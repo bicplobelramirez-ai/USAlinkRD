@@ -2,49 +2,66 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>USAlinkRD</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Clash+Display:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
-  body { margin: 0; font-family: sans-serif; background: #f8f8f6; display: flex; justify-content: center; }
-  .app { width: 100%; max-width: 480px; min-height: 100vh; background: white; }
-  .topbar { background: #002D72; padding: 20px; display: flex; align-items: center; gap: 10px; }
-  .topbar-logo { color: white; font-size: 20px; font-weight: 700; }
-  .topbar-logo span { color: #BF0A30; }
-  .hero { background: linear-gradient(135deg, #002D72, #BF0A30); padding: 32px 20px; color: white; }
-  .hero h1 { font-size: 28px; margin-bottom: 8px; }
-  .hero p { opacity: 0.8; font-size: 14px; }
-  .section { padding: 20px; }
-  .section h2 { font-size: 18px; color: #002D72; margin-bottom: 14px; }
-  .store-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
-  .store-item { background: #f4f4f2; border-radius: 12px; padding: 12px 6px; text-align: center; font-size: 11px; color: #555; cursor: pointer; }
-  .store-item:active { background: #e8eef8; }
-  .cta { margin: 0 20px 20px; background: #BF0A30; color: white; border: none; width: calc(100% - 40px); padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; }
+:root {
+  --bg:#f8f8f6;--bg2:#f0f0ee;--surface:#ffffff;--surface2:#f4f4f2;--surface3:#ebebea;
+  --blue:#002D72;--blue-mid:#1a4db0;--blue-light:#e8eef8;--blue-dim:rgba(0,45,114,0.07);
+  --red:#BF0A30;--red-mid:#d42040;--red-light:#fde8ec;--red-dim:rgba(191,10,48,0.07);
+  --white:#ffffff;--text:#0d0f14;--text2:#5a5c66;--text3:#a0a2aa;
+  --border:rgba(0,0,0,0.07);--border2:rgba(0,0,0,0.04);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex;justify-content:center;}
+.phone{width:100%;max-width:480px;min-height:100vh;background:var(--bg);position:relative;overflow-x:hidden;}
+.grain{position:fixed;inset:0;max-width:480px;pointer-events:none;z-index:100;opacity:0.4;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.025'/%3E%3C/svg%3E");}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.topbar{position:sticky;top:0;z-index:200;padding:16px 22px 14px;background:rgba(248,248,246,0.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-mark{width:34px;height:34px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,45,114,0.25);}
+.logo-mark svg{width:17px;height:17px;}
+.logo-type{font-family:'Clash Display',sans-serif;font-weight:600;font-size:20px;letter-spacing:-0.3px;}
+.logo-type .usa{color:var(--blue);}.logo-type .link{color:var(--text);}.logo-type .rd{color:var(--red);font-size:15px;vertical-align:2px;}
+.topbar-right{display:flex;gap:8px;}
+.t-btn{width:34px;height:34px;background:var(--surface);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;position:relative;box-shadow:0 1px 3px rgba(0,0,0,0.06);}
+.t-notif{position:absolute;top:3px;right:3px;width:7px;height:7px;background:var(--red);border-radius:50%;border:1.5px solid var(--bg);animation:pulse 2s infinite;}
+.scroll{flex:1;overflow-y:auto;padding-bottom:100px;-webkit-overflow-scrolling:touch;}
+.scroll::-webkit-scrollbar{display:none;}
+.greeting{padding:20px 22px 0;display:flex;justify-content:space-between;align-items:flex-start;animation:fadeUp 0.5s ease both;}
+.g-time{font-size:11px;color:var(--text3);margin-bottom:4px;letter-spacing:0.2px;}
+.g-name{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;letter-spacing:-0.5px;line-height:1.1;color:var(--text);}
+.g-name span{color:var(--blue);font-style:italic;}
+.g-trust{display:flex;flex-direction:column;align-items:flex-end;gap:3px;cursor:pointer;padding:6px 10px;background:var(--blue-dim);border:1px solid rgba(0,45,114,0.12);border-radius:12px;}
+.g-trust-score{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--blue);line-height:1;}
+.g-trust-bar{width:40px;height:3px;background:rgba(0,45,114,0.1);border-radius:2px;overflow:hidden;}
+.g-trust-fill{height:100%;width:92%;background:var(--blue);border-radius:2px;}
+.g-trust-label{font-size:9px;color:var(--blue);text-transform:uppercase;letter-spacing:1px;opacity:0.7;}
+.balance-card{margin:16px 16px 0;border-radius:22px;overflow:hidden;position:relative;border:1px solid var(--border);animation:fadeUp 0.5s ease 0.08s both;box-shadow:0 4px 24px rgba(0,45,114,0.1);}
+.balance-bg{position:absolute;inset:0;background:linear-gradient(135deg,var(--blue) 0%,#1a3d8a 40%,#8a1030 70%,var(--red) 100%);}
+.balance-bg::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.04) 1px,transparent 1px);background-size:22px 22px;}
+.balance-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom right,transparent 45%,rgba(255,255,255,0.06) 50%,transparent 55%);}
+.balance-flags{position:absolute;top:14px;right:14px;display:flex;align-items:center;gap:4px;font-size:16px;opacity:0.6;}
+.balance-flags .ch{font-size:10px;color:white;}
+.balance-content{position:relative;padding:20px 22px;display:flex;flex-direction:column;gap:12px;}
+.balance-lbl{font-size:9px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:1.5px;}
+.balance-amount{font-family:'Cormorant Garamond',serif;font-size:46px;font-weight:300;color:white;letter-spacing:-2px;line-height:1;text-shadow:0 2px 20px rgba(0,0,0,0.2);}
+.balance-usd{font-size:11px;color:rgba(255,255,255,0.5);margin-top:-6px;}
+.balance-chips{display:flex;gap:7px;}
+.b-chip{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.18);border-radius:50px;padding:5px 10px;font-size:10px;color:rgba(255,255,255,0.75);display:flex;align-items:center;gap:4px;}
+.live{width:4px;height:4px;background:white;border-radius:50%;animation:pulse 1.5s infinite;}
+.b-chip.gl{background:rgba(255,255,255,0.18);color:white;}
+.ticker-wrap{margin:16px 0 0;overflow:hidden;border-top:1px solid var(--border2);border-bottom:1px solid var(--border2);padding:8px 0;background:var(--surface);animation:fadeUp 0.5s ease 0.12s both;}
+.ticker-track{display:flex;white-space:nowrap;animation:ticker 30s linear infinite;}
+.ticker-item{display:inline-flex;align-items:center;gap:6px;padding:0 18px;font-size:10px;color:var(--text3);}
+.ticker-item strong{color:var(--blue);}
+.ticker-sep{color:var(--red);font-size:8px;opacity:0.5;}
+.sec{padding:22px 22px 14px;display:flex;align-items:baseline;justify-content:space-between;}
+.sec-eyebrow{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:3px;}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:23px;font-weight:300;letter-spacing:-0.3px;color:var(--text);}
+.sec-title em{font-style:italic;color:var(--blue);}
+.sec-link{font-size:11px;color:var(--blue);cursor:pointer;font-weight:500;}
 </style>
-</head>
-<body>
-<div class="app">
-  <div class="topbar">
-    <div class="topbar-logo">USA<span>link</span>RD</div>
-  </div>
-  <div class="hero">
-    <h1>Tu personal shopper desde EE.UU.</h1>
-    <p>Compramos en cualquier tienda americana y te lo enviamos a República Dominicana.</p>
-  </div>
-  <div class="section">
-    <h2>Tiendas disponibles</h2>
-    <div class="store-grid">
-      <div class="store-item">NIKE</div>
-      <div class="store-item">adidas</div>
-      <div class="store-item">Macy's</div>
-      <div class="store-item">Amazon</div>
-      <div class="store-item">Tommy H.</div>
-      <div class="store-item">Kohl's</div>
-      <div class="store-item">HOKA</div>
-      <div class="store-item">New Balance</div>
-    </div>
-  </div>
-  <button class="cta">Hacer un pedido →</button>
-</div>
-</body>
-</html>
-
