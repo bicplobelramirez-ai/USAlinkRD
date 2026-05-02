@@ -176,3 +176,342 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .nav-item.active .nav-lbl{color:var(--blue);font-weight:600;}
 </style>
 </head>
+<body>
+<div class="phone">
+<div class="grain"></div>
+<div style="display:flex;flex-direction:column;min-height:100vh;position:relative;z-index:1;">
+
+  <div class="topbar">
+    <div class="logo">
+      <div class="logo-mark">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="logo-type"><span class="usa">USA</span><span class="link">link</span><span class="rd">RD</span></div>
+    </div>
+    <div class="topbar-right">
+      <div class="t-btn">🔍</div>
+      <div class="t-btn">🛒<div class="t-notif"></div></div>
+    </div>
+  </div>
+
+  <div class="scroll">
+    <div class="greeting">
+      <div>
+        <div class="g-time">Bienvenido 👋</div>
+        <div class="g-name">Hola, <span>Bruce</span></div>
+      </div>
+      <div class="g-trust">
+        <div class="g-trust-score">92</div>
+        <div class="g-trust-bar"><div class="g-trust-fill"></div></div>
+        <div class="g-trust-label">Score</div>
+      </div>
+    </div>
+
+    <div class="balance-card">
+      <div class="balance-bg"></div>
+      <div class="balance-flags">🇩🇴 <span class="ch">⛓</span> 🇺🇸</div>
+      <div class="balance-content">
+        <div>
+          <div class="balance-lbl">Límite de compra disponible</div>
+          <div class="balance-amount">RD$25,000</div>
+          <div class="balance-usd">≈ $427 USD · Tasa 58.5</div>
+        </div>
+        <div class="balance-chips">
+          <div class="b-chip"><div class="live"></div> 2 activos</div>
+          <div class="b-chip gl">⚡ Verificado</div>
+          <div class="b-chip">📦 1 en Miami</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ticker-wrap">
+      <div class="ticker-track">
+        <span class="ticker-item"><span class="ticker-sep">●</span> <strong>Nike</strong> Air Force 1 · $90 · RD$6,800</span>
+        <span class="ticker-item"><span class="ticker-sep">●</span> <strong>HOKA</strong> Clifton 9 · $145 · RD$10,800</span>
+        <span class="ticker-item"><span class="ticker-sep">●</span> <strong>New Balance</strong> 990v6 · $200 · RD$14,900</span>
+        <span class="ticker-item"><span class="ticker-sep">●</span> <strong>Adidas</strong> Samba OG · $100 · RD$7,500</span>
+        <span class="ticker-item"><span class="ticker-sep">●</span> <strong>On Cloud</strong> Monster 2 · $170 · RD$12,600</span>
+        <span class="ticker-item"><span class="ticker-sep">●</span> <strong>Reebok</strong> Classic · $75 · RD$5,700</span>
+        <span class="ticker-item"><span class="ticker-sep">●</span> <strong>Nike</strong> Air Force 1 · $90 · RD$6,800</span>
+        <span class="ticker-item"><span class="ticker-sep">●</span> <strong>HOKA</strong> Clifton 9 · $145 · RD$10,800</span>
+        <span class="ticker-item"><span class="ticker-sep">●</span> <strong>New Balance</strong> 990v6 · $200 · RD$14,900</span>
+        <span class="ticker-item"><span class="ticker-sep">●</span> <strong>Adidas</strong> Samba OG · $100 · RD$7,500</span>
+      </div>
+    </div>
+
+    <div class="sec" style="animation:fadeUp 0.5s ease 0.16s both">
+      <div>
+        <div class="sec-eyebrow">Acceso directo</div>
+        <div class="sec-title">Tiendas <em>USA</em></div>
+      </div>
+      <div class="sec-link">Ver todas →</div>
+    </div>
+
+    <div class="stores-grid">
+      <div class="store-tile">
+        <div class="store-tile-box sn"><div class="store-hot"></div><div style="color:white;font-weight:900;font-size:12px;letter-spacing:-0.3px;font-family:'Clash Display',sans-serif;z-index:1">NIKE</div></div>
+        <div class="store-tile-name">Nike</div>
+      </div>
+      <div class="store-tile">
+        <div class="store-tile-box sa"><div style="color:white;font-weight:700;font-size:10px;letter-spacing:0.5px;z-index:1">adidas</div></div>
+        <div class="store-tile-name">Adidas</div>
+      </div>
+      <div class="store-tile">
+        <div class="store-tile-box sm"><div style="color:white;font-size:22px;font-style:italic;font-family:Georgia;z-index:1">m</div></div>
+        <div class="store-tile-name">Macy's</div>
+      </div>
+      <div class="store-tile">
+        <div class="store-tile-box saz"><div style="color:#ff9900;font-size:10px;font-weight:700;z-index:1">amazon</div></div>
+        <div class="store-tile-name">Amazon</div>
+      </div>
+      <div class="store-tile">
+        <div class="store-tile-box st"><div style="color:white;font-size:8px;font-weight:700;text-align:center;line-height:1.5;z-index:1">TOMMY<br>HILFIGER</div></div>
+        <div class="store-tile-name">Tommy H.</div>
+      </div>
+      <div class="store-tile">
+        <div class="store-tile-box sk"><div style="color:#5555ff;font-size:11px;font-weight:900;z-index:1">Kohl's</div></div>
+        <div class="store-tile-name">Kohl's</div>
+      </div>
+      <div class="store-tile">
+        <div class="store-tile-box sw"><div style="color:white;font-size:17px;z-index:1">⭐</div></div>
+        <div class="store-tile-name">Walmart</div>
+      </div>
+      <div class="store-tile">
+        <div class="store-tile-box smore"><div style="display:flex;flex-direction:column;align-items:center;gap:1px"><div style="color:var(--blue);font-size:14px;letter-spacing:1px">···</div><div style="font-size:8px;color:var(--text3)">+más</div></div></div>
+        <div class="store-tile-name">Ver más</div>
+      </div>
+    </div>
+
+    <div class="hero-band">
+      <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80&auto=format" alt="Sneakers" loading="lazy">
+      <div class="hero-band-overlay"></div>
+      <div class="hero-band-content">
+        <div class="hb-eyebrow">Calzado premium</div>
+        <div class="hb-title">Las mejores marcas<br>de EE.UU. <em>en RD</em></div>
+        <button class="hb-cta">Ver marcas →</button>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div>
+        <div class="sec-eyebrow">Calzado deportivo</div>
+        <div class="sec-title">Marcas <em>exclusivas</em></div>
+      </div>
+      <div class="sec-link">Ver todas →</div>
+    </div>
+
+    <div class="brands-scroll">
+      <div class="brand-card">
+        <div class="bc-badge hot">Viral</div>
+        <img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&q=80&auto=format" alt="HOKA" loading="lazy">
+        <div class="brand-card-overlay"></div>
+        <div class="brand-card-content">
+          <div class="bc-name">HOKA</div>
+          <div class="bc-cat">Max cushion · Trail</div>
+          <div class="bc-from">desde <span>$120</span></div>
+        </div>
+      </div>
+      <div class="brand-card">
+        <div class="bc-badge new">Swiss</div>
+        <img src="https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&q=80&auto=format" alt="On Cloud" loading="lazy">
+        <div class="brand-card-overlay"></div>
+        <div class="brand-card-content">
+          <div class="bc-name">On Cloud</div>
+          <div class="bc-cat">Swiss running</div>
+          <div class="bc-from">desde <span>$140</span></div>
+        </div>
+      </div>
+      <div class="brand-card">
+        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80&auto=format" alt="New Balance" loading="lazy">
+        <div class="brand-card-overlay"></div>
+        <div class="brand-card-content">
+          <div class="bc-name">New Balance</div>
+          <div class="bc-cat">Lifestyle · Running</div>
+          <div class="bc-from">desde <span>$90</span></div>
+        </div>
+      </div>
+      <div class="brand-card">
+        <img src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=400&q=80&auto=format" alt="Brooks" loading="lazy">
+        <div class="brand-card-overlay"></div>
+        <div class="brand-card-content">
+          <div class="bc-name">Brooks</div>
+          <div class="bc-cat">Running premium</div>
+          <div class="bc-from">desde <span>$130</span></div>
+        </div>
+      </div>
+      <div class="brand-card">
+        <img src="https://images.unsplash.com/photo-1539185441755-769473a23570?w=400&q=80&auto=format" alt="Reebok" loading="lazy">
+        <div class="brand-card-overlay"></div>
+        <div class="brand-card-content">
+          <div class="bc-name">Reebok</div>
+          <div class="bc-cat">Classic · Fitness</div>
+          <div class="bc-from">desde <span>$65</span></div>
+        </div>
+      </div>
+      <div class="brand-card">
+        <img src="https://images.unsplash.com/photo-1556906781-9a412961a28c?w=400&q=80&auto=format" alt="Puma" loading="lazy">
+        <div class="brand-card-overlay"></div>
+        <div class="brand-card-content">
+          <div class="bc-name">Puma</div>
+          <div class="bc-cat">Sport · Lifestyle</div>
+          <div class="bc-from">desde <span>$60</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec">
+      <div>
+        <div class="sec-eyebrow">Esta semana en RD</div>
+        <div class="sec-title">Lo más <em>pedido</em></div>
+      </div>
+    </div>
+
+    <div class="products-scroll">
+      <div class="prod-card">
+        <div class="prod-img">
+          <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80&auto=format" alt="NB" loading="lazy">
+          <div class="prod-tag top">🔥 #1</div>
+        </div>
+        <div class="prod-body">
+          <div class="prod-brand">New Balance</div>
+          <div class="prod-name">990v6 Grey Made in USA</div>
+          <div class="prod-price">$200</div>
+          <div class="prod-rd">≈ RD$14,900</div>
+        </div>
+      </div>
+      <div class="prod-card">
+        <div class="prod-img">
+          <img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&q=80&auto=format" alt="HOKA" loading="lazy">
+          <div class="prod-tag top">Viral</div>
+        </div>
+        <div class="prod-body">
+          <div class="prod-brand">HOKA</div>
+          <div class="prod-name">Clifton 9 White</div>
+          <div class="prod-price">$145</div>
+          <div class="prod-rd">≈ RD$10,800</div>
+        </div>
+      </div>
+      <div class="prod-card">
+        <div class="prod-img">
+          <img src="https://images.unsplash.com/photo-1608231387042-66d1773070a5?w=400&q=80&auto=format" alt="On Cloud" loading="lazy">
+        </div>
+        <div class="prod-body">
+          <div class="prod-brand">On Cloud</div>
+          <div class="prod-name">Cloudmonster 2</div>
+          <div class="prod-price">$170</div>
+          <div class="prod-rd">≈ RD$12,600</div>
+        </div>
+      </div>
+      <div class="prod-card">
+        <div class="prod-img">
+          <img src="https://images.unsplash.com/photo-1539185441755-769473a23570?w=400&q=80&auto=format" alt="Reebok" loading="lazy">
+          <div class="prod-tag sale">-25%</div>
+        </div>
+        <div class="prod-body">
+          <div class="prod-brand">Reebok</div>
+          <div class="prod-name">Classic Leather White</div>
+          <div class="prod-price">$75</div>
+          <div class="prod-rd">≈ RD$5,700</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="how-section">
+      <div class="how-img">
+        <img src="https://images.unsplash.com/photo-1556906781-9a412961a28c?w=800&q=80&auto=format" alt="How" loading="lazy">
+        <div class="how-img-overlay"></div>
+        <div class="how-img-title">Cómo funciona<br><em>USAlinkRD</em></div>
+      </div>
+      <div class="how-body">
+        <div class="how-steps">
+          <div class="how-step">
+            <div class="how-num blue">01</div>
+            <div><div class="how-step-title">Elige en la tienda USA</div><div class="how-step-sub">Navega Nike, HOKA, New Balance o cualquier marca. Copia el link del producto.</div></div>
+          </div>
+          <div class="how-step">
+            <div class="how-num red">02</div>
+            <div><div class="how-step-title">Paga en RD sin complicaciones</div><div class="how-step-sub">Transferencia o tarjeta dominicana. Sin tarjeta americana, sin rechazos bancarios.</div></div>
+          </div>
+          <div class="how-step">
+            <div class="how-num blue">03</div>
+            <div><div class="how-step-title">Lo compramos con evidencia</div><div class="how-step-sub">Foto de compra, tracking real y foto de entrega. Transparencia total.</div></div>
+          </div>
+          <div class="how-step">
+            <div class="how-num red">04</div>
+            <div><div class="how-step-title">Recibe en 5-8 días en RD</div><div class="how-step-sub">Casillero Miami incluido. Las tiendas que no envían a LATAM — nosotros sí.</div></div>
+          </div>
+        </div>
+        <button class="how-cta">Hacer mi primer pedido →</button>
+      </div>
+    </div>
+
+    <div class="orders-strip">
+      <div class="orders-header">
+        <div class="oh-title">Pedidos recientes</div>
+        <div class="oh-link">Ver todos →</div>
+      </div>
+      <div class="order-row">
+        <div class="order-img"><img src="https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=100&q=80&auto=format" alt="HOKA" loading="lazy"></div>
+        <div class="order-info"><div class="order-name">HOKA Clifton 9 White</div><div class="order-meta">HOKA · Pedido #2841</div></div>
+        <div style="text-align:right"><div class="order-price">RD$10,800</div><div class="order-status os-miami">✈ Miami</div></div>
+      </div>
+      <div class="order-row">
+        <div class="order-img"><img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=100&q=80&auto=format" alt="NB" loading="lazy"></div>
+        <div class="order-info"><div class="order-name">New Balance 990v6 Grey</div><div class="order-meta">New Balance · Pedido #2799</div></div>
+        <div style="text-align:right"><div class="order-price">RD$14,900</div><div class="order-status os-done">✓ Entregado</div></div>
+      </div>
+    </div>
+
+    <div class="promo-banner">
+      <div class="promo-content">
+        <div class="promo-text">
+          <div class="promo-eyebrow">Verifica tu cuenta</div>
+          <div class="promo-title">Sube tu límite<br>a <em>RD$50,000</em></div>
+        </div>
+        <button class="promo-cta">Verificar →</button>
+      </div>
+    </div>
+
+    <div class="promise-section">
+      <div class="promise-eyebrow">Nuestra promesa</div>
+      <div class="promise-title">Por qué elegir<br><em>USAlinkRD</em></div>
+      <div class="promise-items">
+        <div class="promise-item">
+          <div class="promise-icon pi-blue">🇩🇴</div>
+          <div><div class="promise-text-title">Paga en RD, sin tarjeta americana</div><div class="promise-text-sub">Transferencia, tarjeta dominicana o efectivo. Sin rechazos.</div></div>
+        </div>
+        <div class="promise-item">
+          <div class="promise-icon pi-red">📸</div>
+          <div><div class="promise-text-title">Evidencia fotográfica en cada paso</div><div class="promise-text-sub">Foto de compra, tracking real y foto de entrega. Sin sorpresas.</div></div>
+        </div>
+        <div class="promise-item">
+          <div class="promise-icon pi-blue">✈️</div>
+          <div><div class="promise-text-title">Casillero Miami incluido</div><div class="promise-text-sub">5-8 días a RD. Tiendas que no envían a LATAM — nosotros sí.</div></div>
+        </div>
+        <div class="promise-item">
+          <div class="promise-icon pi-red">🛡️</div>
+          <div><div class="promise-text-title">Sistema anti-fraude verificado</div><div class="promise-text-sub">Score de confianza, contrato digital y respaldo total.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:20px"></div>
+  </div>
+
+  <div class="bottom-nav">
+    <div class="nav-inner">
+      <div class="nav-item active"><div class="nav-ico">🏠</div><div class="nav-lbl">Inicio</div></div>
+      <div class="nav-item"><div class="nav-ico">👟</div><div class="nav-lbl">Marcas</div></div>
+      <div class="nav-item"><div class="nav-ico">➕</div><div class="nav-lbl">Pedir</div></div>
+      <div class="nav-item"><div class="nav-ico">📦</div><div class="nav-lbl">Pedidos</div></div>
+      <div class="nav-item"><div class="nav-ico">◎</div><div class="nav-lbl">Perfil</div></div>
+    </div>
+  </div>
+
+</div>
+</div>
+</body>
+</html>
