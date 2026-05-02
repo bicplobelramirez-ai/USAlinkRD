@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>USAlinkRD</title>
+<style>
+  body { margin: 0; font-family: sans-serif; background: #f8f8f6; display: flex; justify-content: center; }
+  .app { width: 100%; max-width: 480px; min-height: 100vh; background: white; }
+  .topbar { background: #002D72; padding: 20px; display: flex; align-items: center; gap: 10px; }
+  .topbar-logo { color: white; font-size: 20px; font-weight: 700; }
+  .topbar-logo span { color: #BF0A30; }
+  .hero { background: linear-gradient(135deg, #002D72, #BF0A30); padding: 32px 20px; color: white; }
+  .hero h1 { font-size: 28px; margin-bottom: 8px; }
+  .hero p { opacity: 0.8; font-size: 14px; }
+  .section { padding: 20px; }
+  .section h2 { font-size: 18px; color: #002D72; margin-bottom: 14px; }
+  .store-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+  .store-item { background: #f4f4f2; border-radius: 12px; padding: 12px 6px; text-align: center; font-size: 11px; color: #555; cursor: pointer; }
+  .store-item:active { background: #e8eef8; }
+  .cta { margin: 0 20px 20px; background: #BF0A30; color: white; border: none; width: calc(100% - 40px); padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="topbar-logo">USA<span>link</span>RD</div>
+  </div>
+  <div class="hero">
+    <h1>Tu personal shopper desde EE.UU.</h1>
+    <p>Compramos en cualquier tienda americana y te lo enviamos a República Dominicana.</p>
+  </div>
+  <div class="section">
+    <h2>Tiendas disponibles</h2>
+    <div class="store-grid">
+      <div class="store-item">NIKE</div>
+      <div class="store-item">adidas</div>
+      <div class="store-item">Macy's</div>
+      <div class="store-item">Amazon</div>
+      <div class="store-item">Tommy H.</div>
+      <div class="store-item">Kohl's</div>
+      <div class="store-item">HOKA</div>
+      <div class="store-item">New Balance</div>
+    </div>
+  </div>
+  <button class="cta">Hacer un pedido →</button>
+</div>
+</body>
+</html>
