@@ -513,5 +513,169 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 </div>
 </div>
+<!-- PANTALLA PEDIDO -->
+<div id="pedido-screen" style="display:none;position:fixed;inset:0;background:#f8f8f6;z-index:500;overflow-y:auto;padding-bottom:40px;">
+  <div style="background:#002D72;padding:16px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10;">
+    <button onclick="cerrarPedido()" style="background:rgba(255,255,255,0.15);border:none;color:white;width:34px;height:34px;border-radius:8px;font-size:18px;cursor:pointer;">←</button>
+    <span style="color:white;font-family:'Clash Display',sans-serif;font-size:16px;font-weight:600;">Hacer Pedido</span>
+  </div>
+  <div style="padding:20px;display:flex;flex-direction:column;gap:14px;">
+    <div style="background:linear-gradient(135deg,#002D72,#BF0A30);border-radius:16px;padding:18px;color:white;">
+      <div style="font-size:11px;opacity:0.7;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px;">Tu pedido desde EE.UU.</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;">Completa los datos y<br>nosotros lo compramos</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:5px;">
+      <label style="font-size:11px;color:#a0a2aa;text-transform:uppercase;letter-spacing:1px;">Tu nombre</label>
+      <input id="f-nombre" type="text" placeholder="Ej: María González" style="background:white;border:1px solid rgba(0,0,0,0.1);border-radius:12px;padding:13px 16px;font-size:14px;outline:none;font-family:'DM Sans',sans-serif;">
+    </div>
+    <div style="display:flex;flex-direction:column;gap:5px;">
+      <label style="font-size:11px;color:#a0a2aa;text-transform:uppercase;letter-spacing:1px;">Tu teléfono (WhatsApp)</label>
+      <input id="f-telefono" type="tel" placeholder="Ej: 809-555-1234" style="background:white;border:1px solid rgba(0,0,0,0.1);border-radius:12px;padding:13px 16px;font-size:14px;outline:none;font-family:'DM Sans',sans-serif;">
+    </div>
+    <div style="display:flex;flex-direction:column;gap:5px;">
+      <label style="font-size:11px;color:#a0a2aa;text-transform:uppercase;letter-spacing:1px;">Tienda</label>
+      <select id="f-tienda" style="background:white;border:1px solid rgba(0,0,0,0.1);border-radius:12px;padding:13px 16px;font-size:14px;outline:none;font-family:'DM Sans',sans-serif;">
+        <option value="">Selecciona la tienda</option>
+        <option>Nike</option><option>Adidas</option><option>Macy's</option>
+        <option>Amazon</option><option>Tommy Hilfiger</option><option>Kohl's</option>
+        <option>Walmart</option><option>HOKA</option><option>New Balance</option>
+        <option>On Cloud</option><option>Reebok</option><option>Puma</option>
+        <option>Brooks</option><option>Otra</option>
+      </select>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:5px;">
+      <label style="font-size:11px;color:#a0a2aa;text-transform:uppercase;letter-spacing:1px;">Link del producto</label>
+      <input id="f-link" type="url" placeholder="https://www.nike.com/..." style="background:white;border:1px solid rgba(0,0,0,0.1);border-radius:12px;padding:13px 16px;font-size:14px;outline:none;font-family:'DM Sans',sans-serif;">
+    </div>
+    <div style="display:flex;flex-direction:column;gap:5px;">
+      <label style="font-size:11px;color:#a0a2aa;text-transform:uppercase;letter-spacing:1px;">Nombre del producto</label>
+      <input id="f-producto" type="text" placeholder="Ej: Air Force 1 White" style="background:white;border:1px solid rgba(0,0,0,0.1);border-radius:12px;padding:13px 16px;font-size:14px;outline:none;font-family:'DM Sans',sans-serif;">
+    </div>
+    <div style="display:flex;flex-direction:column;gap:5px;">
+      <label style="font-size:11px;color:#a0a2aa;text-transform:uppercase;letter-spacing:1px;">Talla y color</label>
+      <input id="f-talla" type="text" placeholder="Ej: Talla 10 US · Blanco" style="background:white;border:1px solid rgba(0,0,0,0.1);border-radius:12px;padding:13px 16px;font-size:14px;outline:none;font-family:'DM Sans',sans-serif;">
+    </div>
+    <div style="display:flex;flex-direction:column;gap:5px;">
+      <label style="font-size:11px;color:#a0a2aa;text-transform:uppercase;letter-spacing:1px;">Precio en la tienda (USD)</label>
+      <input id="f-precio" type="number" placeholder="0.00" oninput="calcTotal()" style="background:white;border:1px solid rgba(0,0,0,0.1);border-radius:12px;padding:13px 16px;font-size:14px;outline:none;font-family:'DM Sans',sans-serif;">
+    </div>
+    <div id="precio-preview" style="background:linear-gradient(135deg,rgba(0,45,114,0.07),rgba(0,45,114,0.03));border:1px solid rgba(0,45,114,0.15);border-radius:14px;padding:14px;display:none;">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:#a0a2aa;padding:3px 0;"><span>Precio producto</span><span id="t1">$0.00</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:#a0a2aa;padding:3px 0;"><span>Servicio (15%)</span><span id="t2">$0.00</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:#a0a2aa;padding:3px 0;"><span>Envío Miami→RD</span><span>$18.00</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:#a0a2aa;padding:3px 0;"><span>Aduanas (5%)</span><span id="t3">$0.00</span></div>
+      <div style="display:flex;justify-content:space-between;font-family:'Clash Display',sans-serif;font-weight:700;font-size:15px;border-top:1px solid rgba(0,0,0,0.06);margin-top:8px;padding-top:10px;"><span>Total en RD$</span><span id="t-total" style="color:#002D72;">RD$0</span></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:5px;">
+      <label style="font-size:11px;color:#a0a2aa;text-transform:uppercase;letter-spacing:1px;">Notas adicionales</label>
+      <textarea id="f-notas" placeholder="Cualquier detalle adicional..." style="background:white;border:1px solid rgba(0,0,0,0.1);border-radius:12px;padding:13px 16px;font-size:14px;outline:none;font-family:'DM Sans',sans-serif;height:80px;resize:none;"></textarea>
+    </div>
+    <div style="background:rgba(255,193,7,0.1);border:1px solid rgba(255,193,7,0.3);border-radius:12px;padding:12px 14px;font-size:11px;color:#666;line-height:1.5;">
+      ⚠️ <strong style="color:#333;">Pago 100% adelantado.</strong> Te contactaremos por WhatsApp para confirmar y coordinar el pago antes de procesar tu pedido.
+    </div>
+    <button onclick="enviarPedido()" id="btn-enviar" style="background:linear-gradient(135deg,#002D72,#1a4db0);color:white;border:none;padding:16px;border-radius:14px;font-family:'Clash Display',sans-serif;font-weight:600;font-size:15px;cursor:pointer;width:100%;box-shadow:0 6px 20px rgba(0,45,114,0.28);">
+      Enviar pedido 🚀
+    </button>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div id="success-screen" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:600;justify-content:center;align-items:center;flex-direction:column;gap:16px;backdrop-filter:blur(14px);">
+  <div style="font-size:70px;">🎉</div>
+  <div style="font-family:'Clash Display',sans-serif;font-size:26px;font-weight:700;color:white;">¡Pedido enviado!</div>
+  <div style="color:#a0a2aa;font-size:13px;text-align:center;max-width:260px;line-height:1.6;">Te contactaremos por WhatsApp en menos de 2 horas para confirmar tu pedido.</div>
+  <button onclick="cerrarSuccess()" style="background:linear-gradient(135deg,#002D72,#BF0A30);color:white;border:none;padding:14px 32px;border-radius:12px;font-family:'Clash Display',sans-serif;font-weight:600;font-size:14px;cursor:pointer;margin-top:8px;">Volver al inicio</button>
+</div>
+
+<script>
+function abrirPedido(){
+  document.getElementById('pedido-screen').style.display='block';
+  window.scrollTo(0,0);
+}
+function cerrarPedido(){
+  document.getElementById('pedido-screen').style.display='none';
+}
+function calcTotal(){
+  const p=parseFloat(document.getElementById('f-precio').value)||0;
+  if(p>0){
+    document.getElementById('precio-preview').style.display='block';
+    const svc=p*0.15,ship=18,cust=p*0.05;
+    const total=(p+svc+ship+cust)*58.5;
+    document.getElementById('t1').textContent='$'+p.toFixed(2);
+    document.getElementById('t2').textContent='$'+svc.toFixed(2);
+    document.getElementById('t3').textContent='$'+cust.toFixed(2);
+    document.getElementById('t-total').textContent='RD$'+Math.round(total).toLocaleString();
+  }
+}
+async function enviarPedido(){
+  const nombre=document.getElementById('f-nombre').value.trim();
+  const telefono=document.getElementById('f-telefono').value.trim();
+  const tienda=document.getElementById('f-tienda').value;
+  const link=document.getElementById('f-link').value.trim();
+  const producto=document.getElementById('f-producto').value.trim();
+  const talla=document.getElementById('f-talla').value.trim();
+  const precio=parseFloat(document.getElementById('f-precio').value)||0;
+  const notas=document.getElementById('f-notas').value.trim();
+  if(!nombre||!telefono||!tienda||!producto){
+    alert('Por favor completa los campos obligatorios: nombre, teléfono, tienda y producto.');
+    return;
+  }
+  const btn=document.getElementById('btn-enviar');
+  btn.textContent='Enviando...';
+  btn.disabled=true;
+  try{
+    const svc=precio*0.15,ship=18,cust=precio*0.05;
+    const totalRD=(precio+svc+ship+cust)*58.5;
+    const res=await fetch('/api/pedidos',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        nombre_cliente:nombre,
+        telefono:telefono,
+        tienda:tienda,
+        link_producto:link,
+        nombre_producto:producto,
+        talla_color:talla,
+        precio_usd:precio,
+        total_rd:Math.round(totalRD),
+        notas:notas
+      })
+    });
+    const data=await res.json();
+    if(data.success){
+      document.getElementById('pedido-screen').style.display='none';
+      const s=document.getElementById('success-screen');
+      s.style.display='flex';
+    } else {
+      alert('Error al enviar: '+data.error);
+      btn.textContent='Enviar pedido 🚀';
+      btn.disabled=false;
+    }
+  }catch(e){
+    alert('Error de conexión. Intenta de nuevo.');
+    btn.textContent='Enviar pedido 🚀';
+    btn.disabled=false;
+  }
+}
+function cerrarSuccess(){
+  document.getElementById('success-screen').style.display='none';
+  document.getElementById('f-nombre').value='';
+  document.getElementById('f-telefono').value='';
+  document.getElementById('f-tienda').value='';
+  document.getElementById('f-link').value='';
+  document.getElementById('f-producto').value='';
+  document.getElementById('f-talla').value='';
+  document.getElementById('f-precio').value='';
+  document.getElementById('f-notas').value='';
+  document.getElementById('precio-preview').style.display='none';
+}
+
+// Conectar botones al formulario
+document.addEventListener('DOMContentLoaded',function(){
+  document.querySelectorAll('.how-cta, .hb-cta').forEach(function(btn){
+    btn.addEventListener('click',abrirPedido);
+  });
+});
+</script>
 </body>
 </html>
