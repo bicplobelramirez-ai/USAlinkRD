@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>USAlinkRD — Admin</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0f1e;color:#e8f0fe;font-family:'DM Sans',sans-serif;min-height:100vh;}
+.login{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;gap:16px;}
+.login-card{background:#111827;border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:32px 28px;width:100%;max-width:360px;display:flex;flex-direction:column;gap:16px;}
+.login-logo{font-family:Arial Black,sans-serif;font-size:22px;font-weight:900;text-align:center;margin-bottom:8px;}
+.login-logo .u{color:#002D72;}.login-logo .l{color:white;}.login-logo .r{color:#BF0A30;}
+.login-title{font-size:18px;font-weight:600;text-align:center;color:white;}
+.login-sub{font-size:13px;color:#6b7280;text-align:center;}
+.inp{background:#1f2937;border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:14px 16px;color:white;font-size:15px;width:100%;outline:none;}
+.inp:focus{border-color:#002D72;}
+.btn{background:linear-gradient(135deg,#002D72,#1a4db0);color:white;border:none;padding:15px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;width:100%;}
+.btn:active{opacity:0.9;}
+.btn-red{background:linear-gradient(135deg,#BF0A30,#d42040);}
+
+/* DASHBOARD */
+.dashboard{display:none;flex-direction:column;min-height:100vh;}
+.topbar{background:#002D72;padding:48px 20px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.topbar-logo{font-family:Arial Black,sans-serif;font-size:18px;font-weight:900;color:white;}
+.topbar-logo span{color:#BF0A30;}
+.logout-btn{background:rgba(255,255,255,0.15);border:none;color:white;padding:8px 14px;border-radius:8px;font-size:12px;cursor:pointer;}
+
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:16px;}
+.stat-card{background:#111827;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:16px;}
+.stat-num{font-size:28px;font-weight:700;margin-bottom:4px;}
+.stat-num.blue{color:#4a9eff;}.stat-num.red{color:#BF0A30;}.stat-num.green{color:#10b981;}.stat-num.yellow{color:#f5c542;}
+.stat-label{font-size:11px;color:#6b7280;text-transform:uppercase;letter-spacing:0.8px;}
+
+.section-title{padding:8px 20px 12px;font-size:17px;font-weight:700;color:white;}
+
+.pedido-card{background:#111827;border:1px solid rgba(255,255,255,0.07);border-radius:16px;padding:16px;margin:0 16px 12px;}
+.pedido-card.nuevo{border-left:3px solid #4a9eff;}
+.pedido-card.proceso{border-left:3px solid #f5c542;}
+.pedido-card.entregado{border-left:3px solid #10b981;}
+.pedido-card.cancelado{border-left:3px solid #BF0A30;}
+
+.pedido-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.pedido-cliente{font-size:14px;font-weight:600;color:white;}
+.pedido-fecha{font-size:10px;color:#6b7280;}
+.pedido-tienda{font-size:12px;color:#6b7280;margin-top:2px;}
+
+.estado-badge{font-size:10px;padding:3px 8px;border-radius:50px;font-weight:700;text-transform:uppercase;}
+.estado-Nuevo{background:rgba(74,158,255,0.15);color:#4a9eff;}
+.estado-Proceso{background:rgba(245,197,66,0.15);color:#f5c542;}
+.estado-Entregado{background:rgba(16,185,129,0.15);color:#10b981;}
+.estado-Cancelado{background:rgba(191,10,48,0.15);color:#BF0A30;}
+
+.pedido-producto{background:rgba(0,0,0,0.2);border-radius:8px;padding:10px;margin-bottom:10px;font-size:12px;color:#9ca3af;line-height:1.6;}
+.pedido-producto strong{color:#e8f0fe;}
+
+.pedido-precio{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.precio-usd{font-size:13px;color:#6b7280;}
+.precio-rd{font-size:16px;font-weight:700;color:#4a9eff;font-family:Arial Black,sans-serif;}
+
+.estado-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.estado-btn{flex:1;min-width:80px;padding:8px 6px;border-radius:8px;border:none;font-size:11px;font-weight:700;cursor:pointer;transition:opacity 0.2s;}
+.estado-btn:active{opacity:0.7;}
+.btn-nuevo{background:rgba(74,158,255,0.2);color:#4a9eff;}
+.btn-proceso{background:rgba(245,197,66,0.2);color:#f5c542;}
+.btn-entregado{background:rgba(16,185,129,0.2);color:#10b981;}
+.btn-cancelado{background:rgba(191,10,48,0.15);color:#BF0A30;}
+
+.loading{text-align:center;padding:40px;color:#6b7280;}
+.empty{text-align:center;padding:40px;color:#6b7280;font-size:14px;}
+.error-msg{background:rgba(191,10,48,0.1);border:1px solid rgba(191,10,48,0.3);border-radius:10px;padding:12px;margin:0 16px;font-size:13px;color:#BF0A30;text-align:center;}
+
+.refresh-btn{background:rgba(74,158,255,0.1);border:1px solid rgba(74,158,255,0.2);color:#4a9eff;padding:10px;border-radius:10px;font-size:13px;cursor:pointer;margin:0 16px 16px;width:calc(100% - 32px);}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login" id="login-screen">
+  <div class="login-card">
+    <div class="login-logo"><span class="u">USA</span><span class="l">link</span><span class="r">RD</span></div>
+    <div class="login-title">Panel Admin 🛠️</div>
+    <div class="login-sub">Ingresa tu contraseña para acceder</div>
+    <input class="inp" type="password" id="pwd-input" placeholder="Contraseña" onkeydown="if(event.key==='Enter')login()">
+    <button class="btn" onclick="login()">Entrar al panel →</button>
+    <div id="login-error" style="color:#BF0A30;font-size:13px;text-align:center;display:none;">Contraseña incorrecta</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard" id="dashboard">
+
+  <div class="topbar">
+    <div class="topbar-logo">USA<span>link</span>RD <span style="font-size:12px;opacity:0.7;font-family:sans-serif;font-weight:400;">Admin</span></div>
+    <button class="logout-btn" onclick="logout()">Salir</button>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats" id="stats-grid">
+    <div class="stat-card"><div class="stat-num blue" id="stat-total">-</div><div class="stat-label">Total pedidos</div></div>
+    <div class="stat-card"><div class="stat-num red" id="stat-nuevo">-</div><div class="stat-label">Nuevos 🔴</div></div>
+    <div class="stat-card"><div class="stat-num yellow" id="stat-proceso">-</div><div class="stat-label">En proceso</div></div>
+    <div class="stat-card"><div class="stat-num green" id="stat-entregado">-</div><div class="stat-label">Entregados</div></div>
+  </div>
+
+  <button class="refresh-btn" onclick="cargarPedidos()">🔄 Actualizar pedidos</button>
+
+  <div class="section-title">Pedidos recientes</div>
+  <div id="error-container"></div>
+  <div id="pedidos-container"><div class="loading">Cargando pedidos...</div></div>
+
+</div>
+
+<script>
+let adminPassword = '';
+
+function login() {
+  const pwd = document.getElementById('pwd-input').value;
+  if (!pwd) return;
+  adminPassword = pwd;
+  document.getElementById('login-error').style.display = 'none';
+  // Verificar con la API
+  fetch('/api/admin', {
+    headers: { 'Authorization': `Bearer ${pwd}` }
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.error === 'No autorizado') {
+      document.getElementById('login-error').style.display = 'block';
+      adminPassword = '';
+    } else {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'flex';
+      renderPedidos(data.pedidos);
+      updateStats(data.pedidos);
+    }
+  })
+  .catch(() => {
+    document.getElementById('login-error').style.display = 'block';
+  });
+}
+
+function logout() {
+  adminPassword = '';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('pwd-input').value = '';
+}
+
+function cargarPedidos() {
+  document.getElementById('pedidos-container').innerHTML = '<div class="loading">Cargando...</div>';
+  fetch('/api/admin', {
+    headers: { 'Authorization': `Bearer ${adminPassword}` }
+  })
+  .then(r => r.json())
+  .then(data => {
+    renderPedidos(data.pedidos);
+    updateStats(data.pedidos);
+  });
+}
+
+function updateStats(pedidos) {
+  if (!pedidos) return;
+  document.getElementById('stat-total').textContent = pedidos.length;
+  document.getElementById('stat-nuevo').textContent = pedidos.filter(p => p.Estado === 'Nuevo').length;
+  document.getElementById('stat-proceso').textContent = pedidos.filter(p => p.Estado === 'Proceso').length;
+  document.getElementById('stat-entregado').textContent = pedidos.filter(p => p.Estado === 'Entregado').length;
+}
+
+function renderPedidos(pedidos) {
+  const container = document.getElementById('pedidos-container');
+  if (!pedidos || pedidos.length === 0) {
+    container.innerHTML = '<div class="empty">📦 No hay pedidos aún</div>';
+    return;
+  }
+  container.innerHTML = pedidos.map(p => `
+    <div class="pedido-card ${(p.Estado||'nuevo').toLowerCase()}" id="card-${p.id}">
+      <div class="pedido-top">
+        <div>
+          <div class="pedido-cliente">${p.Nombre_cliente || 'Sin nombre'}</div>
+          <div class="pedido-tienda">📱 ${p.Teléfono || '-'} · 🏪 ${p.Tienda || '-'}</div>
+          <div class="pedido-fecha">${new Date(p.created_at).toLocaleString('es-DO')}</div>
+        </div>
+        <div class="estado-badge estado-${p.Estado || 'Nuevo'}">${p.Estado || 'Nuevo'}</div>
+      </div>
+      <div class="pedido-producto">
+        <strong>${p.Nombre_Producto || 'Sin nombre'}</strong><br>
+        ${p.Talla_Color ? '👟 ' + p.Talla_Color + '<br>' : ''}
+        ${p.Link_Producto ? '🔗 <a href="'+p.Link_Producto+'" target="_blank" style="color:#4a9eff">Ver producto</a>' : ''}
+      </div>
+      <div class="pedido-precio">
+        <span class="precio-usd">$${p.Precio_USD || 0} USD</span>
+        <span class="precio-rd">RD$${(p.Total_USD || 0).toLocaleString()}</span>
+      </div>
+      <div class="estado-btns">
+        <button class="estado-btn btn-nuevo" onclick="cambiarEstado(${p.id},'Nuevo')">🔵 Nuevo</button>
+        <button class="estado-btn btn-proceso" onclick="cambiarEstado(${p.id},'Proceso')">🟡 Proceso</button>
+        <button class="estado-btn btn-entregado" onclick="cambiarEstado(${p.id},'Entregado')">✅ Entregado</button>
+        <button class="estado-btn btn-cancelado" onclick="cambiarEstado(${p.id},'Cancelado')">❌ Cancelar</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function cambiarEstado(id, estado) {
+  fetch('/api/admin', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${adminPassword}`
+    },
+    body: JSON.stringify({ id, estado })
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.success) cargarPedidos();
+  });
+}
+</script>
+</body>
+</html>
