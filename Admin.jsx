@@ -43,7 +43,19 @@ export default function Admin() {
   const [loginError, setLoginError] = useState("");
 
   useEffect(() => {
-    sb.auth.getSession().then(({ data: { session } }) => {
+    useEffect(() => {
+  const timer = setTimeout(() => setLoading(false), 3000);
+  sb.auth.getSession().then(({ data: { session } }) => {
+    clearTimeout(timer);
+    if (session?.user) checkAdmin(session.user);
+    else setLoading(false);
+  });
+  const { data: { subscription } } = sb.auth.onAuthStateChange(async (_e, session) => {
+    if (session?.user) await checkAdmin(session.user);
+    else { setUser(null); setIsAdmin(false); setLoading(false); }
+  });
+  return () => subscription.unsubscribe();
+}, []);
       if (session?.user) checkAdmin(session.user);
       else setLoading(false);
     });
