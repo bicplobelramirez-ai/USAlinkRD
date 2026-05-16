@@ -36,7 +36,7 @@ const STATUS_ICONS = {
 export default function Admin() {
   const [user, setUser]         = useState(null);
   const [isAdmin, setIsAdmin]   = useState(false);
-  const [loading, setLoading]   = useState(true);
+ const [loading, setLoading] = useState(false);
   const [tab, setTab]           = useState("orders");
   const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
