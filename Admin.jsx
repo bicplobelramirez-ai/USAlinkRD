@@ -1,4 +1,4 @@
-pimport { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 const SUPA_URL  = "https://kugdrwxthmcscrvlszws.supabase.co";
@@ -36,38 +36,14 @@ const STATUS_ICONS = {
 export default function Admin() {
   const [user, setUser]         = useState(null);
   const [isAdmin, setIsAdmin]   = useState(false);
-  useEffect(() => {
-  const timer = setTimeout(() => setLoading(false), 3000);
-  sb.auth.getSession().then(({ data: { session } }) => {
-    clearTimeout(timer);
-    if (session?.user) checkAdmin(session.user);
-    else setLoading(false);
-  });
-  const { data: { subscription } } = sb.auth.onAuthStateChange(async (_e, session) => {
-    if (session?.user) await checkAdmin(session.user);
-    else { setUser(null); setIsAdmin(false); setLoading(false); }
-  });
-  return () => subscription.unsubscribe();
-}, []);
+  const [loading, setLoading]   = useState(true);
   const [tab, setTab]           = useState("orders");
   const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
 
   useEffect(() => {
-    useEffect(() => {
-  const timer = setTimeout(() => setLoading(false), 3000);
-  sb.auth.getSession().then(({ data: { session } }) => {
-    clearTimeout(timer);
-    if (session?.user) checkAdmin(session.user);
-    else setLoading(false);
-  });
-  const { data: { subscription } } = sb.auth.onAuthStateChange(async (_e, session) => {
-    if (session?.user) await checkAdmin(session.user);
-    else { setUser(null); setIsAdmin(false); setLoading(false); }
-  });
-  return () => subscription.unsubscribe();
-}, []);
+    sb.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) checkAdmin(session.user);
       else setLoading(false);
     });
