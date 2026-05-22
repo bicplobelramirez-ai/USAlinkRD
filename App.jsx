@@ -52,7 +52,21 @@ function AuthProvider({ children }) {
     setProfile(data); setLoading(false);
   }
   async function signOut() { await sb.auth.signOut(); setUser(null); setProfile(null); }
-  return <AuthCtx.Provider value={{ user, profile, loading, signOut, loadProfile }}>{children}</AuthCtx.Provider>;
+
+  async function uploadAvatar(file) {
+    if (!user) return null;
+    const ext = file.name.split(".").pop();
+    const path = `${user.id}/avatar.${ext}`;
+    const { error: upErr } = await sb.storage.from("avatars").upload(path, file, { upsert: true });
+    if (upErr) { console.error(upErr); return null; }
+    const { data } = sb.storage.from("avatars").getPublicUrl(path);
+    const url = data.publicUrl + "?t=" + Date.now();
+    await sb.from("users").update({ avatar_url: url }).eq("id", user.id);
+    setProfile(prev => ({ ...prev, avatar_url: url }));
+    return url;
+  }
+
+  return <AuthCtx.Provider value={{ user, profile, loading, signOut, loadProfile, uploadAvatar }}>{children}</AuthCtx.Provider>;
 }
 
 function RateProvider({ children }) {
@@ -79,6 +93,47 @@ button{font-family:'DM Sans',sans-serif;}
 const btnP = { padding:"10px 16px", borderRadius:11, background:"#4a8fff", color:"white", fontWeight:700, fontSize:11, border:"none", cursor:"pointer", boxShadow:"0 4px 14px rgba(74,143,255,0.3)" };
 const btnS = { padding:"10px 16px", borderRadius:11, background:"#1e293b", color:"#a0a2aa", fontWeight:700, fontSize:11, border:"1px solid rgba(255,255,255,0.07)", cursor:"pointer" };
 const inp  = { width:"100%", background:"#1e293b", border:"1px solid rgba(255,255,255,0.07)", borderRadius:12, padding:"13px 14px", color:"#f0f0f0", fontSize:13, outline:"none", fontFamily:"inherit", boxSizing:"border-box" };
+
+// ── AVATAR UPLOADER ───────────────────────────────────────────
+function AvatarUploader({ avatarUrl, size = 115 }) {
+  const { uploadAvatar } = useAuth();
+  const [uploading, setUploading] = useState(false);
+  const [preview, setPreview] = useState(avatarUrl);
+  const fileRef = useRef(null);
+
+  useEffect(() => { setPreview(avatarUrl); }, [avatarUrl]);
+
+  async function handleFile(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    // Preview instantáneo
+    const reader = new FileReader();
+    reader.onload = ev => setPreview(ev.target.result);
+    reader.readAsDataURL(file);
+    setUploading(true);
+    await uploadAvatar(file);
+    setUploading(false);
+  }
+
+  return (
+    <div style={{ position:"relative", width:size, height:size }}>
+      <input ref={fileRef} type="file" accept="image/*" onChange={handleFile} style={{ display:"none" }} />
+      <div style={{ width:size, height:size, borderRadius:"50%", border:"3px solid rgba(99,179,237,0.7)", background:"#1e293b", display:"flex", alignItems:"center", justifyContent:"center", overflow:"hidden", boxShadow:"0 0 0 5px rgba(74,143,255,0.12), 0 8px 32px rgba(0,0,0,0.6)" }}>
+        {preview
+          ? <img src={preview} alt="avatar" style={{ width:"100%", height:"100%", objectFit:"cover" }} />
+          : <svg viewBox="0 0 80 80" width={size * 0.62} height={size * 0.62} fill="none"><circle cx="40" cy="28" r="17" fill="#334155" /><ellipse cx="40" cy="70" rx="27" ry="18" fill="#334155" /></svg>
+        }
+      </div>
+      {/* Botón cámara */}
+      <div onClick={() => !uploading && fileRef.current?.click()} style={{ position:"absolute", bottom:4, right:4, width:30, height:30, borderRadius:"50%", background: uploading ? "#334155" : "#4a8fff", display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, boxShadow:"0 2px 10px rgba(0,0,0,0.5)", cursor: uploading ? "default" : "pointer", border:"2px solid #0a0e1a", transition:"background .2s" }}>
+        {uploading
+          ? <div style={{ width:12, height:12, border:"2px solid rgba(255,255,255,0.3)", borderTop:"2px solid white", borderRadius:"50%", animation:"spin 0.7s linear infinite" }} />
+          : "📷"
+        }
+      </div>
+    </div>
+  );
+}
 
 const COUNTRY_MAP = { DO:"RD", AR:"ARG", MX:"MX", CO:"COL", PE:"PE", CL:"CHL", VE:"VE", EC:"EC", BO:"BOL", UY:"UY", PY:"PY", GT:"GT", HN:"HN", CR:"CR", PA:"PA" };
 const COUNTRY_NAMES = { DO:"República Dominicana 🇩🇴", AR:"Argentina 🇦🇷", MX:"México 🇲🇽", CO:"Colombia 🇨🇴", PE:"Perú 🇵🇪", CL:"Chile 🇨🇱", VE:"Venezuela 🇻🇪" };
@@ -618,15 +673,9 @@ function Home({ onNav }) {
           <svg style={{ position:"absolute", bottom:0, left:0, width:"100%" }} viewBox="0 0 390 40" preserveAspectRatio="none">
             <path d="M0,20 C100,40 200,0 300,20 C360,35 380,8 390,20 L390,40 L0,40 Z" fill="rgba(167,139,250,0.2)" />
           </svg>
-          {/* Avatar */}
+          {/* Avatar con upload */}
           <div style={{ position:"absolute", left:18, bottom:18 }}>
-            <div style={{ width:115, height:115, borderRadius:"50%", border:"3px solid rgba(99,179,237,0.7)", background:"#1e293b", display:"flex", alignItems:"center", justifyContent:"center", overflow:"hidden", position:"relative", boxShadow:"0 0 0 5px rgba(74,143,255,0.12), 0 8px 32px rgba(0,0,0,0.6)" }}>
-              {profile?.avatar_url
-                ? <img src={profile.avatar_url} alt="avatar" style={{ width:"100%", height:"100%", objectFit:"cover" }} />
-                : <svg viewBox="0 0 80 80" width="72" height="72" fill="none"><circle cx="40" cy="28" r="17" fill="#334155" /><ellipse cx="40" cy="70" rx="27" ry="18" fill="#334155" /></svg>
-              }
-              <div style={{ position:"absolute", bottom:5, right:5, width:28, height:28, borderRadius:"50%", background:"#4a8fff", display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, boxShadow:"0 2px 10px rgba(0,0,0,0.5)", cursor:"pointer" }}>📷</div>
-            </div>
+            <AvatarUploader avatarUrl={profile?.avatar_url} size={115} />
           </div>
           {/* Nombre + badge */}
           <div style={{ position:"absolute", left:150, bottom:28, right:14 }}>
@@ -957,10 +1006,7 @@ function Profile({ onNav }) {
           <svg style={{ position:"absolute", bottom:0, left:0, width:"100%" }} viewBox="0 0 390 55" preserveAspectRatio="none"><path d="M0,28 C60,55 150,5 250,28 C330,48 370,12 390,28 L390,55 L0,55 Z" fill="rgba(124,58,237,0.3)" /></svg>
           <svg style={{ position:"absolute", bottom:0, left:0, width:"100%" }} viewBox="0 0 390 40" preserveAspectRatio="none"><path d="M0,20 C100,40 200,0 300,20 C360,35 380,8 390,20 L390,40 L0,40 Z" fill="rgba(167,139,250,0.2)" /></svg>
           <div style={{ position:"absolute", left:18, bottom:18 }}>
-            <div style={{ width:115, height:115, borderRadius:"50%", border:"3px solid rgba(99,179,237,0.7)", background:"#1e293b", display:"flex", alignItems:"center", justifyContent:"center", overflow:"hidden", position:"relative", boxShadow:"0 0 0 5px rgba(74,143,255,0.12), 0 8px 32px rgba(0,0,0,0.6)" }}>
-              {profile?.avatar_url ? <img src={profile.avatar_url} alt="avatar" style={{ width:"100%", height:"100%", objectFit:"cover" }} /> : <svg viewBox="0 0 80 80" width="72" height="72" fill="none"><circle cx="40" cy="28" r="17" fill="#334155" /><ellipse cx="40" cy="70" rx="27" ry="18" fill="#334155" /></svg>}
-              <div style={{ position:"absolute", bottom:5, right:5, width:28, height:28, borderRadius:"50%", background:"#4a8fff", display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, cursor:"pointer" }}>📷</div>
-            </div>
+            <AvatarUploader avatarUrl={profile?.avatar_url} size={115} />
           </div>
           <div style={{ position:"absolute", left:150, bottom:28, right:14 }}>
             <div style={{ display:"inline-flex", alignItems:"center", gap:5, background:"rgba(0,0,0,0.4)", backdropFilter:"blur(10px)", border:"1px solid rgba(240,180,41,0.55)", borderRadius:50, padding:"5px 13px", marginBottom:9 }}>
