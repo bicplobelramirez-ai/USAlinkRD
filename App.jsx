@@ -1,4 +1,148 @@
-import { useState, useEffect, useRef, createContext, useContext } from "react";
+const [typing, setTyping] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [intro, setIntro] = useState(false);
+  const bottomRef = useRef(null);
+
+  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior:"smooth" }); }, [msgs, typing]);
+  useEffect(() => { const t = setTimeout(() => setIntro(true), 1200); return () => clearTimeout(t); }, []);
+
+  async function send(text) {
+    if (!text.trim() || typing) return;
+    const userMsg = { role:"user", content: text };
+    const newMsgs = [...msgs, userMsg];
+    setMsgs(newMsgs);
+    setInput(""); setTyping(true);
+    try {
+      const res = await fetch("/api/chat", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({
+          messages: newMsgs.map(m => ({ role:m.role, content:m.content })),
+          profile: { full_name: profile?.full_name, total_orders: profile?.total_orders, trust_score: profile?.trust_score, purchase_limit: profile?.purchase_limit },
+          rate: rate,
+        }),
+      });
+      const data = await res.json();
+      const reply = data.reply || "Lo siento, hubo un error. Intenta de nuevo.";
+      setMsgs(p => [...p, { role:"assistant", content:reply }]);
+    } catch(e) {
+      setMsgs(p => [...p, { role:"assistant", content:"Ups, problema de conexion. Intenta de nuevo." }]);
+    }
+    setTyping(false);
+  }
+
+  return (
+    <>
+      {intro && !open && (
+        <div style={{ position:"fixed", bottom:176, right:16, zIndex:301, background:"#161b2e", border:"1px solid rgba(240,180,41,0.25)", borderRadius:"16px 16px 4px 16px", padding:"10px 14px", maxWidth:190, animation:"fadeUp 0.4s ease", boxShadow:"0 8px 32px rgba(0,0,0,0.5)" }}>
+          <div style={{ fontSize:12, fontWeight:700, color:"white", marginBottom:2 }}>Hola, soy Aphrodite</div>
+          <div style={{ fontSize:11, color:"#a0a2aa" }}>¿En que puedo ayudarte?</div>
+          <div style={{ position:"absolute", bottom:-7, right:18, width:0, height:0, borderLeft:"7px solid transparent", borderRight:"7px solid transparent", borderTop:"7px solid rgba(240,180,41,0.25)" }} />
+        </div>
+      )}
+      {!open && (
+        <div onClick={() => { setOpen(true); setIntro(false); }} style={{ position:"fixed", bottom:100, right:16, cursor:"pointer", zIndex:300 }}>
+          <div style={{ position:"absolute", inset:-10, borderRadius:"50%", background:"rgba(240,180,41,0.12)", animation:"pulse 2.5s ease-in-out infinite" }} />
+          <AphroditeAvatar size={64} ring animated />
+          <div style={{ position:"absolute", top:-6, right:-4, background:"linear-gradient(135deg,#f0b429,#ff9500)", borderRadius:50, padding:"2px 8px", fontSize:8, fontWeight:800, color:"#0a0e1a", border:"2px solid #0a0e1a", whiteSpace:"nowrap", boxShadow:"0 2px 12px rgba(240,180,41,0.5)", letterSpacing:0.5 }}>IA</div>
+        </div>
+      )}
+      {open && (
+        <div style={{ position:"fixed", inset:0, zIndex:400, display:"flex", flexDirection:"column", background:"#0a0e1a", animation:"fadeIn 0.25s ease" }}>
+          <div style={{ background:"linear-gradient(180deg,#100c1e,#0d1020)", borderBottom:"1px solid rgba(240,180,41,0.12)", padding:"48px 16px 12px", display:"flex", alignItems:"center", gap:12 }}>
+            <div style={{ position:"relative" }}>
+              <AphroditeAvatar size={50} ring />
+              <div style={{ position:"absolute", bottom:1, right:1, width:12, height:12, borderRadius:"50%", background:"#4caf82", border:"2.5px solid #0d1020" }} />
+            </div>
+            <div style={{ flex:1 }}>
+              <div style={{ fontFamily:"'Clash Display',sans-serif", fontWeight:700, fontSize:18, background:"linear-gradient(135deg,#f0b429,#ffd700,#f0b429)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundSize:"200% auto", animation:"shimmerGold 3s linear infinite" }}>Aphrodite</div>
+              <div style={{ fontSize:10, color:"#4caf82", display:"flex", alignItems:"center", gap:4, marginTop:1 }}>
+                <div style={{ width:5, height:5, borderRadius:"50%", background:"#4caf82" }} /> Personal Shopper · USAlink IA
+              </div>
+            </div>
+            <div style={{ display:"flex", gap:8 }}>
+              <div onClick={() => setMsgs([{ role:"assistant", content:"Hola! Soy Aphrodite, tu personal shopper. Como puedo ayudarte?" }])} style={{ width:34, height:34, borderRadius:10, background:"rgba(255,255,255,0.04)", border:"1px solid rgba(255,255,255,0.07)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, cursor:"pointer", color:"#a0a2aa" }}>🗑️</div>
+              <div onClick={() => setOpen(false)} style={{ width:34, height:34, borderRadius:10, background:"rgba(240,180,41,0.08)", border:"1px solid rgba(240,180,41,0.2)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, cursor:"pointer", color:"#f0b429" }}>✕</div>
+            </div>
+          </div>
+          <div style={{ margin:"12px 14px 0", background:"linear-gradient(135deg,rgba(240,180,41,0.06),rgba(255,149,0,0.04))", border:"1px solid rgba(240,180,41,0.15)", borderRadius:20, overflow:"hidden", display:"flex" }}>
+            <div style={{ width:90, flexShrink:0, position:"relative" }}>
+              <img src={APHRODITE_IMG} alt="Aphrodite" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center top" }} />
+              <div style={{ position:"absolute", inset:0, background:"linear-gradient(to right,transparent 50%,#100c1e)" }} />
+            </div>
+            <div style={{ padding:"14px 14px 14px 10px", flex:1 }}>
+              <div style={{ fontFamily:"'Clash Display',sans-serif", fontSize:14, fontWeight:700, color:"white", marginBottom:4 }}>Hola {profile?.full_name?.split(" ")[0] || ""}! Soy <span style={{ color:"#f0b429" }}>Aphrodite</span></div>
+              <div style={{ fontSize:11, color:"#a0a2aa", lineHeight:1.5, marginBottom:8 }}>Tu personal shopper virtual. Te ayudo a encontrar productos, calcular precios y hacer pedidos desde USA.</div>
+              <div style={{ display:"flex", flexWrap:"wrap", gap:4 }}>
+                {["Tiendas","Precios","Pedidos","Envios"].map(t => (
+                  <span key={t} style={{ background:"rgba(240,180,41,0.1)", border:"1px solid rgba(240,180,41,0.2)", borderRadius:50, padding:"2px 8px", fontSize:9, color:"#f0b429", fontWeight:600 }}>{t}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+          <div style={{ flex:1, overflowY:"auto", padding:"14px 14px 8px" }}>
+            {msgs.map((m,i) => <AphroditeBubble key={i} msg={m} />)}
+            {typing && (
+              <div style={{ display:"flex", alignItems:"flex-end", gap:8, marginBottom:12 }}>
+                <AphroditeAvatar size={30} ring={false} />
+                <div style={{ background:"rgba(255,255,255,0.04)", border:"1px solid rgba(240,180,41,0.2)", borderRadius:"18px 18px 18px 4px" }}><AphroditeTyping /></div>
+              </div>
+            )}
+            <div ref={bottomRef} />
+          </div>
+          <div style={{ overflowX:"auto", padding:"8px 14px 6px", display:"flex", gap:8, scrollbarWidth:"none" }}>
+            {APHRODITE_QUICK.map((q,i) => (
+              <div key={i} onClick={() => send(q.label)} style={{ flexShrink:0, display:"flex", alignItems:"center", gap:5, background:"rgba(255,255,255,0.03)", border:"1px solid rgba(240,180,41,0.15)", borderRadius:50, padding:"6px 13px", cursor:"pointer", fontSize:11, color:"#d4a847", whiteSpace:"nowrap" }}>
+                {q.icon} {q.label}
+              </div>
+            ))}
+          </div>
+          <div style={{ padding:"10px 14px 34px", background:"rgba(10,14,26,0.98)", borderTop:"1px solid rgba(255,255,255,0.04)", display:"flex", gap:10, alignItems:"center" }}>
+            <div style={{ flex:1, background:"rgba(255,255,255,0.04)", border:"1px solid rgba(240,180,41,0.18)", borderRadius:16, padding:"11px 14px", display:"flex", alignItems:"center", gap:8 }}>
+              <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key==="Enter" && send(input)} placeholder="Preguntale a Aphrodite..." style={{ flex:1, background:"none", border:"none", outline:"none", color:"white", fontSize:13, fontFamily:"'DM Sans',sans-serif" }} disabled={typing} />
+              <span style={{ fontSize:12, color:"#f0b429", opacity:0.5 }}>✦</span>
+            </div>
+            <div onClick={() => send(input)} style={{ width:46, height:46, borderRadius:14, flexShrink:0, background: typing ? "#1e293b" : "linear-gradient(135deg,#f0b429,#ff9500)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, cursor: typing ? "default" : "pointer", boxShadow:"0 4px 20px rgba(240,180,41,0.35)", opacity: typing ? 0.5 : 1 }}>➤</div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+// ── ROOT ──────────────────────────────────────────────────────
+export default function App() {
+  return (
+    <AuthProvider>
+      <RateProvider>
+        <Router />
+      </RateProvider>
+    </AuthProvider>
+  );
+}
+
+function Router() {
+  const { user, loading } = useAuth();
+  const [screen, setScreen] = useState("home");
+  const [authScreen, setAuthScreen] = useState("login");
+  if (loading) return <Splash />;
+  if (!user) return authScreen === "login"
+    ? <Login onRegister={() => setAuthScreen("register")} />
+    : <Register onLogin={() => setAuthScreen("login")} />;
+  const { profile } = useAuth();
+  const rate = useRate();
+  const SCREENS = { home:Home, stores:Stores, neworder:NewOrder, orders:Orders, profile:Profile };
+  const Screen = SCREENS[screen] || Home;
+  return (
+    <div style={{ background:"#0a0e1a", minHeight:"100vh", display:"flex", justifyContent:"center" }}>
+      <div style={{ width:"100%", maxWidth:390, position:"relative" }}>
+        <Screen onNav={setScreen} />
+        <BottomNav screen={screen} onNav={setScreen} />
+        <Aphrodite onNav={setScreen} profile={profile} rate={rate} />
+      </div>
+    </div>
+  );
+}import { useState, useEffect, useRef, createContext, useContext } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 const SUPA_URL  = "https://kugdrwxthmcscrvlszws.supabase.co";
