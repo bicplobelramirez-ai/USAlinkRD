@@ -312,18 +312,16 @@ const BRAND = {
   columbia:{ bg:"linear-gradient(145deg,#000e30,#000820,#001540)", color:"rgba(100,180,255,.85)" },
 };
 
-function Tile({ slug, name, cb, hot }) {
+function Tile({ slug, name, hot }) {
   const b = BRAND[slug] || { bg:"linear-gradient(145deg,#161b2e,#1e293b)", color:"#a0a2aa" };
   return (
-    <div style={{ flexShrink:0, display:"flex", flexDirection:"column", alignItems:"center", gap:5, cursor:"pointer", width:72 }}>
-      <div style={{ width:64, height:64, borderRadius:15, background:b.bg, border:"1px solid rgba(255,255,255,0.06)", position:"relative", overflow:"hidden", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 4px 16px rgba(0,0,0,.5)" }}>
-        {hot && <div style={{ position:"absolute", top:5, right:5, width:7, height:7, borderRadius:"50%", background:"#ff3355", border:"1.5px solid rgba(255,255,255,.15)", zIndex:5, animation:"pulse 2s infinite" }}/>}
-        <span style={{ fontFamily:"'Clash Display',sans-serif", fontSize:10, fontWeight:700, letterSpacing:"1.5px", textTransform:"uppercase", color:b.color, textAlign:"center", lineHeight:1.3, padding:"0 4px", zIndex:2, position:"relative" }}>{name}</span>
-        <div style={{ position:"absolute", bottom:5, left:0, right:0, textAlign:"center", fontFamily:"'Clash Display',sans-serif", fontSize:7, fontWeight:700, color:b.color, opacity:.4, zIndex:2 }}>{cb}% CB</div>
+    <div style={{ flexShrink:0, cursor:"pointer", width:72 }}>
+      <div style={{ width:68, height:68, borderRadius:18, background:b.bg, border:"1px solid rgba(255,255,255,0.08)", position:"relative", overflow:"hidden", display:"flex", alignItems:"center", justifyContent:"center", boxShadow:"0 4px 20px rgba(0,0,0,.55)", padding:"6px" }}>
+        {hot && <div style={{ position:"absolute", top:5, right:5, width:7, height:7, borderRadius:"50%", background:"#ff3355", border:"1.5px solid rgba(255,255,255,.2)", zIndex:5, animation:"pulse 2s infinite" }}/>}
+        <span style={{ fontFamily:"'Clash Display',sans-serif", fontSize: name.length > 10 ? 7 : name.length > 7 ? 8.5 : name.length > 5 ? 10 : 13, fontWeight:700, letterSpacing:"0.3px", color:b.color, textAlign:"center", lineHeight:1.3, zIndex:2, wordBreak:"break-word" }}>{name.toUpperCase()}</span>
         <div style={{ position:"absolute", top:0, left:"-100%", width:"60%", height:"100%", background:"linear-gradient(90deg,transparent,rgba(255,255,255,.05),transparent)", animation:"shimmer 4s infinite", zIndex:3 }}/>
+        <div style={{ position:"absolute", top:0, left:0, right:0, height:1, background:"linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent)" }} />
       </div>
-      <div style={{ fontSize:8.5, color:"#a0a2aa", textAlign:"center", lineHeight:1.2, width:"100%" }}>{name}</div>
-      <div style={{ fontSize:8, color:"#4caf82", textAlign:"center", fontWeight:600 }}>{cb}% cashback</div>
     </div>
   );
 }
@@ -646,11 +644,16 @@ function Home({ onNav }) {
         <button onClick={() => setMenuOpen(true)} style={{ background:"#161b2e", border:"1px solid rgba(255,255,255,0.08)", borderRadius:12, width:42, height:42, cursor:"pointer", display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:5 }}>
           {[18,14,18].map((w,i) => <span key={i} style={{ display:"block", width:w, height:2, background:"rgba(255,255,255,0.7)", borderRadius:2 }} />)}
         </button>
-        <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:2 }}>
-          <div style={{ fontFamily:"'Clash Display',sans-serif", fontWeight:700, fontSize:24, color:"white", letterSpacing:-0.5 }}>
-            <span style={{ color:"#4a8fff" }}>USA</span>link
-          </div>
-          <div style={{ fontSize:8, color:"#4a5568", letterSpacing:2.5, textTransform:"uppercase" }}>Conecta con lo mejor de USA</div>
+        <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:1 }}>
+          <svg viewBox="0 0 180 80" width="140" height="48">
+            <text x="2" y="52" fontFamily="Arial Black, Impact, sans-serif" fontSize="54" fontWeight="900" fill="#CC0000" fontStyle="italic" letterSpacing="-2">U</text>
+            <text x="38" y="52" fontFamily="Arial Black, Impact, sans-serif" fontSize="54" fontWeight="900" fill="#ffffff" fontStyle="italic" letterSpacing="-2">S</text>
+            <text x="74" y="52" fontFamily="Arial Black, Impact, sans-serif" fontSize="54" fontWeight="900" fill="#1565C0" fontStyle="italic" letterSpacing="-2">A</text>
+            <line x1="2" y1="63" x2="38" y2="63" stroke="#CC0000" strokeWidth="2.5" strokeLinecap="round"/>
+            <text x="90" y="70" fontFamily="Arial Black, Impact, sans-serif" fontSize="22" fontWeight="900" fill="white" fontStyle="italic" textAnchor="middle" letterSpacing="3">LINK</text>
+            <line x1="142" y1="63" x2="178" y2="63" stroke="#1565C0" strokeWidth="2.5" strokeLinecap="round"/>
+          </svg>
+          <div style={{ fontSize:7, color:"#3a4a6a", letterSpacing:2.5, textTransform:"uppercase", textAlign:"center" }}>Conecta con lo mejor de USA</div>
         </div>
         <div style={{ display:"flex", gap:8 }}>
           <div style={{ width:42, height:42, background:"#161b2e", border:"1px solid rgba(255,255,255,0.08)", borderRadius:12, display:"flex", alignItems:"center", justifyContent:"center", fontSize:17, cursor:"pointer" }}>🔍</div>
@@ -663,20 +666,26 @@ function Home({ onNav }) {
 
       {/* PERFIL HERO */}
       <div style={{ margin:"14px 14px 0", borderRadius:24, overflow:"hidden", boxShadow:"0 8px 40px rgba(0,0,0,0.6)" }}>
-        {/* Banner waves */}
-        <div style={{ height:210, position:"relative", overflow:"hidden", background:"linear-gradient(135deg,#2d0a6b 0%,#1e3a8a 45%,#1e40af 75%,#2563eb 100%)" }}>
-          <div style={{ position:"absolute", top:16, right:16, display:"grid", gridTemplateColumns:"repeat(7,1fr)", gap:6 }}>
-            {Array.from({length:28}).map((_,i) => <div key={i} style={{ width:3, height:3, borderRadius:"50%", background:"rgba(99,179,237,0.4)" }} />)}
+        {/* Banner con logo USA-Link de fondo */}
+        <div style={{ height:185, position:"relative", overflow:"hidden", background:"linear-gradient(135deg,#001135 0%,#002266 40%,#001135 100%)" }}>
+          {/* Logo SVG de fondo */}
+          <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", opacity:0.15 }}>
+            <svg viewBox="0 0 300 220" width="320" height="220">
+              <path d="M30 60 Q40 40 70 35 Q110 28 150 30 Q190 28 220 38 Q250 48 265 65 Q275 80 270 100 Q260 125 240 135 Q210 150 180 148 Q150 152 120 148 Q90 150 65 138 Q40 122 30 100 Q22 82 30 60 Z" fill="#BF0A30" opacity="0.9"/>
+              {[[60,65],[90,55],[120,50],[150,48],[180,52],[210,58],[240,65],[70,85],[100,78],[130,73],[160,70],[190,75],[220,82],[80,105],[110,98],[140,93],[170,90],[200,97],[230,103],[90,122],[120,116],[150,112],[180,118],[210,124]].map(([x,y],i) => (
+                <text key={i} x={x} y={y} fontSize="8" fill="white" opacity="0.8" textAnchor="middle">★</text>
+              ))}
+              <ellipse cx="150" cy="115" rx="130" ry="38" fill="none" stroke="#002D72" strokeWidth="4" opacity="0.8"/>
+              <ellipse cx="150" cy="115" rx="128" ry="36" fill="none" stroke="white" strokeWidth="1.5" opacity="0.4"/>
+              <rect x="118" y="105" width="64" height="58" rx="6" fill="#002D72" opacity="0.95"/>
+              <path d="M132 105 Q132 88 150 88 Q168 88 168 105" fill="none" stroke="#002D72" strokeWidth="6" opacity="0.95"/>
+              <circle cx="140" cy="132" r="8" fill="none" stroke="white" strokeWidth="2.5" opacity="0.9"/>
+              <circle cx="158" cy="132" r="8" fill="none" stroke="white" strokeWidth="2.5" opacity="0.9"/>
+              <rect x="145" y="128" width="10" height="8" fill="#002D72"/>
+            </svg>
           </div>
-          <svg style={{ position:"absolute", bottom:0, left:0, width:"100%" }} viewBox="0 0 390 70" preserveAspectRatio="none">
-            <path d="M0,35 C80,70 160,0 240,35 C310,65 360,15 390,35 L390,70 L0,70 Z" fill="rgba(30,58,138,0.5)" />
-          </svg>
-          <svg style={{ position:"absolute", bottom:0, left:0, width:"100%" }} viewBox="0 0 390 55" preserveAspectRatio="none">
-            <path d="M0,28 C60,55 150,5 250,28 C330,48 370,12 390,28 L390,55 L0,55 Z" fill="rgba(124,58,237,0.3)" />
-          </svg>
-          <svg style={{ position:"absolute", bottom:0, left:0, width:"100%" }} viewBox="0 0 390 40" preserveAspectRatio="none">
-            <path d="M0,20 C100,40 200,0 300,20 C360,35 380,8 390,20 L390,40 L0,40 Z" fill="rgba(167,139,250,0.2)" />
-          </svg>
+          <div style={{ position:"absolute", inset:0, background:"linear-gradient(135deg,rgba(0,17,53,0.6) 0%,rgba(0,34,102,0.3) 50%,rgba(191,10,48,0.2) 100%)" }} />
+          <div style={{ position:"absolute", top:0, left:0, right:0, height:3, background:"linear-gradient(90deg,#BF0A30,#002D72,#BF0A30)" }} />
           {/* Avatar con upload */}
           <div style={{ position:"absolute", left:18, bottom:18 }}>
             <AvatarUploader avatarUrl={profile?.avatar_url} size={115} />
@@ -687,7 +696,7 @@ function Home({ onNav }) {
               <span style={{ fontSize:12 }}>⭐</span>
               <span style={{ fontSize:9, fontWeight:700, color:"#f0b429", fontFamily:"'Clash Display',sans-serif", letterSpacing:0.8 }}>COMPRADOR GOLD</span>
             </div>
-            <div style={{ fontFamily:"'Clash Display',sans-serif", fontWeight:700, fontSize:20, color:"white", lineHeight:1.1, textShadow:"0 2px 12px rgba(0,0,0,0.6)", marginBottom:5 }}>
+            <div style={{ fontFamily:"'Clash Display',sans-serif", fontWeight:700, fontSize:16, color:"white", lineHeight:1.1, textShadow:"0 2px 14px rgba(0,0,0,0.8)", marginBottom:3 }}>
               {profile?.full_name || "Mi cuenta"}
             </div>
             <div style={{ fontSize:11, color:"rgba(255,255,255,0.5)" }}>
@@ -1002,7 +1011,7 @@ function Profile({ onNav }) {
 
       {/* Hero perfil igual que Home */}
       <div style={{ margin:"14px 14px 0", borderRadius:24, overflow:"hidden", boxShadow:"0 8px 40px rgba(0,0,0,0.6)" }}>
-        <div style={{ height:210, position:"relative", overflow:"hidden", background:"linear-gradient(135deg,#2d0a6b 0%,#1e3a8a 45%,#1e40af 75%,#2563eb 100%)" }}>
+        <div style={{ height:185, position:"relative", overflow:"hidden", background:"linear-gradient(135deg,#2d0a6b 0%,#1e3a8a 45%,#1e40af 75%,#2563eb 100%)" }}>
           <div style={{ position:"absolute", top:16, right:16, display:"grid", gridTemplateColumns:"repeat(7,1fr)", gap:6 }}>
             {Array.from({length:28}).map((_,i) => <div key={i} style={{ width:3, height:3, borderRadius:"50%", background:"rgba(99,179,237,0.4)" }} />)}
           </div>
@@ -1017,7 +1026,7 @@ function Profile({ onNav }) {
               <span style={{ fontSize:12 }}>⭐</span>
               <span style={{ fontSize:9, fontWeight:700, color:"#f0b429", fontFamily:"'Clash Display',sans-serif", letterSpacing:0.8 }}>COMPRADOR GOLD</span>
             </div>
-            <div style={{ fontFamily:"'Clash Display',sans-serif", fontWeight:700, fontSize:20, color:"white", lineHeight:1.1, textShadow:"0 2px 12px rgba(0,0,0,0.6)", marginBottom:5 }}>{profile?.full_name||"Mi cuenta"}</div>
+            <div style={{ fontFamily:"'Clash Display',sans-serif", fontWeight:700, fontSize:16, color:"white", lineHeight:1.1, textShadow:"0 2px 14px rgba(0,0,0,0.8)", marginBottom:3 }}>{profile?.full_name||"Mi cuenta"}</div>
             <div style={{ fontSize:11, color:"rgba(255,255,255,0.5)" }}>Miembro desde {profile ? new Date(profile.created_at).getFullYear() : "2024"}</div>
           </div>
         </div>
@@ -1100,175 +1109,4 @@ function AphroditeAvatar({ size=48, ring=true, animated=false }) {
 
 function AphroditeTyping() {
   return (
-    <div style={{ display:"flex", gap:4, padding:"12px 16px" }}>
-      {[0,1,2].map(i => <div key={i} style={{ width:7, height:7, borderRadius:"50%", background:"linear-gradient(135deg,#f0b429,#ff9500)", animation:"typingDot 1.2s ease-in-out infinite", animationDelay:`${i*0.18}s` }} />)}
-    </div>
-  );
-}
-
-function AphroditeBubble({ msg }) {
-  const isUser = msg.role === "user";
-  const parts = msg.content.split(/\*\*(.*?)\*\*/g);
-  return (
-    <div style={{ display:"flex", flexDirection: isUser ? "row-reverse" : "row", alignItems:"flex-end", gap:8, marginBottom:12, animation:"fadeUp 0.3s ease" }}>
-      {!isUser && <AphroditeAvatar size={30} ring={false} />}
-      <div style={{ maxWidth:"78%", background: isUser ? "linear-gradient(135deg,#4a8fff,#2563eb)" : "rgba(255,255,255,0.04)", border: isUser ? "none" : "1px solid rgba(240,180,41,0.2)", borderRadius: isUser ? "18px 18px 4px 18px" : "18px 18px 18px 4px", padding:"11px 14px", fontSize:13, color:"white", lineHeight:1.6 }}>
-        {parts.map((p,i) => i%2===1 ? <strong key={i} style={{ color: isUser ? "white" : "#f0b429" }}>{p}</strong> : <span key={i}>{p}</span>)}
-      </div>
-    </div>
-  );
-}
-
-function Aphrodite({ onNav, profile, rate }) {
-  const [msgs, setMsgs] = useState([
-    { role:"assistant", content:"¡Hola! Soy **Aphrodite** tu personal shopper de USAlink. ¿Qué quieres traer de USA hoy?" }
-  ]);
-  const [input, setInput] = useState("");
-  const [typing, setTyping] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [intro, setIntro] = useState(false);
-  const bottomRef = useRef(null);
-
-  useEffect(() => { bottomRef.current?.scrollIntoView({ behavior:"smooth" }); }, [msgs, typing]);
-  useEffect(() => { const t = setTimeout(() => setIntro(true), 1200); return () => clearTimeout(t); }, []);
-
-  async function send(text) {
-    if (!text.trim() || typing) return;
-    const userMsg = { role:"user", content: text };
-    const newMsgs = [...msgs, userMsg];
-    setMsgs(newMsgs);
-    setInput("");
-    setTyping(true);
-    try {
-      const res = await fetch("/api/chat", {
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({
-          messages: newMsgs.map(m => ({ role:m.role, content:m.content })),
-          profile: { full_name: profile?.full_name, total_orders: profile?.total_orders, trust_score: profile?.trust_score, purchase_limit: profile?.purchase_limit },
-          rate: rate,
-        }),
-      });
-      const data = await res.json();
-      const reply = data.reply || "Lo siento, hubo un error. Intenta de nuevo.";
-      setMsgs(p => [...p, { role:"assistant", content:reply }]);
-    } catch(e) {
-      setMsgs(p => [...p, { role:"assistant", content:"Ups, problema de conexion. Intenta de nuevo." }]);
-    }
-    setTyping(false);
-  }
-
-  return (
-    <>
-      {intro && !open && (
-        <div style={{ position:"fixed", bottom:176, right:16, zIndex:301, background:"#161b2e", border:"1px solid rgba(240,180,41,0.25)", borderRadius:"16px 16px 4px 16px", padding:"10px 14px", maxWidth:190, animation:"fadeUp 0.4s ease", boxShadow:"0 8px 32px rgba(0,0,0,0.5)" }}>
-          <div style={{ fontSize:12, fontWeight:700, color:"white", marginBottom:2 }}>Hola, soy Aphrodite</div>
-          <div style={{ fontSize:11, color:"#a0a2aa" }}>¿En que puedo ayudarte?</div>
-          <div style={{ position:"absolute", bottom:-7, right:18, width:0, height:0, borderLeft:"7px solid transparent", borderRight:"7px solid transparent", borderTop:"7px solid rgba(240,180,41,0.25)" }} />
-        </div>
-      )}
-      {!open && (
-        <div onClick={() => { setOpen(true); setIntro(false); }} style={{ position:"fixed", bottom:100, right:16, cursor:"pointer", zIndex:300 }}>
-          <div style={{ position:"absolute", inset:-10, borderRadius:"50%", background:"rgba(240,180,41,0.12)", animation:"pulse 2.5s ease-in-out infinite" }} />
-          <AphroditeAvatar size={64} ring animated />
-          <div style={{ position:"absolute", top:-6, right:-4, background:"linear-gradient(135deg,#f0b429,#ff9500)", borderRadius:50, padding:"2px 8px", fontSize:8, fontWeight:800, color:"#0a0e1a", border:"2px solid #0a0e1a", whiteSpace:"nowrap", boxShadow:"0 2px 12px rgba(240,180,41,0.5)", letterSpacing:0.5 }}>IA</div>
-        </div>
-      )}
-      {open && (
-        <div style={{ position:"fixed", inset:0, zIndex:400, display:"flex", flexDirection:"column", background:"#0a0e1a", animation:"fadeIn 0.25s ease" }}>
-          <div style={{ background:"linear-gradient(180deg,#100c1e,#0d1020)", borderBottom:"1px solid rgba(240,180,41,0.12)", padding:"48px 16px 12px", display:"flex", alignItems:"center", gap:12 }}>
-            <div style={{ position:"relative" }}>
-              <AphroditeAvatar size={50} ring />
-              <div style={{ position:"absolute", bottom:1, right:1, width:12, height:12, borderRadius:"50%", background:"#4caf82", border:"2.5px solid #0d1020" }} />
-            </div>
-            <div style={{ flex:1 }}>
-              <div style={{ fontFamily:"'Clash Display',sans-serif", fontWeight:700, fontSize:18, background:"linear-gradient(135deg,#f0b429,#ffd700,#f0b429)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundSize:"200% auto", animation:"shimmerGold 3s linear infinite" }}>Aphrodite</div>
-              <div style={{ fontSize:10, color:"#4caf82", display:"flex", alignItems:"center", gap:4, marginTop:1 }}>
-                <div style={{ width:5, height:5, borderRadius:"50%", background:"#4caf82" }} /> Personal Shopper · USAlink IA
-              </div>
-            </div>
-            <div style={{ display:"flex", gap:8 }}>
-              <div onClick={() => setMsgs([{ role:"assistant", content:"Hola! Soy Aphrodite, tu personal shopper. Como puedo ayudarte?" }])} style={{ width:34, height:34, borderRadius:10, background:"rgba(255,255,255,0.04)", border:"1px solid rgba(255,255,255,0.07)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:12, cursor:"pointer", color:"#a0a2aa" }}>🗑️</div>
-              <div onClick={() => setOpen(false)} style={{ width:34, height:34, borderRadius:10, background:"rgba(240,180,41,0.08)", border:"1px solid rgba(240,180,41,0.2)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:13, cursor:"pointer", color:"#f0b429" }}>✕</div>
-            </div>
-          </div>
-          <div style={{ margin:"12px 14px 0", background:"linear-gradient(135deg,rgba(240,180,41,0.06),rgba(255,149,0,0.04))", border:"1px solid rgba(240,180,41,0.15)", borderRadius:20, overflow:"hidden", display:"flex" }}>
-            <div style={{ width:90, flexShrink:0, position:"relative" }}>
-              <img src={APHRODITE_IMG} alt="Aphrodite" style={{ width:"100%", height:"100%", objectFit:"cover", objectPosition:"center top" }} />
-              <div style={{ position:"absolute", inset:0, background:"linear-gradient(to right,transparent 50%,#100c1e)" }} />
-            </div>
-            <div style={{ padding:"14px 14px 14px 10px", flex:1 }}>
-              <div style={{ fontFamily:"'Clash Display',sans-serif", fontSize:14, fontWeight:700, color:"white", marginBottom:4 }}>Hola {profile?.full_name?.split(" ")[0] || ""}! Soy <span style={{ color:"#f0b429" }}>Aphrodite</span></div>
-              <div style={{ fontSize:11, color:"#a0a2aa", lineHeight:1.5, marginBottom:8 }}>Tu personal shopper virtual. Te ayudo a encontrar productos, calcular precios y hacer pedidos desde USA.</div>
-              <div style={{ display:"flex", flexWrap:"wrap", gap:4 }}>
-                {["Tiendas","Precios","Pedidos","Envios"].map(t => (
-                  <span key={t} style={{ background:"rgba(240,180,41,0.1)", border:"1px solid rgba(240,180,41,0.2)", borderRadius:50, padding:"2px 8px", fontSize:9, color:"#f0b429", fontWeight:600 }}>{t}</span>
-                ))}
-              </div>
-            </div>
-          </div>
-          <div style={{ flex:1, overflowY:"auto", padding:"14px 14px 8px" }}>
-            {msgs.map((m,i) => <AphroditeBubble key={i} msg={m} />)}
-            {typing && (
-              <div style={{ display:"flex", alignItems:"flex-end", gap:8, marginBottom:12 }}>
-                <AphroditeAvatar size={30} ring={false} />
-                <div style={{ background:"rgba(255,255,255,0.04)", border:"1px solid rgba(240,180,41,0.2)", borderRadius:"18px 18px 18px 4px" }}><AphroditeTyping /></div>
-              </div>
-            )}
-            <div ref={bottomRef} />
-          </div>
-          <div style={{ overflowX:"auto", padding:"8px 14px 6px", display:"flex", gap:8, scrollbarWidth:"none" }}>
-            {APHRODITE_QUICK.map((q,i) => (
-              <div key={i} onClick={() => send(q.label)} style={{ flexShrink:0, display:"flex", alignItems:"center", gap:5, background:"rgba(255,255,255,0.03)", border:"1px solid rgba(240,180,41,0.15)", borderRadius:50, padding:"6px 13px", cursor:"pointer", fontSize:11, color:"#d4a847", whiteSpace:"nowrap" }}>
-                {q.icon} {q.label}
-              </div>
-            ))}
-          </div>
-          <div style={{ padding:"10px 14px 34px", background:"rgba(10,14,26,0.98)", borderTop:"1px solid rgba(255,255,255,0.04)", display:"flex", gap:10, alignItems:"center" }}>
-            <div style={{ flex:1, background:"rgba(255,255,255,0.04)", border:"1px solid rgba(240,180,41,0.18)", borderRadius:16, padding:"11px 14px", display:"flex", alignItems:"center", gap:8 }}>
-              <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key==="Enter" && send(input)} placeholder="Preguntale a Aphrodite..." style={{ flex:1, background:"none", border:"none", outline:"none", color:"white", fontSize:13, fontFamily:"'DM Sans',sans-serif" }} disabled={typing} />
-              <span style={{ fontSize:12, color:"#f0b429", opacity:0.5 }}>✦</span>
-            </div>
-            <div onClick={() => send(input)} style={{ width:46, height:46, borderRadius:14, flexShrink:0, background: typing ? "#1e293b" : "linear-gradient(135deg,#f0b429,#ff9500)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, cursor: typing ? "default" : "pointer", boxShadow:"0 4px 20px rgba(240,180,41,0.35)", opacity: typing ? 0.5 : 1 }}>➤</div>
-          </div>
-        </div>
-      )}
-    </>
-  );
-}
-
-// ── ROOT ──────────────────────────────────────────────────────
-export default function App() {
-  return (
-    <AuthProvider>
-      <RateProvider>
-        <Router />
-      </RateProvider>
-    </AuthProvider>
-  );
-}
-
-function Router() {
-  const { user, loading } = useAuth();
-  const [screen, setScreen] = useState("home");
-  const [authScreen, setAuthScreen] = useState("login");
-  if (loading) return <Splash />;
-  if (!user) return authScreen === "login"
-    ? <Login onRegister={() => setAuthScreen("register")} />
-    : <Register onLogin={() => setAuthScreen("login")} />;
-  const { profile } = useAuth();
-  const rate = useRate();
-  const SCREENS = { home:Home, stores:Stores, neworder:NewOrder, orders:Orders, profile:Profile };
-  const Screen = SCREENS[screen] || Home;
-  return (
-    <div style={{ background:"#0a0e1a", minHeight:"100vh", display:"flex", justifyContent:"center" }}>
-      <div style={{ width:"100%", maxWidth:390, position:"relative" }}>
-        <Screen onNav={setScreen} />
-        <BottomNav screen={screen} onNav={setScreen} />
-        <Aphrodite onNav={setScreen} profile={profile} rate={rate} />
-      </div>
-    </div>
-  );
-}
-
-
+    <div style={{ display:"flex",
