@@ -606,7 +606,7 @@ function Home({ onNav }) {
     const [currentStore, setCurrentStore] = useState(null);
 
     if (currentStore) {
-      return <StorePageView storeKey={currentStore} onBack={() => setCurrentStore(null)} onOrder={(storeName, productName, price) => { setCurrentStore(null); onNav("neworder"); }} />;
+      return <StorePageView storeKey={currentStore} onBack={() => { setCurrentStore(null); window.location.reload(); }} onOrder={(storeName, productName, price) => { setCurrentStore(null); onNav("neworder"); }} />;
     }
 
     return (
