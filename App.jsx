@@ -612,7 +612,6 @@ function Home({ onNav }) {
     return (
     <div style={{ background:"#0a0e1a", minHeight:"100vh", paddingBottom:100 }}>
       <style>{GS}</style>
-
       {/* TOAST país */}
       {toast && country && (
         <div style={{ position:"fixed", top:14, left:"50%", transform:"translateX(-50%)", background:"#161b2e", border:"1px solid rgba(74,143,255,0.3)", borderRadius:50, padding:"8px 18px", zIndex:999, display:"flex", alignItems:"center", gap:8, boxShadow:"0 8px 32px rgba(0,0,0,0.6)", animation:"fadeDown .35s ease", whiteSpace:"nowrap" }}>
@@ -999,7 +998,7 @@ function Profile({ onNav }) {
     { icon:"💳", label:"Métodos de pago", sub:"Transferencia · Tarjeta", bg:"rgba(240,180,41,0.12)", br:"rgba(240,180,41,0.22)" },
     { icon:"📦", label:"Historial de pedidos", sub:`${profile?.total_orders||0} pedidos`, bg:"rgba(74,143,255,0.10)", br:"rgba(74,143,255,0.20)", nav:"orders" },
     { icon:"💰", label:"Mi cashback", sub:`RD$${Number(profile?.cashback_balance||0).toLocaleString()} disponibles`, bg:"rgba(76,175,130,0.12)", br:"rgba(76,175,130,0.22)" },
-    { icon:"🥇", label:"Mi membresía Gold", sub:"Ver beneficios · Subir a Elite", bg:"rgba(240,180,41,0.12)", br:"rgba(240,180,41,0.22)" },
+    { icon:"🥇", label:"Mi membresía", sub:"Ver beneficios · Subir de nivel", bg:"rgba(240,180,41,0.12)", br:"rgba(240,180,41,0.22)", nav:"membership" },
     { icon:"🔔", label:"Notificaciones", sub:"Pedidos, ofertas, alertas", bg:"rgba(74,143,255,0.10)", br:"rgba(74,143,255,0.20)" },
   ];
   const stats = [
@@ -1356,6 +1355,148 @@ function Aphrodite({ onNav, profile, rate }) {
   );
 }
 
+
+// ── MEMBERSHIP ────────────────────────────────────────────────
+const TIERS = [
+  { id:"free",   name:"Free",   icon:"🔓", color:"#64748b", bg:"linear-gradient(135deg,#1e293b,#0f172a)", border:"rgba(100,116,139,0.3)", reqNum:0,  fee:"$15 USD", limit:"RD$8,000",  benefits:["Acceso a todas las tiendas","Tracking de pedidos","Soporte por WhatsApp","Calculadora de precios"] },
+  { id:"silver", name:"Silver", icon:"🥈", color:"#94a3b8", bg:"linear-gradient(135deg,#1e293b,#0f172a)", border:"rgba(148,163,184,0.4)", reqNum:3,  fee:"$12 USD", limit:"RD$20,000", benefits:["Fee reducido a $12 USD","Límite RD$20,000","Prioridad de atención","Historial detallado","Notificaciones en tiempo real"] },
+  { id:"gold",   name:"Gold",   icon:"⭐", color:"#f0b429", bg:"linear-gradient(135deg,#2a1f00,#1a1300)", border:"rgba(240,180,41,0.4)",  reqNum:10, fee:"$10 USD", limit:"RD$50,000", benefits:["Fee reducido a $10 USD","Límite RD$50,000","Soporte VIP dedicado","Ofertas exclusivas","Pedidos múltiples","Descuentos en envío"], featured:true },
+  { id:"elite",  name:"Elite",  icon:"💎", color:"#818cf8", bg:"linear-gradient(135deg,#1a1040,#0d0820)", border:"rgba(129,140,248,0.4)", reqNum:25, fee:"$8 USD",  limit:"Sin límite",  benefits:["Fee mínimo $8 USD","Sin límite de compra","Línea directa 24/7","Acceso anticipado a tiendas","Cashback acumulable","Gestor personal","Envío express"] },
+];
+
+function TierCard({ tier, currentOrders, isCurrentTier, isUnlocked }) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <div onClick={() => setExpanded(!expanded)} style={{ background:tier.bg, borderRadius:20, border:`1px solid ${isCurrentTier ? tier.color : tier.border}`, overflow:"hidden", cursor:"pointer", boxShadow: isCurrentTier ? `0 0 0 1px ${tier.color}40, 0 8px 32px rgba(0,0,0,0.4)` : "0 4px 20px rgba(0,0,0,0.3)", opacity: !isUnlocked ? 0.6 : 1, position:"relative" }}>
+      {tier.featured && isUnlocked && <div style={{ background:tier.color, padding:"4px 0", textAlign:"center" }}><span style={{ fontFamily:"'Clash Display',sans-serif", fontSize:9, fontWeight:800, color:"#000", letterSpacing:1.5 }}>⭐ MÁS POPULAR</span></div>}
+      <div style={{ padding:"18px 16px" }}>
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:12 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:10 }}>
+            <div style={{ fontSize:28 }}>{tier.icon}</div>
+            <div>
+              <div style={{ fontFamily:"'Clash Display',sans-serif", fontSize:20, fontWeight:700, color:tier.color }}>
+                {tier.name}
+                {isCurrentTier && <span style={{ fontSize:9, fontWeight:700, color:"#fff", background:tier.color, borderRadius:50, padding:"2px 8px", marginLeft:8, verticalAlign:"middle" }}>ACTUAL</span>}
+              </div>
+              <div style={{ fontSize:11, color:"rgba(255,255,255,0.4)", marginTop:1 }}>{tier.reqNum === 0 ? "Al registrarte" : `${tier.reqNum} pedidos completados`}</div>
+            </div>
+          </div>
+          <div style={{ textAlign:"right" }}>
+            <div style={{ fontFamily:"'Clash Display',sans-serif", fontSize:18, fontWeight:700, color:"white" }}>{tier.fee}</div>
+            <div style={{ fontSize:9, color:"rgba(255,255,255,0.35)", textTransform:"uppercase", letterSpacing:0.5 }}>por pedido</div>
+          </div>
+        </div>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", background:"rgba(255,255,255,0.04)", borderRadius:10, padding:"8px 12px", marginBottom:12 }}>
+          <span style={{ fontSize:11, color:"rgba(255,255,255,0.45)" }}>Límite de compra</span>
+          <span style={{ fontSize:13, fontWeight:700, color:tier.color }}>{tier.limit}</span>
+        </div>
+        {!isUnlocked && tier.reqNum > 0 && (
+          <div style={{ marginBottom:12 }}>
+            <div style={{ display:"flex", justifyContent:"space-between", marginBottom:5 }}>
+              <span style={{ fontSize:10, color:"rgba(255,255,255,0.4)" }}>Progreso</span>
+              <span style={{ fontSize:10, color:tier.color, fontWeight:600 }}>{currentOrders}/{tier.reqNum} pedidos</span>
+            </div>
+            <div style={{ height:4, background:"rgba(255,255,255,0.06)", borderRadius:4, overflow:"hidden" }}>
+              <div style={{ height:"100%", width:`${Math.min((currentOrders/tier.reqNum)*100,100)}%`, background:tier.color, borderRadius:4 }} />
+            </div>
+          </div>
+        )}
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+          <span style={{ fontSize:11, color:"rgba(255,255,255,0.4)" }}>{tier.benefits.length} beneficios incluidos</span>
+          <span style={{ fontSize:14, color:"rgba(255,255,255,0.3)", transition:"transform .3s", transform: expanded ? "rotate(90deg)" : "rotate(0deg)" }}>›</span>
+        </div>
+        {expanded && (
+          <div style={{ marginTop:12, display:"flex", flexDirection:"column", gap:8 }}>
+            {tier.benefits.map((b,i) => (
+              <div key={i} style={{ display:"flex", alignItems:"center", gap:8 }}>
+                <div style={{ width:18, height:18, borderRadius:"50%", background:`${tier.color}22`, border:`1px solid ${tier.color}44`, display:"flex", alignItems:"center", justifyContent:"center", flexShrink:0 }}>
+                  <span style={{ fontSize:9, color:tier.color }}>✓</span>
+                </div>
+                <span style={{ fontSize:12, color: isUnlocked ? "rgba(255,255,255,0.75)" : "rgba(255,255,255,0.3)" }}>{b}</span>
+              </div>
+            ))}
+          </div>
+        )}
+        {!isUnlocked && (
+          <div style={{ marginTop:12, display:"flex", alignItems:"center", gap:6, background:"rgba(255,255,255,0.04)", borderRadius:10, padding:"8px 12px" }}>
+            <span style={{ fontSize:14 }}>🔒</span>
+            <span style={{ fontSize:11, color:"rgba(255,255,255,0.4)" }}>Completa {tier.reqNum - currentOrders} pedidos más para desbloquear</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function Membership({ onNav }) {
+  const { profile } = useAuth();
+  const currentOrders = profile?.total_orders || 0;
+  const currentTier = currentOrders >= 25 ? "elite" : currentOrders >= 10 ? "gold" : currentOrders >= 3 ? "silver" : "free";
+  const getTierIndex = (id) => ["free","silver","gold","elite"].indexOf(id);
+  const currentTierIndex = getTierIndex(currentTier);
+  const nextTier = TIERS[currentTierIndex + 1];
+  const ordersToNext = nextTier ? nextTier.reqNum - currentOrders : 0;
+  const currentTierData = TIERS[currentTierIndex];
+
+  return (
+    <div style={{ background:"#0a0e1a", minHeight:"100vh", paddingBottom:100 }}>
+      <style>{GS}</style>
+      <div style={{ background:"rgba(10,14,26,0.97)", backdropFilter:"blur(20px)", padding:"48px 18px 14px", position:"sticky", top:0, zIndex:50, borderBottom:"1px solid rgba(255,255,255,0.05)", display:"flex", alignItems:"center", gap:12 }}>
+        <div onClick={() => onNav("profile")} style={{ cursor:"pointer", fontSize:18, color:"#a0a2aa" }}>←</div>
+        <div style={{ fontFamily:"'Clash Display',sans-serif", fontWeight:700, fontSize:18, color:"white" }}>Mi <span style={{ color:"#4a8fff" }}>Membresía</span></div>
+      </div>
+
+      <div style={{ padding:"16px 14px 0" }}>
+        {/* CURRENT STATUS */}
+        <div style={{ background:"linear-gradient(135deg,#1a1300,#2a1f00)", borderRadius:20, border:"1px solid rgba(240,180,41,0.3)", padding:"20px 18px", marginBottom:20, position:"relative", overflow:"hidden" }}>
+          <div style={{ position:"absolute", top:0, left:0, right:0, height:2, background:"linear-gradient(90deg,#f0b429,#ff9500,#f0b429)" }} />
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:14 }}>
+            <div>
+              <div style={{ fontSize:11, color:"rgba(255,255,255,0.4)", textTransform:"uppercase", letterSpacing:1.5, marginBottom:4 }}>Tu nivel actual</div>
+              <div style={{ fontFamily:"'Clash Display',sans-serif", fontSize:28, fontWeight:700, color:currentTierData.color, lineHeight:1 }}>
+                {currentTierData.icon} {currentTierData.name}
+              </div>
+            </div>
+            <div style={{ textAlign:"right" }}>
+              <div style={{ fontFamily:"'Clash Display',sans-serif", fontSize:28, fontWeight:700, color:"white" }}>{currentOrders}</div>
+              <div style={{ fontSize:10, color:"rgba(255,255,255,0.4)", textTransform:"uppercase", letterSpacing:0.5 }}>pedidos</div>
+            </div>
+          </div>
+          {nextTier && (
+            <div>
+              <div style={{ display:"flex", justifyContent:"space-between", marginBottom:6 }}>
+                <span style={{ fontSize:11, color:"rgba(255,255,255,0.45)" }}>Próximo: <strong style={{ color:"#f0b429" }}>{nextTier.name}</strong></span>
+                <span style={{ fontSize:11, color:"#f0b429", fontWeight:600 }}>{ordersToNext} pedidos más</span>
+              </div>
+              <div style={{ height:6, background:"rgba(255,255,255,0.08)", borderRadius:6, overflow:"hidden" }}>
+                <div style={{ height:"100%", width:`${Math.min((currentOrders/nextTier.reqNum)*100,100)}%`, background:"linear-gradient(90deg,#f0b429,#ff9500)", borderRadius:6 }} />
+              </div>
+            </div>
+          )}
+          {!nextTier && <div style={{ textAlign:"center", fontSize:13, color:"#818cf8", fontWeight:600 }}>💎 Nivel máximo alcanzado</div>}
+        </div>
+
+        {/* TIER CARDS */}
+        <div style={{ fontFamily:"'Clash Display',sans-serif", fontSize:14, fontWeight:700, color:"white", marginBottom:14 }}>Todos los niveles</div>
+        <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+          {TIERS.map(tier => (
+            <TierCard key={tier.id} tier={tier} currentOrders={currentOrders} isCurrentTier={tier.id===currentTier} isUnlocked={getTierIndex(tier.id)<=currentTierIndex} />
+          ))}
+        </div>
+
+        {/* NOTE */}
+        <div style={{ marginTop:20, background:"#161b2e", borderRadius:14, border:"1px solid rgba(255,255,255,0.06)", padding:"14px 16px", display:"flex", gap:10, alignItems:"center" }}>
+          <span style={{ fontSize:20 }}>🤝</span>
+          <div>
+            <div style={{ fontSize:12, fontWeight:700, color:"white", marginBottom:2 }}>Sube automático</div>
+            <div style={{ fontSize:11, color:"#64748b", lineHeight:1.5 }}>No hay pagos ni suscripciones. Cada pedido completado te acerca al siguiente nivel.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── ROOT ──────────────────────────────────────────────────────
 export default function App() {
   return (
@@ -1377,7 +1518,7 @@ function Router() {
     : <Register onLogin={() => setAuthScreen("login")} />;
   const { profile } = useAuth();
   const rate = useRate();
-  const SCREENS = { home:Home, stores:Stores, neworder:NewOrder, orders:Orders, profile:Profile };
+  const SCREENS = { home:Home, stores:Stores, neworder:NewOrder, orders:Orders, profile:Profile, membership:Membership };
   const Screen = SCREENS[screen] || Home;
   return (
     <div style={{ background:"#0a0e1a", minHeight:"100vh", display:"flex", justifyContent:"center" }}>
@@ -1388,3 +1529,4 @@ function Router() {
       </div>
     </div>
   );
+}
