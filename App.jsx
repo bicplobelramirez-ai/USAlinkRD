@@ -602,7 +602,7 @@ function Home({ onNav }) {
     { icon:"💳", n: `RD$${((profile?.purchase_limit||8000)/1000).toFixed(0)}k`,   l:"límite",   c:"#ff3355" },
   ];
 
-  return (
+  
     const [currentStore, setCurrentStore] = useState(null);
 
     if (currentStore) {
