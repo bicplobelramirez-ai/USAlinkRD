@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, createContext, useContext } from "react";
+ort { useState, useEffect, useRef, createContext, useContext } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 const SUPA_URL  = "https://kugdrwxthmcscrvlszws.supabase.co";
@@ -17,7 +17,7 @@ function calcTrustScore(profile) {
   if (profile?.kyc_verified) score += 25;
   const completed = Math.min(profile?.total_orders || 0, 10);
   score += completed * 3; // hasta 30 puntos por pedidos
-  if ((profile?.disputes || 0) === 0) score += 15;
+  if ((putes || 0) === 0) score += 15;
   else if ((profile?.disputes || 0) === 1) score += 7;
   return Math.min(score, 100);
 }
@@ -606,9 +606,8 @@ function Home({ onNav }) {
     const [currentStore, setCurrentStore] = useState(null);
 
     if (currentStore) {
-      return <StorePageView storeKey={currentStore} onBack={() => { setCurrentStore(null); window.location.reload(); }} onOrder={(storeName, productName, price) => { setCurrentStore(null); onNav("neworder"); }} />;
+      return <StorePageView storeKey={currentStore} onBack={() => setCurrentStore(null)} onOrder={() => { setCurrentStore(null); onNav("neworder"); }} />;
     }
-
     return (
     <div style={{ background:"#0a0e1a", minHeight:"100vh", paddingBottom:100 }}>
       <style>{GS}</style>
