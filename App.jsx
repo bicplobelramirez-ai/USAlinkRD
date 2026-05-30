@@ -1,4 +1,4 @@
-ort { useState, useEffect, useRef, createContext, useContext } from "react";
+import { useState, useEffect, useRef, createContext, useContext } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 const SUPA_URL  = "https://kugdrwxthmcscrvlszws.supabase.co";
