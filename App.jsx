@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { AuthProvider, useAuth } from "./AuthContext";
 import Login from "./Login";
 import Register from "./Register";
+
+const useAuthHook = useAuth;
 
 const NAVY = "#081B4B";
 const RED  = "#E31E24";
@@ -45,10 +47,7 @@ function AuthGate({ children }) {
   return children;
 }
 
-/* ─── MAIN APP CONTENT (same as before, now with auth) ─── */
-import { useEffect, useRef } from "react";
-import { useAuth as useAuthHook } from "./AuthContext";
-
+/* ─── STORES ─── */
 const STORES = [
   {id:"coachoutlet",   name:"Coach Outlet",      cat:"outlets",      bg:"linear-gradient(135deg,#1a0a00,#8b5c2a)", badge:"hot",  rating:4.7, url:"https://www.coach.com/outlet",               desc:"Bolsos y accesorios Coach hasta 70% off."},
   {id:"shopsimon",     name:"ShopSimon",          cat:"outlets",      bg:"linear-gradient(135deg,#0a1a3d,#1e3a8a)", badge:"hot",  rating:4.6, url:"https://www.shopsimon.com/",                  desc:"Premium Outlets. Lujo a precio outlet."},
