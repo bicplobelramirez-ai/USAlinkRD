@@ -1,186 +1,106 @@
-// screens/auth/Login.jsx
 import { useState } from "react";
-import { supabase } from "../../App";
+import { useAuth } from "./AuthContext";
 
-export default function Login({ onRegister }) {
-  const [email, setEmail]     = useState("");
+const NAVY = "#081B4B";
+const RED  = "#E31E24";
+
+export default function Login({ onSwitch, onSuccess }) {
+  const { signIn } = useAuth();
+  const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError]     = useState("");
-  const [sent, setSent]       = useState(false);
+  const [loading, setLoading]   = useState(false);
+  const [error, setError]       = useState("");
+  const [showPass, setShowPass] = useState(false);
 
-  async function handleLogin(e) {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) setError(error.message);
-    setLoading(false);
-  }
-
-  async function handleMagicLink() {
-    if (!email) { setError("Escribe tu email primero"); return; }
-    setLoading(true);
-    const { error } = await supabase.auth.signInWithOtp({ email });
-    if (error) setError(error.message);
-    else setSent(true);
-    setLoading(false);
-  }
-
-  if (sent) return (
-    <div style={styles.wrap}>
-      <div style={styles.card}>
-        <div style={{ fontSize:48, textAlign:"center", marginBottom:16 }}>📧</div>
-        <div style={styles.title}>Revisa tu email</div>
-        <div style={styles.sub}>
-          Enviamos un link mágico a <strong style={{ color:"#4a8fff" }}>{email}</strong>.
-          Tócalo para entrar sin contraseña.
-        </div>
-        <button style={styles.btnSecondary} onClick={() => setSent(false)}>
-          ← Volver
-        </button>
-      </div>
-    </div>
-  );
+  const handle = async () => {
+    if (!email.trim() || !password.trim()) { setError("Completa todos los campos"); return; }
+    setLoading(true); setError("");
+    const { error: err } = await signIn(email.trim(), password);
+    if (err) { setError("Email o contraseña incorrectos"); setLoading(false); }
+    else onSuccess();
+  };
 
   return (
-    <div style={styles.wrap}>
+    <div style={{minHeight:"100vh",background:"linear-gradient(155deg,#050f2b 0%,#0a1f55 50%,#0d2560 100%)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"20px"}}>
+
       {/* Logo */}
-      <div style={styles.logo}>
-        <div style={styles.logoIcon}>🔗</div>
-        <div style={styles.logoText}>
-          <span style={{ color:"#4a8fff" }}>USA</span>link
-          <span style={{ color:"#ff3355", fontSize:14 }}>RD</span>
+      <div style={{textAlign:"center",marginBottom:36}}>
+        <div style={{width:68,height:68,background:RED,borderRadius:18,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 14px",boxShadow:"0 8px 28px rgba(227,30,36,0.45)"}}>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round">
+            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+          </svg>
         </div>
-        <div style={styles.logoSub}>Tu acceso a las mejores tiendas de USA</div>
+        <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:36,color:"#fff",letterSpacing:"0.08em",lineHeight:1}}>USALINK</div>
+        <div style={{fontSize:13,color:"rgba(255,255,255,0.45)",marginTop:6}}>Bienvenido de vuelta</div>
       </div>
 
-      <div style={styles.card}>
-        <div style={styles.title}>Bienvenido de vuelta</div>
-        <div style={styles.sub}>Inicia sesión en tu cuenta</div>
+      {/* Card */}
+      <div style={{width:"100%",maxWidth:380,background:"rgba(255,255,255,0.04)",backdropFilter:"blur(20px)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:24,padding:"28px 24px"}}>
 
-        {error && <div style={styles.error}>{error}</div>}
-
-        <form onSubmit={handleLogin}>
-          <div style={styles.field}>
-            <label style={styles.label}>Email</label>
-            <input
-              type="email"
-              placeholder="tu@email.com"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              style={styles.input}
-              required
-            />
+        {error && (
+          <div style={{background:"rgba(227,30,36,0.12)",border:"1px solid rgba(227,30,36,0.3)",borderRadius:12,padding:"11px 14px",fontSize:13,color:"#ff6b6b",marginBottom:18,textAlign:"center"}}>
+            ⚠️ {error}
           </div>
-          <div style={styles.field}>
-            <label style={styles.label}>Contraseña</label>
+        )}
+
+        {/* Email */}
+        <div style={{marginBottom:14}}>
+          <label style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,0.5)",textTransform:"uppercase",letterSpacing:"0.08em",display:"block",marginBottom:7}}>Email</label>
+          <input
+            type="email" value={email} onChange={e => setEmail(e.target.value)}
+            onKeyDown={e => e.key==="Enter" && handle()}
+            placeholder="tu@email.com"
+            style={{width:"100%",padding:"13px 16px",background:"rgba(255,255,255,0.07)",border:"1.5px solid rgba(255,255,255,0.12)",borderRadius:14,fontSize:14,color:"#fff",outline:"none",boxSizing:"border-box"}}
+          />
+        </div>
+
+        {/* Password */}
+        <div style={{marginBottom:22}}>
+          <label style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,0.5)",textTransform:"uppercase",letterSpacing:"0.08em",display:"block",marginBottom:7}}>Contraseña</label>
+          <div style={{position:"relative"}}>
             <input
-              type="password"
+              type={showPass?"text":"password"} value={password} onChange={e => setPassword(e.target.value)}
+              onKeyDown={e => e.key==="Enter" && handle()}
               placeholder="••••••••"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              style={styles.input}
-              required
+              style={{width:"100%",padding:"13px 44px 13px 16px",background:"rgba(255,255,255,0.07)",border:"1.5px solid rgba(255,255,255,0.12)",borderRadius:14,fontSize:14,color:"#fff",outline:"none",boxSizing:"border-box"}}
             />
+            <button onClick={() => setShowPass(!showPass)}
+              style={{position:"absolute",right:14,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",color:"rgba(255,255,255,0.4)",cursor:"pointer",fontSize:16,padding:0}}>
+              {showPass ? "🙈" : "👁️"}
+            </button>
           </div>
-          <button type="submit" style={styles.btnPrimary} disabled={loading}>
-            {loading ? "Entrando..." : "🔑 Iniciar sesión"}
-          </button>
-        </form>
+          <div style={{textAlign:"right",marginTop:8}}>
+            <button style={{background:"none",border:"none",color:"rgba(255,255,255,0.4)",fontSize:12,cursor:"pointer"}}>
+              ¿Olvidaste tu contraseña?
+            </button>
+          </div>
+        </div>
 
-        <div style={styles.divider}>— o —</div>
-
-        <button style={styles.btnMagic} onClick={handleMagicLink} disabled={loading}>
-          ✨ Entrar con link mágico (sin contraseña)
+        {/* Submit */}
+        <button onClick={handle} disabled={loading}
+          style={{width:"100%",padding:"14px",borderRadius:14,background:loading?"rgba(227,30,36,0.5)":RED,color:"#fff",fontSize:15,fontWeight:800,border:"none",cursor:loading?"default":"pointer",boxShadow:loading?"none":"0 8px 24px rgba(227,30,36,0.4)",transition:"all 0.2s",marginBottom:18}}>
+          {loading ? "Iniciando sesión..." : "Iniciar sesión →"}
         </button>
 
-        <div style={styles.registerRow}>
-          ¿No tienes cuenta?{" "}
-          <span style={styles.link} onClick={onRegister}>Regístrate</span>
+        {/* Divider */}
+        <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:18}}>
+          <div style={{flex:1,height:1,background:"rgba(255,255,255,0.1)"}}/>
+          <span style={{fontSize:12,color:"rgba(255,255,255,0.3)"}}>¿No tienes cuenta?</span>
+          <div style={{flex:1,height:1,background:"rgba(255,255,255,0.1)"}}/>
         </div>
+
+        {/* Switch to register */}
+        <button onClick={onSwitch}
+          style={{width:"100%",padding:"13px",borderRadius:14,background:"transparent",color:"rgba(255,255,255,0.75)",fontSize:14,fontWeight:700,border:"1.5px solid rgba(255,255,255,0.15)",cursor:"pointer"}}>
+          Crear cuenta gratis
+        </button>
       </div>
 
-      {/* Flags */}
-      <div style={{ textAlign:"center", fontSize:11, color:"#555866", marginTop:16 }}>
-        🇩🇴 República Dominicana × 🇺🇸 USA
+      <div style={{marginTop:24,fontSize:11,color:"rgba(255,255,255,0.25)",textAlign:"center",lineHeight:1.6}}>
+        Al usar USALINK aceptas nuestros<br/>
+        <span style={{color:"rgba(255,255,255,0.4)"}}>Términos de servicio</span> y <span style={{color:"rgba(255,255,255,0.4)"}}>Política de privacidad</span>
       </div>
     </div>
   );
 }
-
-const styles = {
-  wrap: {
-    minHeight:"100vh", background:"#0d0d0d",
-    display:"flex", flexDirection:"column",
-    alignItems:"center", justifyContent:"center",
-    padding:"24px 16px"
-  },
-  logo: {
-    display:"flex", flexDirection:"column",
-    alignItems:"center", gap:8, marginBottom:28
-  },
-  logoIcon: {
-    width:56, height:56, background:"#002D72", borderRadius:14,
-    display:"flex", alignItems:"center", justifyContent:"center",
-    fontSize:24, boxShadow:"0 8px 24px rgba(0,45,114,0.4)"
-  },
-  logoText: {
-    fontWeight:700, fontSize:24, color:"white", letterSpacing:"-0.3px"
-  },
-  logoSub: { fontSize:11, color:"#555866", textAlign:"center" },
-  card: {
-    width:"100%", maxWidth:360,
-    background:"#161616", borderRadius:20,
-    border:"1px solid rgba(255,255,255,0.07)",
-    padding:"24px 20px"
-  },
-  title: {
-    fontWeight:700, fontSize:20, color:"white",
-    marginBottom:4, textAlign:"center"
-  },
-  sub: {
-    fontSize:12, color:"#a0a2aa",
-    textAlign:"center", marginBottom:20
-  },
-  error: {
-    background:"rgba(255,51,85,0.1)", border:"1px solid rgba(255,51,85,0.2)",
-    borderRadius:10, padding:"10px 12px",
-    fontSize:12, color:"#ff3355", marginBottom:14
-  },
-  field: { marginBottom:14 },
-  label: { fontSize:11, color:"#a0a2aa", textTransform:"uppercase", letterSpacing:"0.8px", display:"block", marginBottom:6 },
-  input: {
-    width:"100%", background:"#1e1e1e", border:"1px solid rgba(255,255,255,0.07)",
-    borderRadius:12, padding:"12px 14px",
-    color:"white", fontSize:14, outline:"none",
-    fontFamily:"inherit", boxSizing:"border-box"
-  },
-  btnPrimary: {
-    width:"100%", padding:14, borderRadius:12,
-    background:"#4a8fff", color:"white",
-    fontWeight:700, fontSize:14, border:"none", cursor:"pointer",
-    marginTop:6, boxShadow:"0 4px 14px rgba(74,143,255,0.3)"
-  },
-  btnMagic: {
-    width:"100%", padding:12, borderRadius:12,
-    background:"rgba(124,58,237,0.12)",
-    border:"1px solid rgba(124,58,237,0.25)",
-    color:"#a855f7", fontWeight:600, fontSize:13,
-    cursor:"pointer"
-  },
-  btnSecondary: {
-    width:"100%", padding:12, borderRadius:12,
-    background:"#1e1e1e", border:"1px solid rgba(255,255,255,0.07)",
-    color:"#a0a2aa", fontWeight:600, fontSize:13, cursor:"pointer",
-    marginTop:12
-  },
-  divider: {
-    textAlign:"center", color:"#555866", fontSize:12,
-    margin:"16px 0"
-  },
-  registerRow: {
-    textAlign:"center", fontSize:13, color:"#a0a2aa", marginTop:16
-  },
-  link: { color:"#4a8fff", cursor:"pointer", fontWeight:600 }
-};
