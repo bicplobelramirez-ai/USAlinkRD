@@ -265,7 +265,25 @@ function HomePage({onNavigate,geo}){
         <button onClick={()=>onNavigate("link")} style={{background:RED,color:"#fff",fontSize:12,fontWeight:800,padding:"10px 20px",borderRadius:999,border:"none",cursor:"pointer"}}>🔗 Pegar link ahora</button>
       </div>
       <div style={{padding:"18px 16px 0"}}>
-        <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:20,color:NAVY,marginBottom:12}}>⚡ Cómo Funciona</div>
+        <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:24,color:NAVY,letterSpacing:"0.02em",marginBottom:14}}>✦ ¿Por qué USALINK?</div>
+        <div style={{display:"flex",flexDirection:"column",gap:10}}>
+          {[
+            ["🛡️","Compras Seguras","Protección y verificación en cada compra."],
+            ["🏪","1K Tiendas Americanas","Accede a las mejores marcas de EE.UU."],
+            ["💰","Mejores Precios","Comparamos ofertas para ayudarte a ahorrar."],
+            ["🤖","Asistente Virtual IA","Encuentra productos y resuelve dudas al instante."],
+            ["📊","Control Total","Cotización, factura y seguimiento en vivo."],
+          ].map(([icon,title,desc])=>(
+            <div key={title} style={{background:"#fff",borderRadius:18,padding:"14px 16px",border:"1.5px solid #dde2f0",display:"flex",alignItems:"center",gap:14,boxShadow:"0 2px 8px rgba(8,27,75,0.06)"}}>
+              <div style={{width:44,height:44,borderRadius:12,background:"linear-gradient(135deg,rgba(8,27,75,0.08),rgba(227,30,36,0.08))",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0}}>{icon}</div>
+              <div>
+                <div style={{fontSize:13,fontWeight:800,color:NAVY,marginBottom:3}}>{title}</div>
+                <div style={{fontSize:12,color:"#5d6a8e",lineHeight:1.5}}>{desc}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
         <div style={{display:"flex",gap:10,overflowX:"auto",paddingBottom:8}}>
           {[["🏠","01","Tu dirección en USA","Personal en Miami, FL. Gratis."],["🛍️","02","Compra donde quieras","Amazon, Nike, Apple, cualquier tienda."],["📦","03","Recibimos tu pedido","Llega a Miami. Te avisamos."],["🔧","04","Consolidamos","Optimizamos el empaque."],["🎉","05","Lo recibes en casa","3-7 días a tu puerta."]].map(([icon,num,title,desc])=>(
             <div key={num} style={{flexShrink:0,width:160,background:"#fff",borderRadius:20,padding:"16px 14px",border:"1.5px solid #dde2f0",position:"relative",overflow:"hidden"}}>
@@ -277,12 +295,8 @@ function HomePage({onNavigate,geo}){
           ))}
         </div>
       </div>
-      <div style={{height:16}}/>
-    </div>
-  );
-}
-
-function StoresPage({initialCat,onStoreSelect}){
+      <div style={{padding:"18px 16px 0"}}>
+        <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:20,color:NAVY,marginBottom:12}}>⚡ Cómo Funciona</div>({initialCat,onStoreSelect}){
   const [cat,setCat]=useState(initialCat||"all");
   const [query,setQuery]=useState("");
   const filtered=STORES.filter(s=>(cat==="all"||s.cat===cat)&&(!query||s.name.toLowerCase().includes(query.toLowerCase())));
