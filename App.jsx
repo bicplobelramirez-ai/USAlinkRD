@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { AuthProvider, useAuth } from "./AuthContext";
+const useAuthHook = () => ({ user:null, profile:null, loading:false, signIn:()=>{}, signUp:()=>{}, signOut:()=>{} });
 import Login from "./Login";
 import Register from "./Register";
 
-const useAuthHook = useAuth;
 
 const NAVY = "#081B4B";
 const RED  = "#E31E24";
@@ -20,34 +19,7 @@ const GEO_RATES = {
   BR:{name:"Brasil",         flag:"🇧🇷",rate:12.00},
 };
 
-/* ─── AUTH GATE ─── */
-function AuthGate({ children }) {
-  const { user, loading } = useAuth();
-  const [screen, setScreen] = useState("login"); // login | register
 
-  if (loading) return (
-    <div style={{minHeight:"100vh",background:"#050f2b",display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:16}}>
-      <div style={{width:56,height:56,background:RED,borderRadius:14,display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 8px 28px rgba(227,30,36,0.4)"}}>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round">
-          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
-        </svg>
-      </div>
-      <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:28,color:"#fff",letterSpacing:"0.08em"}}>USALINK</div>
-      <div style={{width:40,height:40,border:"3px solid rgba(227,30,36,0.3)",borderTop:"3px solid #E31E24",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/>
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}}`}</style>
-    </div>
-  );
-
-  if (!user) {
-    if (screen === "login") return <Login onSwitch={() => setScreen("register")} onSuccess={() => setScreen("login")}/>;
-    return <Register onSwitch={() => setScreen("login")} onSuccess={() => setScreen("login")}/>;
-  }
-
-  return children;
-}
-
-/* ─── STORES ─── */
 const STORES = [
   {id:"coachoutlet",   name:"Coach Outlet",      cat:"outlets",      bg:"linear-gradient(135deg,#1a0a00,#8b5c2a)", badge:"hot",  rating:4.7, url:"https://www.coach.com/outlet",               desc:"Bolsos y accesorios Coach hasta 70% off."},
   {id:"shopsimon",     name:"ShopSimon",          cat:"outlets",      bg:"linear-gradient(135deg,#0a1a3d,#1e3a8a)", badge:"hot",  rating:4.6, url:"https://www.shopsimon.com/",                  desc:"Premium Outlets. Lujo a precio outlet."},
@@ -303,24 +275,27 @@ function HomePage({onNavigate,geo}){
           </div>
         ))}
       </div>
-      <div style={{margin:"14px 16px 0",background:"linear-gradient(135deg,#1a0a3d,#0d0a2e)",borderRadius:20,padding:20}}>
+      <div style={{margin:"14px 16px 0",background:"linear-gradient(135deg,#1a0a3d,#0d0a2e)",borderRadius:20,padding:20,position:"relative",overflow:"hidden"}}>
+        <div style={{position:"absolute",top:-20,right:-20,fontSize:80,opacity:0.1}}>🔗</div>
         <div style={{fontSize:9,fontWeight:800,letterSpacing:"0.12em",textTransform:"uppercase",color:"rgba(255,255,255,0.5)",marginBottom:7}}>✨ NUEVO</div>
         <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:22,color:"#fff",marginBottom:6}}>Pega el link.<br/><span style={{color:RED}}>Nosotros compramos.</span></div>
         <div style={{fontSize:12,color:"rgba(255,255,255,0.55)",lineHeight:1.6,marginBottom:14}}>Copia cualquier URL de Amazon, Nike, Apple o donde sea.</div>
-        <button onClick={()=>onNavigate("link")} style={{background:RED,color:"#fff",fontSize:12,fontWeight:800,padding:"10px 20px",borderRadius:999,border:"none",cursor:"pointer"}}>🔗 Pegar link ahora</button>
+        <button onClick={()=>onNavigate("link")} style={{background:RED,color:"#fff",fontSize:12,fontWeight:800,padding:"10px 20px",borderRadius:999,border:"none",cursor:"pointer",boxShadow:"0 6px 20px rgba(227,30,36,0.4)"}}>🔗 Pegar link ahora</button>
       </div>
       <div style={{padding:"18px 16px 0"}}>
-        <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:24,color:NAVY,letterSpacing:"0.02em",marginBottom:14}}>✦ ¿Por qué USALINK?</div>
-        <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:20}}>
+        <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:24,color:NAVY,marginBottom:14}}>Por que USALINK?</div>
+        <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:8}}>
           {[
-            ["🛡️","Compras Seguras","Protección y verificación en cada compra."],
-            ["🏪","1K Tiendas Americanas","Accede a las mejores marcas de EE.UU."],
-            ["💰","Mejores Precios","Comparamos ofertas para ayudarte a ahorrar."],
-            ["🤖","Asistente Virtual IA","Encuentra productos y resuelve dudas al instante."],
-            ["📊","Control Total","Cotización, factura y seguimiento en vivo."],
-          ].map(([icon,title,desc])=>(
-            <div key={title} style={{background:"#fff",borderRadius:18,padding:"14px 16px",border:"1.5px solid #dde2f0",display:"flex",alignItems:"center",gap:14,boxShadow:"0 2px 8px rgba(8,27,75,0.06)"}}>
-              <div style={{width:44,height:44,borderRadius:12,background:"linear-gradient(135deg,rgba(8,27,75,0.08),rgba(227,30,36,0.08))",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0}}>{icon}</div>
+            ["Compras Seguras","Proteccion y verificacion en cada compra."],
+            ["1K Tiendas Americanas","Accede a las mejores marcas de EE.UU."],
+            ["Mejores Precios","Comparamos ofertas para ayudarte a ahorrar."],
+            ["Asistente Virtual IA","Encuentra productos y resuelve dudas al instante."],
+            ["Control Total","Cotizacion, factura y seguimiento en vivo."],
+          ].map(([title,desc],i)=>(
+            <div key={title} style={{background:"#fff",borderRadius:18,padding:"14px 16px",border:"1.5px solid #dde2f0",display:"flex",alignItems:"center",gap:14}}>
+              <div style={{width:44,height:44,borderRadius:12,background:"rgba(8,27,75,0.08)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:22,flexShrink:0}}>
+                {i===0&&"🛡️"}{i===1&&"🏪"}{i===2&&"💰"}{i===3&&"🤖"}{i===4&&"📊"}
+              </div>
               <div>
                 <div style={{fontSize:13,fontWeight:800,color:NAVY,marginBottom:3}}>{title}</div>
                 <div style={{fontSize:12,color:"#5d6a8e",lineHeight:1.5}}>{desc}</div>
@@ -748,10 +723,6 @@ function AppContent(){
 /* ─── ROOT ─── */
 export default function App(){
   return (
-    <AuthProvider>
-      <AuthGate>
         <AppContent/>
-      </AuthGate>
-    </AuthProvider>
   );
 }
