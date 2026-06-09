@@ -1,7 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 const useAuthHook = () => ({ user:null, profile:null, loading:false, signIn:()=>{}, signUp:()=>{}, signOut:()=>{} });
-import Login from "./Login";
-import Register from "./Register";
 
 
 const NAVY = "#081B4B";
