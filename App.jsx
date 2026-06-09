@@ -1,5 +1,52 @@
-import { useState, useEffect, useRef } from "react";
-const useAuthHook = () => ({ user:null, profile:null, loading:false, signIn:()=>{}, signUp:()=>{}, signOut:()=>{} });
+import { useState, useEffect, useRef, createContext, useContext } from "react";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  "https://kugdrwxthmcscrvlszws.supabase.co",
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+);
+
+const AuthCtx = createContext({});
+const useAuthHook = () => useContext(AuthCtx);
+
+function AuthProvider({ children }) {
+  const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchProfile = async (uid) => {
+    const { data } = await supabase.from("profiles").select("*").eq("id", uid).single();
+    setProfile(data);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      if (session?.user) fetchProfile(session.user.id);
+      else setLoading(false);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
+      setUser(session?.user ?? null);
+      if (session?.user) fetchProfile(session.user.id);
+      else { setProfile(null); setLoading(false); }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const signIn = (email, password) => supabase.auth.signInWithPassword({ email, password });
+  const signOut = async () => { await supabase.auth.signOut(); setUser(null); setProfile(null); };
+  const signUp = async (email, password, fullName, country) => {
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (!error && data.user) {
+      const cid = "USL-" + Math.floor(10000 + Math.random() * 90000);
+      await supabase.from("profiles").insert({ id: data.user.id, full_name: fullName, email, country, casillero_id: cid, membership: "free" });
+    }
+    return { data, error };
+  };
+
+  return <AuthCtx.Provider value={{ user, profile, loading, signIn, signUp, signOut }}>{children}</AuthCtx.Provider>;
+}
 
 
 const NAVY = "#081B4B";
@@ -719,8 +766,189 @@ function AppContent(){
 }
 
 /* ─── ROOT ─── */
+/* ─── LOGIN ─── */
+function LoginScreen({ onSwitch }) {
+  const { signIn } = useAuthHook();
+  const [email, setEmail] = useState("");
+  const [pass, setPass] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handle = async () => {
+    if (!email.trim() || !pass.trim()) { setError("Completa todos los campos"); return; }
+    setLoading(true); setError("");
+    const { error: err } = await signIn(email.trim(), pass);
+    if (err) { setError("Email o contraseña incorrectos"); setLoading(false); }
+  };
+
+  return (
+    <div style={{minHeight:"100vh",background:"linear-gradient(155deg,#050f2b,#0a1f55)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:20}}>
+      <div style={{textAlign:"center",marginBottom:32}}>
+        <div style={{width:68,height:68,background:"#E31E24",borderRadius:18,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 14px",boxShadow:"0 8px 28px rgba(227,30,36,0.45)"}}>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </div>
+        <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:36,color:"#fff",letterSpacing:"0.08em"}}>USALINK</div>
+        <div style={{fontSize:13,color:"rgba(255,255,255,0.45)",marginTop:6}}>Bienvenido de vuelta</div>
+      </div>
+      <div style={{width:"100%",maxWidth:380,background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:24,padding:"28px 24px"}}>
+        {error && <div style={{background:"rgba(227,30,36,0.12)",border:"1px solid rgba(227,30,36,0.3)",borderRadius:12,padding:"11px 14px",fontSize:13,color:"#ff6b6b",marginBottom:18,textAlign:"center"}}>{error}</div>}
+        <div style={{marginBottom:14}}>
+          <label style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,0.5)",textTransform:"uppercase",letterSpacing:"0.08em",display:"block",marginBottom:7}}>Email</label>
+          <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="tu@email.com"
+            style={{width:"100%",padding:"13px 16px",background:"rgba(255,255,255,0.07)",border:"1.5px solid rgba(255,255,255,0.12)",borderRadius:14,fontSize:14,color:"#fff",outline:"none",boxSizing:"border-box"}}/>
+        </div>
+        <div style={{marginBottom:22}}>
+          <label style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,0.5)",textTransform:"uppercase",letterSpacing:"0.08em",display:"block",marginBottom:7}}>Contraseña</label>
+          <input type="password" value={pass} onChange={e=>setPass(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handle()} placeholder="••••••••"
+            style={{width:"100%",padding:"13px 16px",background:"rgba(255,255,255,0.07)",border:"1.5px solid rgba(255,255,255,0.12)",borderRadius:14,fontSize:14,color:"#fff",outline:"none",boxSizing:"border-box"}}/>
+        </div>
+        <button onClick={handle} disabled={loading}
+          style={{width:"100%",padding:14,borderRadius:14,background:"#E31E24",color:"#fff",fontSize:15,fontWeight:800,border:"none",cursor:"pointer",boxShadow:"0 8px 24px rgba(227,30,36,0.4)",marginBottom:16,opacity:loading?0.6:1}}>
+          {loading ? "Iniciando sesión..." : "Iniciar sesión →"}
+        </button>
+        <button onClick={onSwitch}
+          style={{width:"100%",padding:13,borderRadius:14,background:"transparent",color:"rgba(255,255,255,0.75)",fontSize:14,fontWeight:700,border:"1.5px solid rgba(255,255,255,0.15)",cursor:"pointer"}}>
+          Crear cuenta gratis
+        </button>
+      </div>
+    </div>
+  );
+}
+
+const COUNTRIES = [
+  {code:"DO",flag:"🇩🇴",name:"Rep. Dominicana"},{code:"MX",flag:"🇲🇽",name:"México"},
+  {code:"CO",flag:"🇨🇴",name:"Colombia"},{code:"VE",flag:"🇻🇪",name:"Venezuela"},
+  {code:"PE",flag:"🇵🇪",name:"Perú"},{code:"CL",flag:"🇨🇱",name:"Chile"},
+  {code:"AR",flag:"🇦🇷",name:"Argentina"},{code:"BR",flag:"🇧🇷",name:"Brasil"},
+  {code:"US",flag:"🇺🇸",name:"Estados Unidos"},
+];
+
+function RegisterScreen({ onSwitch }) {
+  const { signUp } = useAuthHook();
+  const [step, setStep] = useState(1);
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [country, setCountry] = useState("DO");
+  const [pass, setPass] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [done, setDone] = useState(false);
+
+  const next = () => {
+    if (!fullName.trim()) { setError("Ingresa tu nombre"); return; }
+    if (!email.trim() || !email.includes("@")) { setError("Email inválido"); return; }
+    setError(""); setStep(2);
+  };
+
+  const handle = async () => {
+    if (pass.length < 6) { setError("Mínimo 6 caracteres"); return; }
+    if (pass !== confirm) { setError("Las contraseñas no coinciden"); return; }
+    setLoading(true); setError("");
+    const { error: err } = await signUp(email.trim(), pass, fullName.trim(), country);
+    if (err) { setError(err.message.includes("already") ? "Email ya registrado" : "Error al crear cuenta"); setLoading(false); }
+    else setDone(true);
+  };
+
+  if (done) return (
+    <div style={{minHeight:"100vh",background:"linear-gradient(155deg,#050f2b,#0a1f55)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:20,textAlign:"center"}}>
+      <div style={{fontSize:72,marginBottom:20}}>🎉</div>
+      <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:32,color:"#fff",marginBottom:10}}>Cuenta creada!</div>
+      <div style={{fontSize:14,color:"rgba(255,255,255,0.55)",marginBottom:8,maxWidth:300}}>Revisa tu email <strong style={{color:"#fff"}}>{email}</strong> para verificar tu cuenta.</div>
+      <button onClick={onSwitch} style={{marginTop:24,padding:"14px 40px",borderRadius:14,background:"#E31E24",color:"#fff",fontSize:15,fontWeight:800,border:"none",cursor:"pointer"}}>Ir al login →</button>
+    </div>
+  );
+
+  return (
+    <div style={{minHeight:"100vh",background:"linear-gradient(155deg,#050f2b,#0a1f55)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:20}}>
+      <div style={{textAlign:"center",marginBottom:24}}>
+        <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:30,color:"#fff",letterSpacing:"0.08em"}}>USALINK</div>
+        <div style={{fontSize:13,color:"rgba(255,255,255,0.45)",marginTop:4}}>Crea tu cuenta gratis</div>
+      </div>
+      <div style={{width:"100%",maxWidth:380,background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:24,padding:"28px 24px"}}>
+        {error && <div style={{background:"rgba(227,30,36,0.12)",border:"1px solid rgba(227,30,36,0.3)",borderRadius:12,padding:"11px 14px",fontSize:13,color:"#ff6b6b",marginBottom:18,textAlign:"center"}}>{error}</div>}
+        {step === 1 && <>
+          <div style={{marginBottom:14}}>
+            <label style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,0.5)",textTransform:"uppercase",letterSpacing:"0.08em",display:"block",marginBottom:7}}>Nombre completo</label>
+            <input value={fullName} onChange={e=>setFullName(e.target.value)} placeholder="Juan Pérez"
+              style={{width:"100%",padding:"13px 16px",background:"rgba(255,255,255,0.07)",border:"1.5px solid rgba(255,255,255,0.12)",borderRadius:14,fontSize:14,color:"#fff",outline:"none",boxSizing:"border-box"}}/>
+          </div>
+          <div style={{marginBottom:14}}>
+            <label style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,0.5)",textTransform:"uppercase",letterSpacing:"0.08em",display:"block",marginBottom:7}}>Email</label>
+            <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="tu@email.com"
+              style={{width:"100%",padding:"13px 16px",background:"rgba(255,255,255,0.07)",border:"1.5px solid rgba(255,255,255,0.12)",borderRadius:14,fontSize:14,color:"#fff",outline:"none",boxSizing:"border-box"}}/>
+          </div>
+          <div style={{marginBottom:22}}>
+            <label style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,0.5)",textTransform:"uppercase",letterSpacing:"0.08em",display:"block",marginBottom:10}}>País</label>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
+              {COUNTRIES.slice(0,6).map(c=>(
+                <button key={c.code} onClick={()=>setCountry(c.code)}
+                  style={{padding:"10px 6px",borderRadius:12,border:"1.5px solid",borderColor:country===c.code?"#E31E24":"rgba(255,255,255,0.1)",background:country===c.code?"rgba(227,30,36,0.15)":"rgba(255,255,255,0.04)",cursor:"pointer",textAlign:"center"}}>
+                  <div style={{fontSize:20}}>{c.flag}</div>
+                  <div style={{fontSize:9,fontWeight:700,color:country===c.code?"#fff":"rgba(255,255,255,0.5)",marginTop:3}}>{c.name}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+          <button onClick={next} style={{width:"100%",padding:14,borderRadius:14,background:"#E31E24",color:"#fff",fontSize:15,fontWeight:800,border:"none",cursor:"pointer"}}>Continuar →</button>
+        </>}
+        {step === 2 && <>
+          <button onClick={()=>setStep(1)} style={{background:"none",border:"none",color:"rgba(255,255,255,0.5)",fontSize:13,cursor:"pointer",marginBottom:16,padding:0}}>‹ Volver</button>
+          <div style={{marginBottom:14}}>
+            <label style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,0.5)",textTransform:"uppercase",letterSpacing:"0.08em",display:"block",marginBottom:7}}>Contraseña</label>
+            <input type="password" value={pass} onChange={e=>setPass(e.target.value)} placeholder="Mínimo 6 caracteres"
+              style={{width:"100%",padding:"13px 16px",background:"rgba(255,255,255,0.07)",border:"1.5px solid rgba(255,255,255,0.12)",borderRadius:14,fontSize:14,color:"#fff",outline:"none",boxSizing:"border-box"}}/>
+          </div>
+          <div style={{marginBottom:22}}>
+            <label style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,0.5)",textTransform:"uppercase",letterSpacing:"0.08em",display:"block",marginBottom:7}}>Confirmar contraseña</label>
+            <input type="password" value={confirm} onChange={e=>setConfirm(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handle()} placeholder="Repite tu contraseña"
+              style={{width:"100%",padding:"13px 16px",background:"rgba(255,255,255,0.07)",border:`1.5px solid ${confirm&&confirm!==pass?"rgba(227,30,36,0.5)":confirm&&confirm===pass?"rgba(16,185,129,0.5)":"rgba(255,255,255,0.12)"}`,borderRadius:14,fontSize:14,color:"#fff",outline:"none",boxSizing:"border-box"}}/>
+            {confirm && confirm===pass && <div style={{fontSize:11,color:"#10b981",marginTop:5}}>✓ Contraseñas coinciden</div>}
+          </div>
+          <button onClick={handle} disabled={loading}
+            style={{width:"100%",padding:14,borderRadius:14,background:"#E31E24",color:"#fff",fontSize:15,fontWeight:800,border:"none",cursor:"pointer",opacity:loading?0.6:1}}>
+            {loading ? "Creando cuenta..." : "Crear cuenta gratis 🎉"}
+          </button>
+        </>}
+      </div>
+      <div style={{marginTop:20,display:"flex",alignItems:"center",gap:8}}>
+        <span style={{fontSize:13,color:"rgba(255,255,255,0.35)"}}>¿Ya tienes cuenta?</span>
+        <button onClick={onSwitch} style={{background:"none",border:"none",color:"rgba(255,255,255,0.7)",fontSize:13,fontWeight:700,cursor:"pointer",textDecoration:"underline"}}>Iniciar sesión</button>
+      </div>
+    </div>
+  );
+}
+
+function AuthGate({ children }) {
+  const { user, loading } = useAuthHook();
+  const [screen, setScreen] = useState("login");
+
+  if (loading) return (
+    <div style={{minHeight:"100vh",background:"#050f2b",display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:16}}>
+      <div style={{width:56,height:56,background:"#E31E24",borderRadius:14,display:"flex",alignItems:"center",justifyContent:"center"}}>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      </div>
+      <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:28,color:"#fff",letterSpacing:"0.08em"}}>USALINK</div>
+      <style>{"@keyframes spin{to{transform:rotate(360deg)}}"}</style>
+      <div style={{width:36,height:36,border:"3px solid rgba(227,30,36,0.3)",borderTop:"3px solid #E31E24",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/>
+    </div>
+  );
+
+  if (!user) {
+    if (screen === "login") return <LoginScreen onSwitch={()=>setScreen("register")}/>;
+    return <RegisterScreen onSwitch={()=>setScreen("login")}/>;
+  }
+
+  return children;
+}
+
+
 export default function App(){
   return (
+    <AuthProvider>
+      <AuthGate>
         <AppContent/>
+      </AuthGate>
+    </AuthProvider>
   );
 }
