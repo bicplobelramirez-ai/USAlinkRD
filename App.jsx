@@ -690,7 +690,7 @@ function AccountPage({onNavigate,geo}){
         ))}
       </div>
       <div style={{padding:"16px 16px 0",display:"flex",flexDirection:"column",gap:8}}>
-        {[["📦","Mis paquetes","Todas tus compras en un lugar","packages"],["🔗","Pegar link","Compra asistida por IA","link"],["🛍️","Tiendas USA","41 tiendas disponibles","stores"],["🧮","Calcular envío","Cotización instantánea","calc"],["🤖","Hablar con Aphrodite","Tu asistente personal","ai"]].map(([icon,title,sub,pg])=>(
+        {[["🛒","Mi carrito","Productos seleccionados","cart"],["📦","Mis paquetes","Historial de envíos","packages"],["⭐","Membresía","Actualiza tu plan","membership"],["🔗","Pegar link","Compra asistida por IA","link"],["🛍️","Tiendas USA","32 tiendas disponibles","stores"],["🧮","Calcular envío","Cotización instantánea","calc"],["🤖","Hablar con Aphrodite","Tu asistente personal","ai"]].map(([icon,title,sub,pg])=>(
           <div key={title} onClick={()=>onNavigate(pg)} style={{background:"#fff",borderRadius:16,padding:16,display:"flex",alignItems:"center",gap:14,border:"1.5px solid #dde2f0",boxShadow:"0 2px 8px rgba(8,27,75,0.07)",cursor:"pointer"}}>
             <div style={{width:40,height:40,borderRadius:12,background:"rgba(8,27,75,0.07)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>{icon}</div>
             <div style={{flex:1}}><div style={{fontSize:14,fontWeight:700,color:NAVY,marginBottom:2}}>{title}</div><div style={{fontSize:11,color:"#8b96b8"}}>{sub}</div></div>
@@ -770,12 +770,351 @@ function LinkPage({geo}){
 }
 
 /* ─── APP CONTENT ─── */
+/* ─── CART CONTEXT ─── */
+const CartCtx = createContext({});
+const useCart = () => useContext(CartCtx);
+
+function CartProvider({ children }) {
+  const [items, setItems] = useState([]);
+
+  const addItem = (item) => {
+    setItems(prev => {
+      const exists = prev.find(i => i.id === item.id);
+      if (exists) return prev.map(i => i.id === item.id ? {...i, qty: i.qty + 1} : i);
+      return [...prev, {...item, qty: 1}];
+    });
+  };
+
+  const removeItem = (id) => setItems(prev => prev.filter(i => i.id !== id));
+  const updateQty = (id, qty) => {
+    if (qty < 1) { removeItem(id); return; }
+    setItems(prev => prev.map(i => i.id === id ? {...i, qty} : i));
+  };
+  const clearCart = () => setItems([]);
+  const total = items.reduce((s, i) => s + (i.price * i.qty), 0);
+  const count = items.reduce((s, i) => s + i.qty, 0);
+
+  return <CartCtx.Provider value={{ items, addItem, removeItem, updateQty, clearCart, total, count }}>{children}</CartCtx.Provider>;
+}
+
+/* ─── MEMBERSHIP DATA ─── */
+const MEMBERSHIPS = [
+  {
+    key:"free", name:"Free", price:0, color:"#8b96b8", icon:"🆓",
+    perks:["Dirección en Miami","Rastreo básico","Soporte por email","Hasta 5 paquetes/mes"],
+    shipping_discount:0,
+  },
+  {
+    key:"silver", name:"Silver", price:9.99, color:"#94a3b8", icon:"🥈",
+    perks:["Todo lo de Free","10% descuento en envíos","Soporte prioritario","Hasta 15 paquetes/mes","Consolidación gratis"],
+    shipping_discount:10,
+  },
+  {
+    key:"gold", name:"Gold", price:19.99, color:"#F5A623", icon:"🥇",
+    perks:["Todo lo de Silver","20% descuento en envíos","Soporte 24/7 WhatsApp","Paquetes ilimitados","Seguro premium incluido","Compras asistidas gratis"],
+    shipping_discount:20,
+  },
+  {
+    key:"elite", name:"Elite", price:39.99, color:"#E31E24", icon:"💎",
+    perks:["Todo lo de Gold","30% descuento en envíos","Agente personal dedicado","Envío express disponible","Sin límite de consolidación","Acceso anticipado a ofertas"],
+    shipping_discount:30,
+  },
+];
+
+/* ─── CART PAGE ─── */
+function CartPage({onNavigate}) {
+  const { items, removeItem, updateQty, total, count, clearCart } = useCart();
+  const { profile } = useAuthHook();
+  const [ordered, setOrdered] = useState(false);
+
+  const handleOrder = () => {
+    if (items.length === 0) return;
+    // Save order to localStorage
+    const orders = JSON.parse(localStorage.getItem("usalink_orders_" + profile?.id) || "[]");
+    const newOrder = {
+      id: "ORD-" + Date.now(),
+      items: [...items],
+      total: total.toFixed(2),
+      date: new Date().toLocaleDateString("es-DO"),
+      status: "Pendiente",
+    };
+    orders.push(newOrder);
+    localStorage.setItem("usalink_orders_" + profile?.id, JSON.stringify(orders));
+    clearCart();
+    setOrdered(true);
+  };
+
+  if (ordered) return (
+    <div style={{padding:"48px 24px",textAlign:"center"}}>
+      <div style={{fontSize:64,marginBottom:16}}>🎉</div>
+      <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:28,color:"#081B4B",marginBottom:10}}>Pedido recibido!</div>
+      <div style={{fontSize:14,color:"#5d6a8e",lineHeight:1.7,marginBottom:28,maxWidth:300,margin:"0 auto 28px"}}>
+        Te contactaremos por WhatsApp en menos de 24 horas para confirmar y procesar tu compra.
+      </div>
+      <div style={{background:"linear-gradient(135deg,#081B4B,#0a2070)",borderRadius:20,padding:18,marginBottom:16}}>
+        <div style={{fontSize:12,color:"rgba(255,255,255,0.6)",marginBottom:6}}>Contáctanos también en</div>
+        <div style={{fontSize:16,fontWeight:800,color:"#fff"}}>📱 WhatsApp: +1 (305) 000-0000</div>
+      </div>
+      <button onClick={()=>onNavigate("home")} style={{background:"#E31E24",color:"#fff",fontSize:14,fontWeight:800,padding:"14px 32px",borderRadius:14,border:"none",cursor:"pointer"}}>
+        Volver al inicio
+      </button>
+    </div>
+  );
+
+  return (
+    <div>
+      <div style={{background:"linear-gradient(155deg,#050f2b,#0a1f55)",padding:"24px 20px 24px"}}>
+        <div style={{fontSize:9,fontWeight:800,color:"rgba(255,255,255,0.6)",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:8}}>
+          CARRITO DE COMPRAS
+        </div>
+        <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:32,color:"#fff"}}>Mi Carrito</div>
+        <div style={{fontSize:13,color:"rgba(255,255,255,0.5)",marginTop:4}}>{count} producto{count!==1?"s":""} seleccionado{count!==1?"s":""}</div>
+      </div>
+
+      {items.length === 0 ? (
+        <div style={{padding:"48px 24px",textAlign:"center"}}>
+          <div style={{fontSize:64,marginBottom:16}}>🛒</div>
+          <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:26,color:"#081B4B",marginBottom:8}}>Tu carrito está vacío</div>
+          <div style={{fontSize:14,color:"#8b96b8",marginBottom:28}}>Agrega productos desde las tiendas o pega un link.</div>
+          <div style={{display:"flex",flexDirection:"column",gap:10,maxWidth:280,margin:"0 auto"}}>
+            <button onClick={()=>onNavigate("stores")} style={{background:"#081B4B",color:"#fff",fontSize:14,fontWeight:800,padding:"14px",borderRadius:14,border:"none",cursor:"pointer"}}>
+              🛍️ Explorar tiendas
+            </button>
+            <button onClick={()=>onNavigate("link")} style={{background:"#E31E24",color:"#fff",fontSize:14,fontWeight:800,padding:"14px",borderRadius:14,border:"none",cursor:"pointer"}}>
+              🔗 Pegar link
+            </button>
+          </div>
+        </div>
+      ) : (
+        <div style={{padding:"14px 16px"}}>
+          {/* Items */}
+          <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:16}}>
+            {items.map(item=>(
+              <div key={item.id} style={{background:"#fff",borderRadius:18,padding:16,border:"1.5px solid #dde2f0",display:"flex",gap:12,alignItems:"center"}}>
+                <div style={{width:48,height:48,borderRadius:12,background:item.bg||"linear-gradient(135deg,#081B4B,#0a2070)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:20,flexShrink:0}}>
+                  🛍️
+                </div>
+                <div style={{flex:1,minWidth:0}}>
+                  <div style={{fontSize:13,fontWeight:800,color:"#081B4B",marginBottom:2,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{item.name}</div>
+                  <div style={{fontSize:12,color:"#8b96b8"}}>{item.store}</div>
+                  <div style={{fontSize:14,fontWeight:800,color:"#E31E24",marginTop:4}}>${item.price?.toFixed(2)||"0.00"}</div>
+                </div>
+                <div style={{display:"flex",alignItems:"center",gap:8,flexShrink:0}}>
+                  <button onClick={()=>updateQty(item.id, item.qty-1)} style={{width:28,height:28,borderRadius:"50%",background:"#eef0f8",border:"none",cursor:"pointer",fontSize:16,fontWeight:800,color:"#081B4B"}}>-</button>
+                  <span style={{fontSize:14,fontWeight:800,color:"#081B4B",minWidth:16,textAlign:"center"}}>{item.qty}</span>
+                  <button onClick={()=>updateQty(item.id, item.qty+1)} style={{width:28,height:28,borderRadius:"50%",background:"#081B4B",border:"none",cursor:"pointer",fontSize:16,fontWeight:800,color:"#fff"}}>+</button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Summary */}
+          <div style={{background:"linear-gradient(135deg,#081B4B,#050f2b)",borderRadius:20,padding:20,marginBottom:14}}>
+            <div style={{fontSize:14,fontWeight:800,color:"#fff",marginBottom:14}}>Resumen del pedido</div>
+            {items.map(item=>(
+              <div key={item.id} style={{display:"flex",justifyContent:"space-between",fontSize:12,color:"rgba(255,255,255,0.6)",marginBottom:8}}>
+                <span>{item.name} x{item.qty}</span>
+                <span style={{color:"rgba(255,255,255,0.85)"}}>${(item.price*item.qty).toFixed(2)}</span>
+              </div>
+            ))}
+            <div style={{display:"flex",justifyContent:"space-between",fontSize:12,color:"rgba(255,255,255,0.6)",marginBottom:8,paddingTop:10,borderTop:"1px solid rgba(255,255,255,0.1)"}}>
+              <span>Servicio USALINK</span><span style={{color:"rgba(255,255,255,0.85)"}}>$15.00</span>
+            </div>
+            <div style={{display:"flex",justifyContent:"space-between",fontSize:16,fontWeight:800,color:"#fff",paddingTop:10,borderTop:"1px solid rgba(255,255,255,0.15)"}}>
+              <span>Total estimado</span>
+              <span style={{color:"#34d399",fontSize:20}}>${(total+15).toFixed(2)}</span>
+            </div>
+            <div style={{fontSize:10,color:"rgba(255,255,255,0.4)",marginTop:6}}>* Envío se calcula según peso real</div>
+          </div>
+
+          <button onClick={handleOrder}
+            style={{width:"100%",padding:16,borderRadius:14,background:"#E31E24",color:"#fff",fontSize:15,fontWeight:800,border:"none",cursor:"pointer",boxShadow:"0 6px 20px rgba(227,30,36,0.4)",marginBottom:10}}>
+            ✅ Solicitar compra asistida
+          </button>
+          <button onClick={()=>onNavigate("stores")}
+            style={{width:"100%",padding:14,borderRadius:14,background:"transparent",color:"#081B4B",fontSize:14,fontWeight:700,border:"1.5px solid #dde2f0",cursor:"pointer"}}>
+            + Agregar más productos
+          </button>
+        </div>
+      )}
+      <div style={{height:16}}/>
+    </div>
+  );
+}
+
+/* ─── MEMBERSHIP PAGE ─── */
+function MembershipPage({onNavigate}) {
+  const { profile } = useAuthHook();
+  const current = profile?.membership || "free";
+
+  const handleUpgrade = (plan) => {
+    if (plan.key === current) return;
+    onNavigate("payment", plan);
+  };
+
+  return (
+    <div>
+      <div style={{background:"linear-gradient(155deg,#050f2b,#0a1f55)",padding:"28px 20px 28px",textAlign:"center"}}>
+        <div style={{fontSize:9,fontWeight:800,color:"rgba(255,255,255,0.6)",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:8}}>MEMBRESÍA</div>
+        <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:32,color:"#fff",marginBottom:6}}>Elige tu Plan</div>
+        <div style={{fontSize:13,color:"rgba(255,255,255,0.5)"}}>Ahorra más con cada envío</div>
+        {/* Current plan badge */}
+        <div style={{display:"inline-flex",alignItems:"center",gap:8,background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:999,padding:"8px 16px",marginTop:14}}>
+          <span style={{fontSize:14}}>{MEMBERSHIPS.find(m=>m.key===current)?.icon}</span>
+          <span style={{fontSize:12,fontWeight:700,color:"#fff"}}>Plan actual: {MEMBERSHIPS.find(m=>m.key===current)?.name}</span>
+        </div>
+      </div>
+
+      <div style={{padding:"14px 16px",display:"flex",flexDirection:"column",gap:12}}>
+        {MEMBERSHIPS.map(plan=>{
+          const isCurrent = plan.key === current;
+          return (
+            <div key={plan.key} style={{background:"#fff",borderRadius:20,border:`2px solid ${isCurrent?plan.color:"#dde2f0"}`,overflow:"hidden",boxShadow:isCurrent?"0 4px 20px rgba(0,0,0,0.1)":"0 2px 8px rgba(8,27,75,0.07)"}}>
+              {/* Header */}
+              <div style={{background:isCurrent?`linear-gradient(135deg,${plan.color}22,${plan.color}11)`:"#F3F5FB",padding:"16px 18px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                <div style={{display:"flex",alignItems:"center",gap:10}}>
+                  <span style={{fontSize:28}}>{plan.icon}</span>
+                  <div>
+                    <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:22,color:"#081B4B",letterSpacing:"0.03em"}}>{plan.name}</div>
+                    <div style={{fontSize:12,color:"#8b96b8"}}>{plan.shipping_discount>0?`${plan.shipping_discount}% descuento en envíos`:"Envíos a precio estándar"}</div>
+                  </div>
+                </div>
+                <div style={{textAlign:"right"}}>
+                  {plan.price === 0
+                    ? <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:22,color:"#10b981"}}>GRATIS</div>
+                    : <div><span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:26,color:"#081B4B"}}>${plan.price}</span><span style={{fontSize:11,color:"#8b96b8"}}>/mes</span></div>
+                  }
+                </div>
+              </div>
+              {/* Perks */}
+              <div style={{padding:"14px 18px"}}>
+                {plan.perks.map(perk=>(
+                  <div key={perk} style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
+                    <span style={{color:"#10b981",fontSize:14,flexShrink:0}}>✓</span>
+                    <span style={{fontSize:13,color:"#5d6a8e"}}>{perk}</span>
+                  </div>
+                ))}
+                <button onClick={()=>handleUpgrade(plan)}
+                  disabled={isCurrent}
+                  style={{width:"100%",marginTop:12,padding:"12px",borderRadius:12,background:isCurrent?"#eef0f8":plan.color==="#E31E24"?"#E31E24":plan.color==="#F5A623"?"#F5A623":"#081B4B",color:isCurrent?"#8b96b8":"#fff",fontSize:13,fontWeight:800,border:"none",cursor:isCurrent?"default":"pointer",opacity:1}}>
+                  {isCurrent?"Plan actual ✓":plan.price===0?"Seleccionar":"Actualizar a "+plan.name+" →"}
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      <div style={{height:16}}/>
+    </div>
+  );
+}
+
+/* ─── PAYMENT PAGE ─── */
+function PaymentPage({plan, onNavigate}) {
+  const { profile } = useAuthHook();
+  const [method, setMethod] = useState("whatsapp");
+  const [done, setDone] = useState(false);
+
+  if (!plan) {
+    return (
+      <div style={{padding:32,textAlign:"center"}}>
+        <div style={{fontSize:48,marginBottom:16}}>💳</div>
+        <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:24,color:"#081B4B",marginBottom:8}}>Pagos</div>
+        <div style={{fontSize:14,color:"#8b96b8",marginBottom:24}}>Selecciona un plan o producto para proceder al pago.</div>
+        <button onClick={()=>onNavigate("membership")} style={{background:"#081B4B",color:"#fff",fontSize:14,fontWeight:800,padding:"14px 24px",borderRadius:14,border:"none",cursor:"pointer"}}>
+          Ver membresías
+        </button>
+      </div>
+    );
+  }
+
+  if (done) return (
+    <div style={{padding:"48px 24px",textAlign:"center"}}>
+      <div style={{fontSize:64,marginBottom:16}}>✅</div>
+      <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:28,color:"#081B4B",marginBottom:10}}>Solicitud enviada!</div>
+      <div style={{fontSize:14,color:"#5d6a8e",lineHeight:1.7,marginBottom:28,maxWidth:300,margin:"0 auto 28px"}}>
+        Nos contactaremos contigo en menos de 24 horas para confirmar tu pago y activar tu membresía.
+      </div>
+      <button onClick={()=>onNavigate("home")} style={{background:"#E31E24",color:"#fff",fontSize:14,fontWeight:800,padding:"14px 32px",borderRadius:14,border:"none",cursor:"pointer"}}>
+        Volver al inicio
+      </button>
+    </div>
+  );
+
+  const METHODS = [
+    {key:"whatsapp", icon:"📱", label:"WhatsApp", desc:"Te enviamos instrucciones por WhatsApp"},
+    {key:"transfer", icon:"🏦", label:"Transferencia", desc:"Transferencia bancaria o Zelle"},
+    {key:"paypal",   icon:"💙", label:"PayPal", desc:"Pago seguro con PayPal"},
+  ];
+
+  return (
+    <div>
+      <div style={{background:"linear-gradient(155deg,#050f2b,#0a1f55)",padding:"28px 20px 28px"}}>
+        <div style={{fontSize:9,fontWeight:800,color:"rgba(255,255,255,0.6)",textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:8}}>PAGO SEGURO</div>
+        <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:32,color:"#fff",marginBottom:6}}>Confirmar Pago</div>
+        {/* Plan summary */}
+        <div style={{background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.15)",borderRadius:16,padding:"14px 16px",marginTop:14,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <span style={{fontSize:24}}>{plan.icon}</span>
+            <div>
+              <div style={{fontSize:14,fontWeight:800,color:"#fff"}}>Plan {plan.name}</div>
+              <div style={{fontSize:12,color:"rgba(255,255,255,0.5)"}}>Facturación mensual</div>
+            </div>
+          </div>
+          <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:24,color:"#34d399"}}>${plan.price}/mo</div>
+        </div>
+      </div>
+
+      <div style={{padding:"16px 16px 0"}}>
+        {/* Payment method */}
+        <div style={{fontSize:14,fontWeight:800,color:"#081B4B",marginBottom:12}}>Método de pago</div>
+        <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:20}}>
+          {METHODS.map(m=>(
+            <div key={m.key} onClick={()=>setMethod(m.key)}
+              style={{background:"#fff",borderRadius:16,padding:16,display:"flex",alignItems:"center",gap:14,border:`2px solid ${method===m.key?"#E31E24":"#dde2f0"}`,cursor:"pointer"}}>
+              <span style={{fontSize:24}}>{m.icon}</span>
+              <div style={{flex:1}}>
+                <div style={{fontSize:14,fontWeight:700,color:"#081B4B"}}>{m.label}</div>
+                <div style={{fontSize:12,color:"#8b96b8"}}>{m.desc}</div>
+              </div>
+              <div style={{width:20,height:20,borderRadius:"50%",border:`2px solid ${method===m.key?"#E31E24":"#dde2f0"}`,background:method===m.key?"#E31E24":"transparent",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                {method===m.key&&<div style={{width:8,height:8,borderRadius:"50%",background:"#fff"}}/>}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Contact info */}
+        <div style={{background:"linear-gradient(135deg,#081B4B,#0a2070)",borderRadius:20,padding:18,marginBottom:16}}>
+          <div style={{fontSize:13,fontWeight:800,color:"#fff",marginBottom:10}}>📋 Datos de contacto</div>
+          <div style={{fontSize:12,color:"rgba(255,255,255,0.7)",lineHeight:1.8}}>
+            <div>👤 {profile?.full_name}</div>
+            <div>📧 {profile?.email}</div>
+            <div>🆔 {profile?.casillero_id}</div>
+          </div>
+        </div>
+
+        <button onClick={()=>setDone(true)}
+          style={{width:"100%",padding:16,borderRadius:14,background:"#E31E24",color:"#fff",fontSize:15,fontWeight:800,border:"none",cursor:"pointer",boxShadow:"0 6px 20px rgba(227,30,36,0.4)",marginBottom:10}}>
+          ✅ Confirmar solicitud de pago
+        </button>
+        <div style={{fontSize:11,color:"#8b96b8",textAlign:"center",lineHeight:1.6}}>
+          Al confirmar, un agente USALINK te contactará para completar el pago.
+        </div>
+      </div>
+      <div style={{height:16}}/>
+    </div>
+  );
+}
+
+
 function AppContent(){
   const {profile,signOut}=useAuthHook();
   const [page,setPage]=useState("home");
   const [storeCat,setStoreCat]=useState("all");
   const [selectedStore,setSelectedStore]=useState(null);
   const [geo,setGeo]=useState(null);
+  const [paymentPlan,setPaymentPlan]=useState(null);
 
   useEffect(()=>{
     // Set geo from profile country
@@ -840,8 +1179,11 @@ function AppContent(){
             {id:"link",    show:!selectedStore&&page==="link",     el:<LinkPage geo={geo}/>},
             {id:"track",   show:!selectedStore&&page==="track",    el:<TrackPage/>},
             {id:"calc",    show:!selectedStore&&page==="calc",     el:<CalcPage geo={geo}/>},
-            {id:"packages",show:!selectedStore&&page==="packages", el:<PackagesPage onNavigate={navigate}/>},
-            {id:"account", show:!selectedStore&&page==="account",  el:<AccountPage onNavigate={navigate} geo={geo}/>},
+            {id:"packages",   show:!selectedStore&&page==="packages",    el:<PackagesPage onNavigate={navigate}/>},
+            {id:"cart",       show:!selectedStore&&page==="cart",       el:<CartPage onNavigate={navigate}/>},
+            {id:"membership", show:!selectedStore&&page==="membership", el:<MembershipPage onNavigate={navigate}/>},
+            {id:"payment",    show:!selectedStore&&page==="payment",    el:<PaymentPage plan={paymentPlan} onNavigate={navigate}/>},
+            {id:"account",    show:!selectedStore&&page==="account",    el:<AccountPage onNavigate={navigate} geo={geo}/>},
           ].map(({id,show,el})=>(
             <div key={id} style={{position:"absolute",inset:0,overflowY:"auto",overflowX:"hidden",WebkitOverflowScrolling:"touch",paddingBottom:80,display:show?"block":"none"}}>
               {el}
@@ -1049,9 +1391,11 @@ function AuthGate({ children }) {
 export default function App(){
   return (
     <AuthProvider>
-      <AuthGate>
-        <AppContent/>
-      </AuthGate>
+      <CartProvider>
+        <AuthGate>
+          <AppContent/>
+        </AuthGate>
+      </CartProvider>
     </AuthProvider>
   );
 }
