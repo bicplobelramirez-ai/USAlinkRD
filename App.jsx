@@ -556,6 +556,108 @@ function CalcPage({geo}){
   );
 }
 
+function PackagesPage({onNavigate}) {
+  const { profile } = useAuthHook();
+
+  const DEMO_PACKAGES = [];
+  // In the future: load from localStorage or backend
+  // const saved = JSON.parse(localStorage.getItem("usalink_packages_" + profile?.id) || "[]");
+
+  const STATUS_COLORS = {
+    "En Miami": "#F5A623",
+    "En camino": "#3b82f6",
+    "En aduana": "#8b5cf6",
+    "Entregado": "#10b981",
+  };
+
+  const STATUS_ICONS = {
+    "En Miami": "📦",
+    "En camino": "✈️",
+    "En aduana": "📋",
+    "Entregado": "✅",
+  };
+
+  return (
+    <div>
+      {/* Header */}
+      <div style={{background:"linear-gradient(155deg,#050f2b,#0a1f55)",padding:"28px 20px 28px"}}>
+        <div style={{fontSize:9,fontWeight:800,letterSpacing:"0.1em",textTransform:"uppercase",color:"rgba(255,255,255,0.6)",marginBottom:10,display:"flex",alignItems:"center",gap:6}}>
+          <span style={{width:6,height:6,borderRadius:"50%",background:"#10b981",display:"inline-block"}}/>
+          MIS PAQUETES
+        </div>
+        <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:32,color:"#fff",marginBottom:6}}>Mis Paquetes</div>
+        <div style={{fontSize:13,color:"rgba(255,255,255,0.5)"}}>Rastrea todas tus compras en un lugar</div>
+        {/* Stats */}
+        <div style={{display:"flex",gap:10,marginTop:18}}>
+          {[["0","Total"],["0","En camino"],["0","Entregados"]].map(([num,lbl])=>(
+            <div key={lbl} style={{flex:1,background:"rgba(255,255,255,0.07)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:14,padding:"12px 10px",textAlign:"center"}}>
+              <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:24,color:"#fff"}}>{num}</div>
+              <div style={{fontSize:10,color:"rgba(255,255,255,0.45)",textTransform:"uppercase",letterSpacing:"0.07em",marginTop:2}}>{lbl}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Empty state */}
+      {DEMO_PACKAGES.length === 0 && (
+        <div style={{padding:"48px 24px",textAlign:"center"}}>
+          <div style={{fontSize:64,marginBottom:16}}>📭</div>
+          <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:26,color:"#081B4B",marginBottom:8}}>No tienes paquetes aún</div>
+          <div style={{fontSize:14,color:"#8b96b8",lineHeight:1.6,marginBottom:28,maxWidth:280,margin:"0 auto 28px"}}>
+            Cuando hagas tu primera compra aparecerá aquí con su estado en tiempo real.
+          </div>
+          <div style={{display:"flex",flexDirection:"column",gap:10,maxWidth:280,margin:"0 auto"}}>
+            <button onClick={()=>onNavigate("stores")}
+              style={{background:"#081B4B",color:"#fff",fontSize:14,fontWeight:800,padding:"14px 20px",borderRadius:14,border:"none",cursor:"pointer"}}>
+              🛍️ Explorar tiendas
+            </button>
+            <button onClick={()=>onNavigate("link")}
+              style={{background:"#E31E24",color:"#fff",fontSize:14,fontWeight:800,padding:"14px 20px",borderRadius:14,border:"none",cursor:"pointer"}}>
+              🔗 Pegar link de producto
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Packages list - will show when there are packages */}
+      {DEMO_PACKAGES.length > 0 && (
+        <div style={{padding:"14px 16px",display:"flex",flexDirection:"column",gap:12}}>
+          {DEMO_PACKAGES.map((pkg,i)=>(
+            <div key={i} style={{background:"#fff",borderRadius:20,padding:16,border:"1.5px solid #dde2f0",boxShadow:"0 2px 8px rgba(8,27,75,0.07)"}}>
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
+                <span style={{fontFamily:"monospace",fontSize:12,color:"#8b96b8"}}>{pkg.tracking}</span>
+                <span style={{background:STATUS_COLORS[pkg.status]+"22",color:STATUS_COLORS[pkg.status],fontSize:11,fontWeight:800,padding:"4px 10px",borderRadius:999,border:`1px solid ${STATUS_COLORS[pkg.status]}44`}}>
+                  {STATUS_ICONS[pkg.status]} {pkg.status}
+                </span>
+              </div>
+              <div style={{fontSize:14,fontWeight:800,color:"#081B4B",marginBottom:4}}>{pkg.store}</div>
+              <div style={{fontSize:12,color:"#8b96b8"}}>{pkg.description}</div>
+              <div style={{display:"flex",gap:16,marginTop:10,paddingTop:10,borderTop:"1px solid #eef0f8"}}>
+                <span style={{fontSize:11,color:"#5d6a8e"}}>⚖️ {pkg.weight} lbs</span>
+                <span style={{fontSize:11,color:"#5d6a8e"}}>💰 ${pkg.cost}</span>
+                <span style={{fontSize:11,color:"#5d6a8e"}}>📅 {pkg.date}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Info banner */}
+      <div style={{margin:"14px 16px",background:"linear-gradient(135deg,#081B4B,#0a2070)",borderRadius:20,padding:18}}>
+        <div style={{fontSize:13,fontWeight:800,color:"#fff",marginBottom:6}}>📍 Tu dirección en Miami</div>
+        <div style={{fontFamily:"monospace",fontSize:12,color:"rgba(255,255,255,0.7)",lineHeight:1.8}}>
+          {profile?.full_name} — {profile?.casillero_id}<br/>
+          3250 NW 107th Ave Suite 500<br/>
+          Doral, FL 33172<br/>
+          United States
+        </div>
+      </div>
+      <div style={{height:16}}/>
+    </div>
+  );
+}
+
+
 function AccountPage({onNavigate,geo}){
   const {profile,signOut}=useAuthHook();
   const rate=geo?geo.rate:8.50;
@@ -588,7 +690,7 @@ function AccountPage({onNavigate,geo}){
         ))}
       </div>
       <div style={{padding:"16px 16px 0",display:"flex",flexDirection:"column",gap:8}}>
-        {[["📦","Mis paquetes","3 paquetes en tránsito","track"],["🔗","Pegar link","Compra asistida por IA","link"],["🛍️","Tiendas USA","41 tiendas disponibles","stores"],["🧮","Calcular envío","Cotización instantánea","calc"],["🤖","Hablar con Aphrodite","Tu asistente personal","ai"]].map(([icon,title,sub,pg])=>(
+        {[["📦","Mis paquetes","Todas tus compras en un lugar","packages"],["🔗","Pegar link","Compra asistida por IA","link"],["🛍️","Tiendas USA","41 tiendas disponibles","stores"],["🧮","Calcular envío","Cotización instantánea","calc"],["🤖","Hablar con Aphrodite","Tu asistente personal","ai"]].map(([icon,title,sub,pg])=>(
           <div key={title} onClick={()=>onNavigate(pg)} style={{background:"#fff",borderRadius:16,padding:16,display:"flex",alignItems:"center",gap:14,border:"1.5px solid #dde2f0",boxShadow:"0 2px 8px rgba(8,27,75,0.07)",cursor:"pointer"}}>
             <div style={{width:40,height:40,borderRadius:12,background:"rgba(8,27,75,0.07)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18,flexShrink:0}}>{icon}</div>
             <div style={{flex:1}}><div style={{fontSize:14,fontWeight:700,color:NAVY,marginBottom:2}}>{title}</div><div style={{fontSize:11,color:"#8b96b8"}}>{sub}</div></div>
@@ -738,6 +840,7 @@ function AppContent(){
             {id:"link",    show:!selectedStore&&page==="link",     el:<LinkPage geo={geo}/>},
             {id:"track",   show:!selectedStore&&page==="track",    el:<TrackPage/>},
             {id:"calc",    show:!selectedStore&&page==="calc",     el:<CalcPage geo={geo}/>},
+            {id:"packages",show:!selectedStore&&page==="packages", el:<PackagesPage onNavigate={navigate}/>},
             {id:"account", show:!selectedStore&&page==="account",  el:<AccountPage onNavigate={navigate} geo={geo}/>},
           ].map(({id,show,el})=>(
             <div key={id} style={{position:"absolute",inset:0,overflowY:"auto",overflowX:"hidden",WebkitOverflowScrolling:"touch",paddingBottom:80,display:show?"block":"none"}}>
