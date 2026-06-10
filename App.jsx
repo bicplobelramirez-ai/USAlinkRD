@@ -1,54 +1,54 @@
 import { useState, useEffect, useRef, createContext, useContext } from "react";
-import { createClient } from "@supabase/supabase-js";
 
-const supabase = createClient(
-  "https://kugdrwxthmcscrvlszws.supabase.co",
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
-
+/* ─── LOCAL AUTH ─── */
 const AuthCtx = createContext({});
 const useAuthHook = () => useContext(AuthCtx);
 
 function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchProfile = async (uid) => {
-    const { data } = await supabase.from("profiles").select("*").eq("id", uid).single();
-    setProfile(data);
-    setLoading(false);
-  };
-
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      if (session?.user) fetchProfile(session.user.id);
-      else setLoading(false);
-    });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) fetchProfile(session.user.id);
-      else { setProfile(null); setLoading(false); }
-    });
-    return () => subscription.unsubscribe();
+    try {
+      const saved = localStorage.getItem("usalink_user");
+      if (saved) setUser(JSON.parse(saved));
+    } catch(e) {}
+    setLoading(false);
   }, []);
 
-  const signIn = (email, password) => supabase.auth.signInWithPassword({ email, password });
-  const signOut = async () => { await supabase.auth.signOut(); setUser(null); setProfile(null); };
-  const signUp = async (email, password, fullName, country) => {
-    const { data, error } = await supabase.auth.signUp({ email, password });
-    if (!error && data.user) {
-      const cid = "USL-" + Math.floor(10000 + Math.random() * 90000);
-      await supabase.from("profiles").insert({ id: data.user.id, full_name: fullName, email, country, casillero_id: cid, membership: "free" });
-    }
-    return { data, error };
+  const signIn = async (email, password) => {
+    try {
+      const users = JSON.parse(localStorage.getItem("usalink_users") || "[]");
+      const found = users.find(u => u.email === email && u.password === password);
+      if (!found) return { error: { message: "Email o contraseña incorrectos" } };
+      const { password: _, ...safe } = found;
+      localStorage.setItem("usalink_user", JSON.stringify(safe));
+      setUser(safe);
+      return { data: safe, error: null };
+    } catch(e) { return { error: { message: "Error al iniciar sesión" } }; }
   };
+
+  const signUp = async (email, password, fullName, country) => {
+    try {
+      const users = JSON.parse(localStorage.getItem("usalink_users") || "[]");
+      if (users.find(u => u.email === email)) return { error: { message: "already" } };
+      const casillero_id = "USL-" + Math.floor(10000 + Math.random() * 90000);
+      const newUser = { id: Date.now().toString(), email, password, full_name: fullName, country, casillero_id, membership: "free" };
+      users.push(newUser);
+      localStorage.setItem("usalink_users", JSON.stringify(users));
+      return { data: newUser, error: null };
+    } catch(e) { return { error: { message: "Error al registrarse" } }; }
+  };
+
+  const signOut = () => {
+    localStorage.removeItem("usalink_user");
+    setUser(null);
+  };
+
+  const profile = user;
 
   return <AuthCtx.Provider value={{ user, profile, loading, signIn, signUp, signOut }}>{children}</AuthCtx.Provider>;
 }
-
-
 const NAVY = "#081B4B";
 const RED  = "#E31E24";
 
