@@ -132,9 +132,10 @@ const SLIDES = [
 ];
 
 const callAI = (messages, system, onReply, onError) => {
-  fetch("https://api.anthropic.com/v1/messages", {
-    method:"POST", headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({model:"claude-sonnet-4-20250514", max_tokens:600, system, messages})
+  fetch("/api/chat", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({messages, system, max_tokens:600})
   }).then(r=>r.json()).then(d=>{
     onReply(d.content&&d.content[0]?d.content[0].text:"Lo siento, intenta de nuevo.");
   }).catch(()=>onError());
