@@ -1218,6 +1218,7 @@ function RegisterScreen({ onSwitch }) {
   );
 }
 
+
 function AuthGate({ children }) {
   const { user, loading } = useAuthHook();
   const [screen, setScreen] = useState("login");
