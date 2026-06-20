@@ -15,11 +15,18 @@ export default async function handler(req, res) {
   try {
     const { messages, system, max_tokens } = req.body;
 
-    const apiKey = process.env.ANTHROPIC_API_KEY || process.env.CLAVE_API_ANTRÓPICA || "";
+    // Probamos varias variantes del nombre de la variable,
+    // porque el navegador del tablet a veces traduce el nombre al guardarlo en Vercel.
+    const apiKey =
+      process.env.ANTHROPIC_API_KEY ||
+      process.env.CLAVE_API_ANTRÓPICA ||
+      process.env["CLAVE_API_ANTRÓPICA"] ||
+      process.env.CLAVE_API_ANTROPICA ||
+      "";
 
     if (!apiKey) {
       return res.status(200).json({
-        content: [{ type: "text", text: "⚠️ DEBUG: No se encontró ANTHROPIC_API_KEY en las variables de entorno." }]
+        content: [{ type: "text", text: "⚠️ DEBUG: No se encontró ninguna variable de API key (probé ANTHROPIC_API_KEY y CLAVE_API_ANTRÓPICA)." }]
       });
     }
 
@@ -40,7 +47,6 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    // Si Anthropic devolvió un error, lo mostramos claramente en el chat para debug
     if (!response.ok || data.error) {
       return res.status(200).json({
         content: [{
