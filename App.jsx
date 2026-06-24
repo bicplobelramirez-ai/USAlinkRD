@@ -1247,3 +1247,40 @@ function RegisterScreen({ onSwitch }) {
       <div style={{marginTop:20,display:"flex",alignItems:"center",gap:8}}>
         <span style={{fontSize:13,color:"rgba(255,255,255,0.35)"}}>¿Ya tienes cuenta?</span>
         <button onClick={onSwitch} style={{background:"none",border:"none",color:"rgba(255,255,255,0.7)",fontSize:13,fontWeight:700,cursor:"pointer",textDecoration:"underl
+,color:"rgba(255,255,255,0.7)",border:"none",cursor:"pointer",fontSize:14,fontWeight:700}}>{mode==="login"?"Crear cuenta gratis":"Ya tengo cuenta"}</button>
+      </div>
+    </div>
+  );
+}
+
+function AuthGate({ children }) {
+  const { user, loading } = useAuthHook();
+  const [screen, setScreen] = useState("login");
+  if (loading) return (
+    <div style={{minHeight:"100vh",background:"#050f2b",display:"flex",alignItems:"center",justifyContent:"center"}}>
+      <div style={{width:56,height:56,background:"#E31E24",borderRadius:14,display:"flex",alignItems:"center",justifyContent:"center"}}>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      </div>
+      <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:28,color:"#fff",letterSpacing:"0.05em",marginLeft:12}}>USALINK</div>
+      <style>{"@keyframes spin{to{transform:rotate(360deg)}}"}</style>
+      <div style={{width:36,height:36,border:"3px solid rgba(227,30,36,0.3)",borderTop:"3px solid #E31E24",borderRadius:"50%",marginLeft:16}}/>
+    </div>
+  );
+  if (!user) {
+    if (screen==="login") return <LoginScreen onSwitch={()=>setScreen("register")}/>;
+    return <RegisterScreen onSwitch={()=>setScreen("login")}/>;
+  }
+  return children;
+}
+
+export default function App(){
+  return (
+    <AuthProvider>
+      <CartProvider>
+        <AuthGate>
+          <AppContent/>
+        </AuthGate>
+      </CartProvider>
+    </AuthProvider>
+  );
+}
