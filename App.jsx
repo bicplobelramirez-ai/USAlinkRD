@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, createContext, useContext } from "react";
 
-const APHRODITE_IMG = "/aphrodite.png";
+const APHRODITE_IMG = "__APHRODITE_IMG__";
 
 /* ─── LOCAL AUTH ─── */
 const AuthCtx = createContext({});
@@ -940,8 +940,34 @@ function MembershipPage({onNavigate}) {
 
 function PaymentPage({plan, onNavigate}) {
   const { profile } = useAuthHook();
-  const [method, setMethod] = useState("whatsapp");
-  const [done, setDone] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleStripeCheckout = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/create-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "membership",
+          membershipTier: plan.key,
+          customerEmail: profile?.email,
+        }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setError("No se pudo iniciar el pago. Intenta de nuevo.");
+      }
+    } catch(e) {
+      setError("Error de conexión. Intenta de nuevo.");
+    }
+    setLoading(false);
+  };
+
   if (!plan) return (
     <div style={{padding:32,textAlign:"center"}}>
       <div style={{fontSize:48,marginBottom:16}}>💳</div>
@@ -950,15 +976,6 @@ function PaymentPage({plan, onNavigate}) {
       <button onClick={()=>onNavigate("membership")} style={{background:"#081B4B",color:"#fff",fontSize:14,fontWeight:800,padding:"14px 24px",borderRadius:14,border:"none",cursor:"pointer"}}>Ver membresías</button>
     </div>
   );
-  if (done) return (
-    <div style={{padding:"48px 24px",textAlign:"center"}}>
-      <div style={{fontSize:64,marginBottom:16}}>✅</div>
-      <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:28,color:"#081B4B",marginBottom:10}}>Solicitud enviada!</div>
-      <div style={{fontSize:14,color:"#5d6a8e",lineHeight:1.7,marginBottom:28,maxWidth:300,margin:"0 auto 28px"}}>Nos contactaremos contigo en menos de 24 horas para confirmar tu pago y activar tu membresía.</div>
-      <button onClick={()=>onNavigate("home")} style={{background:"#E31E24",color:"#fff",fontSize:14,fontWeight:800,padding:"14px 32px",borderRadius:14,border:"none",cursor:"pointer"}}>Volver al inicio</button>
-    </div>
-  );
-  const METHODS = [{key:"whatsapp",icon:"📱",label:"WhatsApp",desc:"Te enviamos instrucciones por WhatsApp"},{key:"transfer",icon:"🏦",label:"Transferencia",desc:"Transferencia bancaria o Zelle"},{key:"paypal",icon:"💙",label:"PayPal",desc:"Pago seguro con PayPal"}];
   return (
     <div>
       <div style={{background:"linear-gradient(155deg,#050f2b,#0a1f55)",padding:"28px 20px"}}>
@@ -969,27 +986,20 @@ function PaymentPage({plan, onNavigate}) {
           <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:24,color:"#34d399"}}>${plan.price}/mo</div>
         </div>
       </div>
-      <div style={{padding:"16px 16px 0"}}>
-        <div style={{fontSize:14,fontWeight:800,color:"#081B4B",marginBottom:12}}>Método de pago</div>
-        <div style={{display:"flex",flexDirection:"column",gap:10,marginBottom:20}}>
-          {METHODS.map(m=>(
-            <div key={m.key} onClick={()=>setMethod(m.key)} style={{background:"#fff",borderRadius:16,padding:16,display:"flex",alignItems:"center",gap:14,border:`2px solid ${method===m.key?"#E31E24":"#dde2f0"}`,cursor:"pointer"}}>
-              <span style={{fontSize:24}}>{m.icon}</span>
-              <div style={{flex:1}}><div style={{fontSize:14,fontWeight:700,color:"#081B4B"}}>{m.label}</div><div style={{fontSize:12,color:"#8b96b8"}}>{m.desc}</div></div>
-              <div style={{width:20,height:20,borderRadius:"50%",border:`2px solid ${method===m.key?"#E31E24":"#dde2f0"}`,background:method===m.key?"#E31E24":"transparent",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                {method===m.key&&<div style={{width:8,height:8,borderRadius:"50%",background:"#fff"}}/>}
-              </div>
-            </div>
-          ))}
-        </div>
-        <div style={{background:"linear-gradient(135deg,#081B4B,#0a2070)",borderRadius:20,padding:18,marginBottom:16}}>
+      <div style={{padding:"20px 16px"}}>
+        <div style={{background:"linear-gradient(135deg,#081B4B,#0a2070)",borderRadius:20,padding:18,marginBottom:20}}>
           <div style={{fontSize:13,fontWeight:800,color:"#fff",marginBottom:10}}>📋 Datos de contacto</div>
           <div style={{fontSize:12,color:"rgba(255,255,255,0.7)",lineHeight:1.8}}><div>👤 {profile?.full_name}</div><div>📧 {profile?.email}</div><div>🆔 {profile?.casillero_id}</div></div>
         </div>
-        <button onClick={()=>setDone(true)} style={{width:"100%",padding:16,borderRadius:14,background:"#E31E24",color:"#fff",fontSize:15,fontWeight:800,border:"none",cursor:"pointer",boxShadow:"0 6px 20px rgba(227,30,36,0.4)",marginBottom:10}}>✅ Confirmar solicitud de pago</button>
-        <div style={{fontSize:11,color:"#8b96b8",textAlign:"center",lineHeight:1.6}}>Al confirmar, un agente USALINK te contactará para completar el pago.</div>
+        {error&&<div style={{background:"#fff0f0",border:"1px solid #E31E24",borderRadius:12,padding:"12px 16px",marginBottom:16,fontSize:13,color:"#E31E24"}}>{error}</div>}
+        <button onClick={handleStripeCheckout} disabled={loading} style={{width:"100%",padding:18,borderRadius:14,background:loading?"#ccc":"#E31E24",color:"#fff",fontSize:16,fontWeight:800,border:"none",cursor:loading?"not-allowed":"pointer",boxShadow:"0 6px 20px rgba(227,30,36,0.4)",marginBottom:12}}>
+          {loading?"⏳ Procesando...":"💳 Pagar con Tarjeta"}
+        </button>
+        <button disabled style={{width:"100%",padding:16,borderRadius:14,background:"#f5f7ff",color:"#aaa",fontSize:14,fontWeight:700,border:"2px dashed #dde2f0",cursor:"not-allowed",marginBottom:12}}>
+          💙 PayPal — Próximamente
+        </button>
+        <div style={{fontSize:11,color:"#8b96b8",textAlign:"center",lineHeight:1.6}}>🔒 Pago procesado de forma segura por Stripe</div>
       </div>
-      <div style={{height:16}}/>
     </div>
   );
 }
@@ -1236,40 +1246,4 @@ function RegisterScreen({ onSwitch }) {
       </div>
       <div style={{marginTop:20,display:"flex",alignItems:"center",gap:8}}>
         <span style={{fontSize:13,color:"rgba(255,255,255,0.35)"}}>¿Ya tienes cuenta?</span>
-        <button onClick={onSwitch} style={{background:"none",border:"none",color:"rgba(255,255,255,0.7)",fontSize:13,fontWeight:700,cursor:"pointer",textDecoration:"underline"}}>Iniciar sesión</button>
-      </div>
-    </div>
-  );
-}
-
-function AuthGate({ children }) {
-  const { user, loading } = useAuthHook();
-  const [screen, setScreen] = useState("login");
-  if (loading) return (
-    <div style={{minHeight:"100vh",background:"#050f2b",display:"flex",alignItems:"center",justifyContent:"center",flexDirection:"column",gap:16}}>
-      <div style={{width:56,height:56,background:"#E31E24",borderRadius:14,display:"flex",alignItems:"center",justifyContent:"center"}}>
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-      </div>
-      <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:28,color:"#fff",letterSpacing:"0.08em"}}>USALINK</div>
-      <style>{"@keyframes spin{to{transform:rotate(360deg)}}"}</style>
-      <div style={{width:36,height:36,border:"3px solid rgba(227,30,36,0.3)",borderTop:"3px solid #E31E24",borderRadius:"50%",animation:"spin 0.8s linear infinite"}}/>
-    </div>
-  );
-  if (!user) {
-    if (screen==="login") return <LoginScreen onSwitch={()=>setScreen("register")}/>;
-    return <RegisterScreen onSwitch={()=>setScreen("login")}/>;
-  }
-  return children;
-}
-
-export default function App(){
-  return (
-    <AuthProvider>
-      <CartProvider>
-        <AuthGate>
-          <AppContent/>
-        </AuthGate>
-      </CartProvider>
-    </AuthProvider>
-  );
-}
+        <button onClick={onSwitch} style={{background:"none",border:"none",color:"rgba(255,255,255,0.7)",fontSize:13,fontWeight:700,cursor:"pointer",textDecoration:"underl
