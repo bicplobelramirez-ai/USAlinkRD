@@ -995,9 +995,34 @@ function PaymentPage({plan, onNavigate}) {
         <button onClick={handleStripeCheckout} disabled={loading} style={{width:"100%",padding:18,borderRadius:14,background:loading?"#ccc":"#E31E24",color:"#fff",fontSize:16,fontWeight:800,border:"none",cursor:loading?"not-allowed":"pointer",boxShadow:"0 6px 20px rgba(227,30,36,0.4)",marginBottom:12}}>
           {loading?"⏳ Procesando...":"💳 Pagar con Tarjeta"}
         </button>
-        <button disabled style={{width:"100%",padding:16,borderRadius:14,background:"#f5f7ff",color:"#aaa",fontSize:14,fontWeight:700,border:"2px dashed #dde2f0",cursor:"not-allowed",marginBottom:12}}>
-          💙 PayPal — Próximamente
-        </button>
+        {/* ===== Métodos alternativos ===== */}
+<p style={{ textAlign:'center', color:'#888', fontSize:13, margin:'14px 0 8px' }}>
+  También aceptamos
+</p>
+
+{/* Cash App */}
+<details style={{ marginBottom:8, border:'1px solid #e0e0e0', borderRadius:10, padding:'12px 14px' }}>
+  <summary style={{ cursor:'pointer', fontWeight:600, color:'#00D632' }}>💵 Cash App</summary>
+  <div style={{ marginTop:10, fontSize:14, color:'#444' }}>
+    Envía <b>$9.99</b> a <b>$BicplobelRamirez</b> y confírmanos por WhatsApp para activar tu plan.
+  </div>
+</details>
+
+{/* Zelle */}
+<details style={{ marginBottom:8, border:'1px solid #e0e0e0', borderRadius:10, padding:'12px 14px' }}>
+  <summary style={{ cursor:'pointer', fontWeight:600, color:'#6D1ED4' }}>🏦 Zelle</summary>
+  <div style={{ marginTop:10, fontSize:14, color:'#444' }}>
+    Envía <b>$9.99</b> a <b>Bicplobelramirez@gmail.com</b> y confírmanos por WhatsApp para activar tu plan.
+  </div>
+</details>
+
+{/* WhatsApp */}
+<a href="https://wa.me/18565622190?text=Hola%2C%20quiero%20activar%20mi%20Membres%C3%ADa%20Silver"
+  target="_blank" rel="noopener noreferrer"
+  style={{ display:'block', textAlign:'center', textDecoration:'none', padding:'14px',
+    borderRadius:10, background:'#25D366', color:'#fff', fontWeight:700, fontSize:15 }}>
+  🟢 Coordinar pago por WhatsApp
+</a>
         <div style={{fontSize:11,color:"#8b96b8",textAlign:"center",lineHeight:1.6}}>🔒 Pago procesado de forma segura por Stripe</div>
       </div>
     </div>
