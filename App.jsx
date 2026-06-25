@@ -1246,8 +1246,7 @@ function RegisterScreen({ onSwitch }) {
       </div>
       <div style={{marginTop:20,display:"flex",alignItems:"center",gap:8}}>
         <span style={{fontSize:13,color:"rgba(255,255,255,0.35)"}}>¿Ya tienes cuenta?</span>
-        <button onClick={onSwitch} style={{background:"none",border:"none",color:"rgba(255,255,255,0.7)",fontSize:13,fontWeight:700,cursor:"pointer",textDecoration:"underl
-,color:"rgba(255,255,255,0.7)",border:"none",cursor:"pointer",fontSize:14,fontWeight:700}}>{mode==="login"?"Crear cuenta gratis":"Ya tengo cuenta"}</button>
+ <button onClick={onSwitch} style={{background:"none",border:"none",color:"rgba(255,255,255,0.7)",fontSize:13,cursor:"pointer",marginBottom:16,padding:0}}>{mode==="login"?"Crear cuenta gratis":"Ya tengo cuenta"}</button>
       </div>
     </div>
   );
