@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>USALINK — Mi Tienda Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#081B4B;--deep:#050f2e;--red:#E31E24;--sky:#3B9EFF;
+  --white:#fff;--muted:#8ba0c8;--line:rgba(255,255,255,.10);
+  --green:#27e36a;--gold:#FFD166;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--deep);color:var(--white);
+  -webkit-font-smoothing:antialiased;max-width:460px;margin:0 auto;padding-bottom:30px}
+
+/* Header */
+header{background:var(--navy);border-bottom:1px solid var(--line);
+  padding:14px 16px;display:flex;align-items:center;gap:10px;
+  position:sticky;top:0;z-index:30}
+.mark{width:36px;height:36px;border-radius:10px;background:var(--red);
+  display:grid;place-items:center;font-size:17px;flex-shrink:0}
+.htxt b{font-family:'Bebas Neue';font-size:20px;display:block;line-height:1}
+.htxt small{font-size:8px;color:var(--muted);letter-spacing:2px;font-weight:600}
+
+/* Mode tabs */
+.tabs{display:flex;background:#0a1f52;border-bottom:1px solid var(--line)}
+.tab{flex:1;text-align:center;padding:13px 8px;font-size:13px;font-weight:700;
+  cursor:pointer;color:var(--muted);border-bottom:3px solid transparent;transition:.2s}
+.tab.active{color:var(--white);border-bottom-color:var(--red);background:rgba(227,30,36,.08)}
+
+/* ── ADMIN PANEL ── */
+#adminView{padding:16px}
+
+.photo-upload{
+  width:100%;height:200px;border:2px dashed rgba(59,158,255,.4);
+  border-radius:16px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:10px;cursor:pointer;position:relative;
+  overflow:hidden;background:rgba(59,158,255,.05);transition:.2s}
+.photo-upload:active{border-color:var(--sky);background:rgba(59,158,255,.1)}
+.photo-upload img{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;border-radius:14px}
+.photo-upload .overlay{position:absolute;inset:0;background:rgba(0,0,0,.5);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;border-radius:14px;opacity:0;transition:.2s}
+.photo-upload:hover .overlay,.photo-upload.has-img .overlay{opacity:1}
+.photo-upload .ic{font-size:36px}
+.photo-upload .txt{font-size:13px;color:var(--muted);font-weight:600;text-align:center}
+.photo-upload .change{font-size:12px;color:var(--sky);font-weight:700}
+#fileInput{display:none}
+
+.field{margin-bottom:14px}
+label{display:block;font-size:11px;font-weight:700;color:#cfe0ff;
+  margin-bottom:6px;letter-spacing:.3px}
+input,select,textarea{width:100%;background:#0a1f52;border:1px solid var(--line);
+  border-radius:12px;padding:13px 14px;color:#fff;font-size:14px;
+  font-family:'DM Sans';outline:none;-webkit-appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--sky);
+  box-shadow:0 0 0 3px rgba(59,158,255,.15)}
+input::placeholder,textarea::placeholder{color:#6f84ad}
+textarea{height:70px;resize:none}
+.row2{display:flex;gap:10px}.row2 .field{flex:1}
+
+/* Estado nuevo/usado */
+.estado-row{display:flex;gap:10px}
+.estado-btn{flex:1;text-align:center;padding:12px;border-radius:10px;
+  border:1.5px solid var(--line);font-size:13px;font-weight:700;
+  cursor:pointer;background:#0a1f52;color:var(--muted);transition:.2s}
+.estado-btn.active-nuevo{border-color:var(--green);background:rgba(39,227,106,.1);color:var(--green)}
+.estado-btn.active-usado{border-color:var(--gold);background:rgba(255,209,102,.1);color:var(--gold)}
+
+/* Atributos */
+.attrs-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.attrs-hd label{margin:0}
+.btn-add-attr{background:rgba(59,158,255,.12);border:1px solid rgba(59,158,255,.3);
+  color:var(--sky);font-size:11px;font-weight:700;padding:6px 12px;
+  border-radius:20px;cursor:pointer}
+.attr-row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
+.attr-row input{flex:1;padding:10px 12px;font-size:13px}
+.attr-del{width:36px;height:36px;flex-shrink:0;border-radius:10px;
+  background:rgba(227,30,36,.1);border:1px solid rgba(227,30,36,.25);
+  color:var(--red);font-size:16px;cursor:pointer;display:grid;place-items:center}
+.hint{font-size:10px;color:var(--muted);margin-bottom:10px;line-height:1.5}
+
+/* Botón publicar */
+.btn-publish{width:100%;border:none;cursor:pointer;font-family:'DM Sans';
+  font-weight:700;border-radius:12px;font-size:16px;padding:16px;
+  background:var(--red);color:#fff;box-shadow:0 8px 20px rgba(227,30,36,.3);
+  margin-top:8px;margin-bottom:28px}
+.btn-publish:active{transform:scale(.99)}
+
+/* Lista publicados */
+.pub-title{font-family:'Bebas Neue';font-size:20px;padding-top:20px;
+  border-top:1px solid var(--line);margin-bottom:12px}
+.prod-item{display:flex;gap:12px;background:#0a1f52;border:1px solid var(--line);
+  border-radius:14px;padding:10px;margin-bottom:10px;align-items:center}
+.prod-item .thumb{width:56px;height:56px;border-radius:10px;flex-shrink:0;
+  overflow:hidden;background:rgba(255,255,255,.06);
+  display:flex;align-items:center;justify-content:center;font-size:26px}
+.prod-item .thumb img{width:100%;height:100%;object-fit:cover}
+.prod-item .info{flex:1;min-width:0}
+.prod-item .nm{font-size:13px;font-weight:700;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prod-item .pr{font-size:12px;color:var(--sky);font-weight:700;margin-top:2px}
+.prod-item .st{font-size:9px;font-weight:800;padding:3px 8px;border-radius:6px;margin-top:3px;display:inline-block}
+.st-nuevo{background:rgba(39,227,106,.15);color:var(--green)}
+.st-usado{background:rgba(255,209,102,.15);color:var(--gold)}
+.btn-del{width:34px;height:34px;border-radius:9px;background:rgba(227,30,36,.1);
+  border:1px solid rgba(227,30,36,.25);color:var(--red);font-size:16px;
+  cursor:pointer;display:grid;place-items:center;flex-shrink:0}
+
+/* ── STORE VIEW ── */
+#storeView{display:none}
+.store-hero{padding:16px;background:linear-gradient(135deg,#0d0820,#1a0c35);
+  border-bottom:1px solid var(--line)}
+.store-hero h2{font-family:'Bebas Neue';font-size:28px;line-height:.95}
+.store-hero h2 em{color:var(--red);font-style:normal;display:block}
+.store-hero p{font-size:12px;color:#d4b8c8;margin-top:4px}
+
+.filters{display:flex;gap:8px;overflow-x:auto;padding:14px 16px;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.f-chip{display:inline-flex;align-items:center;gap:5px;background:#0a1f52;
+  border:1.5px solid var(--line);border-radius:20px;padding:8px 14px;
+  font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;white-space:nowrap}
+.f-chip.on{background:var(--red);border-color:var(--red);color:#fff}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 16px}
+.card{background:linear-gradient(160deg,#0c2257,#081B4B);border:1px solid var(--line);
+  border-radius:16px;overflow:hidden;cursor:pointer;position:relative;transition:.15s}
+.card:active{transform:scale(.97)}
+.card-img{width:100%;height:130px;display:flex;align-items:center;
+  justify-content:center;background:rgba(255,255,255,.05);
+  border-bottom:1px solid var(--line);overflow:hidden;font-size:44px}
+.card-img img{width:100%;height:100%;object-fit:cover}
+.cbadge{position:absolute;top:8px;left:8px;font-size:9px;font-weight:800;
+  padding:3px 8px;border-radius:6px}
+.cdisc{position:absolute;top:8px;right:8px;background:var(--red);color:#fff;
+  font-size:9px;font-weight:800;padding:3px 7px;border-radius:6px}
+.card-body{padding:10px}
+.card-brand{font-size:9px;font-weight:800;letter-spacing:1px;color:var(--sky);margin-bottom:3px}
+.card-name{font-size:12px;font-weight:700;line-height:1.3;margin-bottom:5px;min-height:30px}
+.card-price{font-family:'Bebas Neue';font-size:18px}
+.card-orig{font-size:10px;color:var(--muted);text-decoration:line-through;margin-left:4px}
+.card-stock{font-size:10px;color:var(--muted);margin-top:3px}
+.btn-add{width:100%;border:none;cursor:pointer;font-family:'DM Sans';font-weight:700;
+  border-radius:8px;font-size:11px;padding:9px;margin-top:6px;
+  background:var(--red);color:#fff}
+.empty{text-align:center;padding:60px 20px;color:var(--muted);
+  grid-column:1/-1;font-size:13px;line-height:1.6}
+.empty .big{font-size:36px;display:block;margin-bottom:8px}
+
+/* Modal detalle */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);
+  z-index:100;align-items:flex-end;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:linear-gradient(165deg,#0c2257,#081B4B);border-radius:22px 22px 0 0;
+  padding:20px 18px 32px;width:100%;max-width:460px;
+  border-top:1px solid var(--line);max-height:88vh;overflow-y:auto}
+.modal-img{width:100%;height:160px;border-radius:14px;overflow:hidden;
+  background:rgba(255,255,255,.05);display:flex;align-items:center;
+  justify-content:center;font-size:64px;margin-bottom:14px}
+.modal-img img{width:100%;height:100%;object-fit:cover}
+.modal-brand{font-size:10px;font-weight:800;letter-spacing:1.5px;color:var(--sky);margin-bottom:3px}
+.modal-name{font-family:'Bebas Neue';font-size:26px;line-height:.95;margin-bottom:10px}
+.modal-price{font-family:'Bebas Neue';font-size:34px}
+.modal-orig{font-size:13px;color:var(--muted);text-decoration:line-through;margin-left:8px}
+.modal-save{display:inline-block;background:rgba(39,227,106,.1);
+  border:1px solid rgba(39,227,106,.25);color:var(--green);
+  font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;margin:8px 0 14px}
+.attrs-box{background:rgba(255,255,255,.04);border-radius:12px;
+  padding:4px 14px;margin-bottom:14px}
+.attr-line{display:flex;justify-content:space-between;padding:10px 0;
+  border-bottom:1px solid var(--line);font-size:13px}
+.attr-line:last-child{border:none}
+.attr-line .k{color:var(--muted)}.attr-line .v{font-weight:700}
+.modal-desc{font-size:13px;color:#cfe0ff;line-height:1.6;margin-bottom:14px}
+.qty-row{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.qbtn{width:36px;height:36px;border-radius:50%;background:#0a1f52;
+  border:1px solid var(--line);color:#fff;font-size:18px;
+  cursor:pointer;display:grid;place-items:center}
+.qnum{font-family:'Bebas Neue';font-size:22px}
+.btn-buy{width:100%;border:none;cursor:pointer;font-family:'DM Sans';font-weight:700;
+  border-radius:12px;font-size:15px;padding:15px;background:var(--red);
+  color:#fff;box-shadow:0 8px 20px rgba(227,30,36,.3);margin-bottom:10px}
+.btn-cls{width:100%;border:1.5px solid var(--line);background:transparent;
+  color:var(--muted);font-family:'DM Sans';font-weight:600;
+  border-radius:12px;font-size:13px;padding:12px;cursor:pointer}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:var(--green);color:#000;font-weight:700;font-size:13px;
+  padding:10px 20px;border-radius:30px;z-index:200;
+  opacity:0;transition:.3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="mark">🔗</div>
+  <div class="htxt"><b>MI TIENDA</b><small>USALINK · BRUCE'S PICKS</small></div>
+</header>
+
+<div class="tabs">
+  <div class="tab active" id="tabAdmin" onclick="setTab('admin')">🛠️ Publicar producto</div>
+  <div class="tab" id="tabStore" onclick="setTab('store')">🛍️ Ver tienda (<span id="storeCount">0</span>)</div>
+</div>
+
+<!-- ═══ ADMIN ═══ -->
+<div id="adminView">
+
+  <!-- Foto del producto -->
+  <div style="padding:16px 16px 0">
+    <div class="field">
+      <label>FOTO DEL PRODUCTO</label>
+      <div class="photo-upload" id="photoArea" onclick="document.getElementById('fileInput').click()">
+        <div class="ic">📷</div>
+        <div class="txt">Toca para elegir foto<br><span style="font-size:11px">desde tu galería o cámara</span></div>
+        <div class="overlay">
+          <span class="change">✏️ Cambiar foto</span>
+        </div>
+      </div>
+      <input type="file" id="fileInput" accept="image/*" onchange="loadPhoto(event)">
+    </div>
+
+    <div class="field">
+      <label>NOMBRE DEL PRODUCTO</label>
+      <input id="pName" placeholder="Ej. Adidas Samba OG">
+    </div>
+
+    <div class="row2">
+      <div class="field">
+        <label>MARCA</label>
+        <input id="pBrand" placeholder="Ej. Adidas">
+      </div>
+      <div class="field">
+        <label>CATEGORÍA</label>
+        <select id="pCat">
+          <option value="Calzado">👟 Calzado</option>
+          <option value="Ropa">👗 Ropa</option>
+          <option value="Tech">💻 Tech</option>
+          <option value="Belleza">💄 Belleza</option>
+          <option value="Hogar">🏠 Hogar</option>
+          <option value="Otro">📦 Otro</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>ESTADO</label>
+      <div class="estado-row">
+        <div class="estado-btn active-nuevo" id="btnNuevo" onclick="setEstado('nuevo')">✨ Nuevo</div>
+        <div class="estado-btn" id="btnUsado" onclick="setEstado('usado')">🔄 Usado</div>
+      </div>
+    </div>
+
+    <div class="row2">
+      <div class="field">
+        <label>PRECIO (US$)</label>
+        <input id="pPrice" type="number" placeholder="69.99" inputmode="decimal">
+      </div>
+      <div class="field">
+        <label>PRECIO ORIGINAL (opcional)</label>
+        <input id="pOrig" type="number" placeholder="95.00" inputmode="decimal">
+      </div>
+    </div>
+
+    <div class="field">
+      <label>STOCK</label>
+      <input id="pStock" type="number" placeholder="3" inputmode="numeric">
+    </div>
+
+    <!-- Atributos dinámicos -->
+    <div class="field">
+      <div class="attrs-hd">
+        <label>ATRIBUTOS DEL PRODUCTO</label>
+        <div class="btn-add-attr" onclick="addAttr()">+ Agregar</div>
+      </div>
+      <div class="hint">Ej: Talla → 9.5 US · Color → Negro · Material → Cuero. Agrega los que apliquen.</div>
+      <div id="attrList"></div>
+    </div>
+
+    <div class="field">
+      <label>DESCRIPCIÓN</label>
+      <textarea id="pDesc" placeholder="Detalles del producto, condición, accesorios incluidos..."></textarea>
+    </div>
+
+    <button class="btn-publish" onclick="publish()">📦 Publicar en mi tienda</button>
+  </div>
+
+  <!-- Lista de publicados -->
+  <div style="padding:0 16px">
+    <div class="pub-title">PUBLICADOS (<span id="pubCount">0</span>)</div>
+    <div id="pubList"><div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">Aún no has publicado productos.</div></div>
+  </div>
+</div>
+
+<!-- ═══ TIENDA (vista cliente) ═══ -->
+<div id="storeView">
+  <div class="store-hero">
+    <h2>MI TIENDA,<br><em>MIS MEJORES OFERTAS.</em></h2>
+    <p>Productos seleccionados por Bruce, directo desde EE.UU.</p>
+  </div>
+  <div class="filters">
+    <div class="f-chip on" onclick="filter(this,'todo')">🏪 Todo</div>
+    <div class="f-chip" onclick="filter(this,'Calzado')">👟 Calzado</div>
+    <div class="f-chip" onclick="filter(this,'Ropa')">👗 Ropa</div>
+    <div class="f-chip" onclick="filter(this,'Tech')">💻 Tech</div>
+    <div class="f-chip" onclick="filter(this,'nuevo')">✨ Nuevo</div>
+    <div class="f-chip" onclick="filter(this,'usado')">🔄 Usado</div>
+  </div>
+  <div class="grid" id="storeGrid"></div>
+</div>
+
+<!-- Modal -->
+<div class="overlay" id="overlay" onclick="bgClose(event)">
+  <div class="modal">
+    <div class="modal-img" id="mImg"></div>
+    <div class="modal-brand" id="mBrand"></div>
+    <div class="modal-name" id="mName"></div>
+    <div><span class="modal-price" id="mPrice"></span><span class="modal-orig" id="mOrig"></span></div>
+    <span class="modal-save" id="mSave"></span>
+    <div class="attrs-box" id="mAttrs"></div>
+    <div class="modal-desc" id="mDesc"></div>
+    <div class="qty-row">
+      <button class="qbtn" onclick="qty(-1)">−</button>
+      <span class="qnum" id="qNum">1</span>
+      <button class="qbtn" onclick="qty(1)">+</button>
+      <span style="font-size:12px;color:var(--muted)">unidad(es)</span>
+    </div>
+    <button class="btn-buy" onclick="buy()">🛒 Agregar al carrito</button>
+    <button class="btn-cls" onclick="closeModal()">← Volver</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STORE_KEY = 'usalink_mtienda_v1';
+let products = JSON.parse(localStorage.getItem(STORE_KEY) || '[]');
+let currentPhoto = null;
+let currentEstado = 'nuevo';
+let attrCount = 0;
+let activeFilter = 'todo';
+let currentProd = null;
+let currentQty = 1;
+
+// ── Photo upload ──
+function loadPhoto(e){
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = r => {
+    currentPhoto = r.result;
+    const area = document.getElementById('photoArea');
+    area.innerHTML = `<img src="${currentPhoto}"><div class="overlay"><span class="change">✏️ Cambiar foto</span></div>`;
+    area.classList.add('has-img');
+    area.onclick = () => document.getElementById('fileInput').click();
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── Estado ──
+function setEstado(e){
+  currentEstado = e;
+  document.getElementById('btnNuevo').className = 'estado-btn' + (e==='nuevo' ? ' active-nuevo' : '');
+  document.getElementById('btnUsado').className = 'estado-btn' + (e==='usado' ? ' active-usado' : '');
+}
+
+// ── Atributos ──
+function addAttr(){
+  attrCount++;
+  const d = document.createElement('div');
+  d.className = 'attr-row';
+  d.id = 'attr-'+attrCount;
+  d.innerHTML = `
+    <input placeholder="Ej. Talla" class="ak">
+    <input placeholder="Ej. 9.5 US" class="av">
+    <div class="attr-del" onclick="this.parentElement.remove()">✕</div>`;
+  document.getElementById('attrList').appendChild(d);
+}
+addAttr(); // una fila por defecto
+
+// ── Publicar ──
+function publish(){
+  const name = document.getElementById('pName').value.trim();
+  const brand = document.getElementById('pBrand').value.trim();
+  const price = parseFloat(document.getElementById('pPrice').value);
+  const orig = parseFloat(document.getElementById('pOrig').value) || null;
+  const stock = parseInt(document.getElementById('pStock').value) || 1;
+  const cat = document.getElementById('pCat').value;
+  const desc = document.getElementById('pDesc').value.trim();
+
+  if(!name || !brand || !price){
+    toast('⚠️ Completa nombre, marca y precio');
+    return;
+  }
+
+  const attrs = [];
+  document.querySelectorAll('.attr-row').forEach(r=>{
+    const k = r.querySelector('.ak').value.trim();
+    const v = r.querySelector('.av').value.trim();
+    if(k && v) attrs.push({k,v});
+  });
+
+  const prod = {
+    id: Date.now(), name, brand, price, orig, stock,
+    cat, estado: currentEstado, desc, attrs,
+    img: currentPhoto
+  };
+
+  products.unshift(prod);
+  localStorage.setItem(STORE_KEY, JSON.stringify(products));
+  renderAdmin();
+  renderStore();
+
+  // Reset form
+  document.getElementById('pName').value='';
+  document.getElementById('pBrand').value='';
+  document.getElementById('pPrice').value='';
+  document.getElementById('pOrig').value='';
+  document.getElementById('pStock').value='';
+  document.getElementById('pDesc').value='';
+  document.getElementById('attrList').innerHTML='';
+  document.getElementById('fileInput').value='';
+  document.getElementById('photoArea').innerHTML=`<div class="ic">📷</div><div class="txt">Toca para elegir foto<br><span style="font-size:11px">desde tu galería o cámara</span></div><div class="overlay"><span class="change">✏️ Cambiar foto</span></div>`;
+  document.getElementById('photoArea').classList.remove('has-img');
+  currentPhoto = null;
+  attrCount = 0;
+  addAttr();
+  setEstado('nuevo');
+
+  toast('✅ ¡Producto publicado en tu tienda!');
+}
+
+// ── Render admin list ──
+function renderAdmin(){
+  const n = products.length;
+  document.getElementById('pubCount').textContent = n;
+  document.getElementById('storeCount').textContent = n;
+  const list = document.getElementById('pubList');
+  if(!n){ list.innerHTML='<div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">Aún no has publicado productos.</div>'; return; }
+  list.innerHTML = products.map(p=>`
+    <div class="prod-item">
+      <div class="thumb">${p.img ? `<img src="${p.img}">` : '📦'}</div>
+      <div class="info">
+        <div class="nm">${p.name}</div>
+        <div class="pr">$${p.price.toFixed(2)} ${p.orig?`<span style="color:var(--muted);text-decoration:line-through;font-size:10px">$${p.orig.toFixed(2)}</span>`:''}
+        </div>
+        <span class="st ${p.estado==='nuevo'?'st-nuevo':'st-usado'}">${p.estado.toUpperCase()}</span>
+      </div>
+      <button class="btn-del" onclick="del(${p.id})">🗑</button>
+    </div>`).join('');
+}
+
+function del(id){
+  if(!confirm('¿Eliminar este producto?')) return;
+  products = products.filter(p=>p.id!==id);
+  localStorage.setItem(STORE_KEY, JSON.stringify(products));
+  renderAdmin(); renderStore();
+  toast('🗑 Producto eliminado');
+}
+
+// ── Render store ──
+function renderStore(){
+  const grid = document.getElementById('storeGrid');
+  let list = products;
+  if(activeFilter==='nuevo') list = products.filter(p=>p.estado==='nuevo');
+  else if(activeFilter==='usado') list = products.filter(p=>p.estado==='usado');
+  else if(activeFilter!=='todo') list = products.filter(p=>p.cat===activeFilter);
+
+  if(!list.length){
+    grid.innerHTML=`<div class="empty"><span class="big">🛍️</span>Aún no hay productos.<br>Publícalos desde "Publicar producto".</div>`;
+    return;
+  }
+  grid.innerHTML = list.map(p=>{
+    const disc = p.orig ? Math.round((1-p.price/p.orig)*100) : null;
+    return `<div class="card" onclick="openModal(${p.id})">
+      <span class="cbadge ${p.estado==='nuevo'?'st-nuevo':'st-usado'}">${p.estado==='nuevo'?'✨ NUEVO':'🔄 USADO'}</span>
+      ${disc?`<span class="cdisc">-${disc}%</span>`:''}
+      <div class="card-img">${p.img?`<img src="${p.img}">`:'📦'}</div>
+      <div class="card-body">
+        <div class="card-brand">${p.brand.toUpperCase()}</div>
+        <div class="card-name">${p.name}</div>
+        <div><span class="card-price">$${p.price.toFixed(2)}</span>${p.orig?`<span class="card-orig">$${p.orig.toFixed(2)}</span>`:''}</div>
+        <div class="card-stock">Quedan <b>${p.stock}</b></div>
+        <button class="btn-add">🛒 Comprar</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filter(el, f){
+  document.querySelectorAll('.f-chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  activeFilter = f;
+  renderStore();
+}
+
+// ── Modal ──
+function openModal(id){
+  currentProd = products.find(p=>p.id===id);
+  if(!currentProd) return;
+  currentQty = 1;
+  document.getElementById('mImg').innerHTML = currentProd.img ? `<img src="${currentProd.img}">` : '📦';
+  document.getElementById('mBrand').textContent = currentProd.brand.toUpperCase();
+  document.getElementById('mName').textContent = currentProd.name;
+  document.getElementById('mPrice').textContent = '$'+currentProd.price.toFixed(2);
+  document.getElementById('mOrig').textContent = currentProd.orig ? ' $'+currentProd.orig.toFixed(2) : '';
+  const disc = currentProd.orig ? Math.round((1-currentProd.price/currentProd.orig)*100) : null;
+  document.getElementById('mSave').textContent = disc ? `✓ Ahorras ${disc}% · Envío incluido` : '✓ Envío incluido a RD';
+  document.getElementById('mDesc').textContent = currentProd.desc || 'Producto disponible en Miami, listo para envío a RD.';
+  document.getElementById('qNum').textContent = 1;
+  const ab = document.getElementById('mAttrs');
+  const rows = currentProd.attrs.map(a=>`<div class="attr-line"><span class="k">${a.k}</span><span class="v">${a.v}</span></div>`).join('');
+  ab.innerHTML = rows + `<div class="attr-line"><span class="k">Stock</span><span class="v">${currentProd.stock} disponibles</span></div>`;
+  document.getElementById('overlay').classList.add('open');
+}
+function closeModal(){ document.getElementById('overlay').classList.remove('open'); }
+function bgClose(e){ if(e.target.id==='overlay') closeModal(); }
+function qty(d){ currentQty = Math.max(1, currentQty+d); document.getElementById('qNum').textContent = currentQty; }
+function buy(){ closeModal(); toast('🛒 ¡Agregado! → Te lleva a confirmar orden'); }
+
+// ── Tabs ──
+function setTab(t){
+  document.getElementById('adminView').style.display = t==='admin' ? 'block' : 'none';
+  document.getElementById('storeView').style.display = t==='store' ? 'block' : 'none';
+  document.getElementById('tabAdmin').className = 'tab' + (t==='admin' ? ' active' : '');
+  document.getElementById('tabStore').className = 'tab' + (t==='store' ? ' active' : '');
+  if(t==='store') renderStore();
+}
+
+// ── Toast ──
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2500);
+}
+
+// Init
+renderAdmin();
+renderStore();
+</script>
+</body>
+</html>
