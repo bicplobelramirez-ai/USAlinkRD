@@ -419,7 +419,7 @@ function HomePage({onNavigate,geo}){
           <div style={{display:"inline-flex",background:"rgba(227,30,36,.2)",border:"1px solid rgba(227,30,36,.4)",color:"#ff9a9c",fontSize:10,fontWeight:800,letterSpacing:"1.5px",padding:"4px 12px",borderRadius:20,marginBottom:10}}>🛍️ BRUCE'S PICKS</div>
           <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:30,lineHeight:.92,marginBottom:6}}>MI TIENDA,<br/><span style={{color:"#E31E24"}}>MIS MEJORES OFERTAS.</span></div>
           <div style={{fontSize:12,color:"#d4b8c8",lineHeight:1.5,marginBottom:16}}>Productos seleccionados por Bruce. Precios bajos, alta calidad y envío rápido desde EE.UU.</div>
-          <button style={{background:"#E31E24",color:"#fff",border:"none",borderRadius:10,padding:"12px 20px",fontSize:14,fontWeight:700,width:"100%",cursor:"pointer"}}>Ver mi tienda →</button>
+          <button style={{background:"#E31E24",color:"#fff",border:"none",borderRadius:10,padding:"12px 20px",fontSize:14,fontWeight:700,width:"100%",cursor:"pointer",onClick:()=>window.location.href='/mi-tienda-admin.html'}}>Ver mi tienda →</button>
         </div>
         <div style={{width:86,height:78,background:"linear-gradient(135deg,#f0ebe4,#ddd5c8)",borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",fontSize:34,flexShrink:0,position:"relative",boxShadow:"0 6px 18px rgba(0,0,0,.5)"}}>
           📦
