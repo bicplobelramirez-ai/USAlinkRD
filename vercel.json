@@ -4,4 +4,4 @@
     { "source": "/mi-tienda-admin.html", "destination": "/mi-tienda-admin.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
-}
+} 
