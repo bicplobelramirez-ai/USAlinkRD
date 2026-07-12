@@ -26,8 +26,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--sky);box-shadow:0 0 0
 input::placeholder,textarea::placeholder{color:#6f84ad}
 textarea{height:70px;resize:none}
 .row2{display:flex;gap:10px}.row2 .field{flex:1}
-.photo-upload{width:100%;height:190px;border:2px dashed rgba(59,158,255,.4);border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;position:relative;overflow:hidden;background:rgba(59,158,255,.05);transition:.2s}
-.photo-upload:active{border-color:var(--sky)}
+.photo-upload{width:100%;height:190px;border:2px dashed rgba(59,158,255,.4);border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;position:relative;overflow:hidden;background:rgba(59,158,255,.05)}
 .photo-upload img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:14px}
 .photo-upload .overlay{position:absolute;inset:0;background:rgba(0,0,0,.5);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border-radius:14px;opacity:0;transition:.2s}
 .photo-upload.has-img .overlay{opacity:1}
@@ -36,7 +35,7 @@ textarea{height:70px;resize:none}
 .photo-upload .change{font-size:12px;color:var(--sky);font-weight:700}
 #fileInput{display:none}
 .pills{display:flex;gap:10px}
-.pill-opt{flex:1;text-align:center;padding:12px;border-radius:10px;border:1.5px solid var(--line);font-size:13px;font-weight:700;cursor:pointer;background:#0a1f52;color:var(--muted);transition:.2s}
+.pill-opt{flex:1;text-align:center;padding:12px;border-radius:10px;border:1.5px solid var(--line);font-size:13px;font-weight:700;cursor:pointer;background:#0a1f52;color:var(--muted)}
 .pill-opt.sel-new{border-color:var(--green);background:rgba(39,227,106,.1);color:var(--green)}
 .pill-opt.sel-used{border-color:var(--gold);background:rgba(255,209,102,.1);color:var(--gold)}
 .attrs-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
@@ -83,7 +82,6 @@ textarea{height:70px;resize:none}
 .card-stock{font-size:10px;color:var(--muted);margin-top:3px}
 .btn-add{width:100%;border:none;cursor:pointer;font-family:'DM Sans';font-weight:700;border-radius:8px;font-size:11px;padding:9px;margin-top:6px;background:var(--red);color:#fff}
 .empty{text-align:center;padding:60px 20px;color:var(--muted);grid-column:1/-1;font-size:13px;line-height:1.6}
-.empty .big{font-size:36px;display:block;margin-bottom:8px}
 .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:100;align-items:flex-end;justify-content:center}
 .overlay.open{display:flex}
 .modal{background:linear-gradient(165deg,#0c2257,#081B4B);border-radius:22px 22px 0 0;padding:22px 18px 32px;width:100%;max-width:460px;border-top:1px solid var(--line);max-height:88vh;overflow-y:auto}
@@ -104,85 +102,105 @@ textarea{height:70px;resize:none}
 .qnum{font-family:'Bebas Neue';font-size:22px}
 .btn-buy{width:100%;border:none;cursor:pointer;font-family:'DM Sans';font-weight:700;border-radius:12px;font-size:15px;padding:15px;background:var(--red);color:#fff;box-shadow:0 8px 20px rgba(227,30,36,.3);margin-bottom:10px}
 .btn-cls{width:100%;border:1.5px solid var(--line);background:transparent;color:var(--muted);font-family:'DM Sans';font-weight:600;border-radius:12px;font-size:13px;padding:12px;cursor:pointer}
-.loading-bar{text-align:center;padding:40px;color:var(--muted);font-size:14px}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--green);color:#000;font-weight:700;font-size:13px;padding:10px 20px;border-radius:30px;z-index:200;opacity:0;transition:.3s;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1}
+/* Token setup screen */
+#tokenScreen{display:none;padding:30px 20px;text-align:center}
+#tokenScreen h2{font-family:'Bebas Neue';font-size:28px;margin-bottom:8px}
+#tokenScreen p{font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5}
+#tokenInput{width:100%;background:#0a1f52;border:1px solid var(--sky);border-radius:12px;padding:13px 14px;color:#fff;font-size:13px;font-family:'DM Sans';outline:none;margin-bottom:14px;word-break:break-all}
+.btn-save-token{width:100%;border:none;cursor:pointer;font-family:'DM Sans';font-weight:700;border-radius:12px;font-size:15px;padding:15px;background:var(--sky);color:#fff}
 </style>
 </head>
 <body>
+
 <header>
   <div class="mark">🔗</div>
   <div class="htxt"><b>MI TIENDA</b><small>USALINK · BRUCE'S PICKS</small></div>
 </header>
-<div class="tabs">
-  <div class="tab active" id="tabAdmin" onclick="setTab('admin')">🛠️ Publicar producto</div>
-  <div class="tab" id="tabStore" onclick="setTab('store')">🛍️ Ver tienda (<span id="storeCount">0</span>)</div>
+
+<!-- TOKEN SETUP -->
+<div id="tokenScreen">
+  <div style="font-size:48px;margin-bottom:16px">🔑</div>
+  <h2>CONFIGURACIÓN INICIAL</h2>
+  <p>Solo la primera vez. Ingresa tu Airtable Personal Access Token para conectar tu tienda.</p>
+  <input id="tokenInput" placeholder="patXXXXXXXX..." type="password">
+  <button class="btn-save-token" onclick="saveToken()">Conectar mi tienda →</button>
 </div>
 
-<!-- ADMIN -->
-<div id="adminView">
-  <div class="sec-title">PUBLICAR PRODUCTO</div>
-  <div class="sec-sub">Llena los datos y toca "Publicar". Se guarda en la nube — visible desde cualquier dispositivo.</div>
-  <div class="field">
-    <label>FOTO DEL PRODUCTO</label>
-    <div class="photo-upload" id="photoArea" onclick="document.getElementById('fileInput').click()">
-      <div class="ic">📷</div>
-      <div class="txt">Toca para elegir foto<br><span style="font-size:11px">desde tu galería o cámara</span></div>
-      <div class="overlay"><span class="change">✏️ Cambiar foto</span></div>
-    </div>
-    <input type="file" id="fileInput" accept="image/*" onchange="loadPhoto(event)">
+<div id="mainContent" style="display:none">
+  <div class="tabs">
+    <div class="tab active" id="tabAdmin" onclick="setTab('admin')">🛠️ Publicar producto</div>
+    <div class="tab" id="tabStore" onclick="setTab('store')">🛍️ Ver tienda (<span id="storeCount">0</span>)</div>
   </div>
-  <div class="field"><label>NOMBRE DEL PRODUCTO</label><input id="pName" placeholder="Ej. Adidas Samba OG"></div>
-  <div class="row2">
-    <div class="field"><label>MARCA</label><input id="pBrand" placeholder="Ej. Adidas"></div>
-    <div class="field"><label>CATEGORÍA</label>
-      <select id="pCat">
-        <option value="Calzado">👟 Calzado</option>
-        <option value="Ropa">👗 Ropa</option>
-        <option value="Tech">💻 Tech</option>
-        <option value="Belleza">💄 Belleza</option>
-        <option value="Hogar">🏠 Hogar</option>
-        <option value="Otro">📦 Otro</option>
-      </select>
-    </div>
-  </div>
-  <div class="field"><label>ESTADO</label>
-    <div class="pills">
-      <div class="pill-opt sel-new" id="btnNuevo" onclick="setEstado('Nuevo')">✨ Nuevo</div>
-      <div class="pill-opt" id="btnUsado" onclick="setEstado('Usado')">🔄 Usado</div>
-    </div>
-  </div>
-  <div class="row2">
-    <div class="field"><label>PRECIO (US$)</label><input id="pPrice" type="number" placeholder="69.99" inputmode="decimal"></div>
-    <div class="field"><label>PRECIO ORIGINAL (opcional)</label><input id="pOrig" type="number" placeholder="95.00" inputmode="decimal"></div>
-  </div>
-  <div class="field"><label>STOCK</label><input id="pStock" type="number" placeholder="3" inputmode="numeric"></div>
-  <div class="field">
-    <div class="attrs-hd"><label>ATRIBUTOS DEL PRODUCTO</label><div class="btn-add-attr" onclick="addAttr()">+ Agregar</div></div>
-    <div class="hint">Ej: Talla → 9.5 US · Color → Negro. Agrega los que apliquen.</div>
-    <div id="attrList"></div>
-  </div>
-  <div class="field"><label>DESCRIPCIÓN</label><textarea id="pDesc" placeholder="Detalles del producto..."></textarea></div>
-  <button class="btn-publish" id="btnPublish" onclick="publish()">📦 Publicar en mi tienda</button>
-  <div class="pub-title">PUBLICADOS (<span id="pubCount">0</span>)</div>
-  <div id="pubList"><div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">Cargando productos...</div></div>
-</div>
 
-<!-- STORE -->
-<div id="storeView">
-  <div class="store-hero">
-    <h2>MI TIENDA,<br><em>MIS MEJORES OFERTAS.</em></h2>
-    <p>Productos seleccionados por Bruce, directo desde EE.UU.</p>
+  <!-- ADMIN -->
+  <div id="adminView">
+    <div style="padding:16px">
+      <div class="sec-title">PUBLICAR PRODUCTO</div>
+      <div class="sec-sub">Se guarda en la nube — visible desde cualquier dispositivo.</div>
+      <div class="field">
+        <label>FOTO DEL PRODUCTO</label>
+        <div class="photo-upload" id="photoArea" onclick="document.getElementById('fileInput').click()">
+          <div class="ic">📷</div>
+          <div class="txt">Toca para elegir foto<br><span style="font-size:11px">desde tu galería o cámara</span></div>
+          <div class="overlay"><span class="change">✏️ Cambiar foto</span></div>
+        </div>
+        <input type="file" id="fileInput" accept="image/*" onchange="loadPhoto(event)">
+      </div>
+      <div class="field"><label>NOMBRE DEL PRODUCTO</label><input id="pName" placeholder="Ej. Adidas Samba OG"></div>
+      <div class="row2">
+        <div class="field"><label>MARCA</label><input id="pBrand" placeholder="Ej. Adidas"></div>
+        <div class="field"><label>CATEGORÍA</label>
+          <select id="pCat">
+            <option value="Calzado">👟 Calzado</option>
+            <option value="Ropa">👗 Ropa</option>
+            <option value="Tech">💻 Tech</option>
+            <option value="Belleza">💄 Belleza</option>
+            <option value="Hogar">🏠 Hogar</option>
+            <option value="Otro">📦 Otro</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>ESTADO</label>
+        <div class="pills">
+          <div class="pill-opt sel-new" id="btnNuevo" onclick="setEstado('Nuevo')">✨ Nuevo</div>
+          <div class="pill-opt" id="btnUsado" onclick="setEstado('Usado')">🔄 Usado</div>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>PRECIO (US$)</label><input id="pPrice" type="number" placeholder="69.99" inputmode="decimal"></div>
+        <div class="field"><label>PRECIO ORIGINAL</label><input id="pOrig" type="number" placeholder="95.00" inputmode="decimal"></div>
+      </div>
+      <div class="field"><label>STOCK</label><input id="pStock" type="number" placeholder="3" inputmode="numeric"></div>
+      <div class="field">
+        <div class="attrs-hd"><label>ATRIBUTOS</label><div class="btn-add-attr" onclick="addAttr()">+ Agregar</div></div>
+        <div class="hint">Ej: Talla → 9.5 US · Color → Negro</div>
+        <div id="attrList"></div>
+      </div>
+      <div class="field"><label>DESCRIPCIÓN</label><textarea id="pDesc" placeholder="Detalles del producto..."></textarea></div>
+      <button class="btn-publish" id="btnPublish" onclick="publish()">📦 Publicar en mi tienda</button>
+      <div class="pub-title">PUBLICADOS (<span id="pubCount">0</span>)</div>
+      <div id="pubList"><div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">⏳ Cargando...</div></div>
+    </div>
   </div>
-  <div class="filters">
-    <div class="f-chip on" onclick="filter(this,'todo')">🏪 Todo</div>
-    <div class="f-chip" onclick="filter(this,'Calzado')">👟 Calzado</div>
-    <div class="f-chip" onclick="filter(this,'Ropa')">👗 Ropa</div>
-    <div class="f-chip" onclick="filter(this,'Tech')">💻 Tech</div>
-    <div class="f-chip" onclick="filter(this,'Nuevo')">✨ Nuevo</div>
-    <div class="f-chip" onclick="filter(this,'Usado')">🔄 Usado</div>
+
+  <!-- STORE -->
+  <div id="storeView" style="display:none">
+    <div class="store-hero">
+      <h2>MI TIENDA,<br><em>MIS MEJORES OFERTAS.</em></h2>
+      <p>Productos seleccionados por Bruce, directo desde EE.UU.</p>
+    </div>
+    <div class="filters">
+      <div class="f-chip on" onclick="filter(this,'todo')">🏪 Todo</div>
+      <div class="f-chip" onclick="filter(this,'Calzado')">👟 Calzado</div>
+      <div class="f-chip" onclick="filter(this,'Ropa')">👗 Ropa</div>
+      <div class="f-chip" onclick="filter(this,'Tech')">💻 Tech</div>
+      <div class="f-chip" onclick="filter(this,'Nuevo')">✨ Nuevo</div>
+      <div class="f-chip" onclick="filter(this,'Usado')">🔄 Usado</div>
+    </div>
+    <div class="grid" id="storeGrid"></div>
   </div>
-  <div class="grid" id="storeGrid"><div class="loading-bar">⏳ Cargando productos...</div></div>
 </div>
 
 <!-- MODAL -->
@@ -201,7 +219,7 @@ textarea{height:70px;resize:none}
       <button class="qbtn" onclick="qty(1)">+</button>
       <span style="font-size:12px;color:var(--muted)">unidad(es)</span>
     </div>
-    <button class="btn-buy" onclick="buy()">🛒 Agregar al carrito</button>
+    <button class="btn-buy" onclick="buy()">🛒 Comprar</button>
     <button class="btn-cls" onclick="closeModal()">← Volver</button>
   </div>
 </div>
@@ -209,6 +227,10 @@ textarea{height:70px;resize:none}
 <div class="toast" id="toast"></div>
 
 <script>
+const BASE = 'appSrCkBCihEkjQRE';
+const TABLE = 'tbl3ypuRZ6cnGICdP';
+const AT = `https://api.airtable.com/v0/${BASE}/${TABLE}`;
+
 let products = [];
 let currentPhoto = null;
 let currentEstado = 'Nuevo';
@@ -217,7 +239,32 @@ let activeFilter = 'todo';
 let currentProd = null;
 let currentQty = 1;
 
-// ── Compress image to base64 ──
+function getToken() { return localStorage.getItem('at_token') || ''; }
+
+function saveToken() {
+  const t = document.getElementById('tokenInput').value.trim();
+  if (!t) { alert('Ingresa el token'); return; }
+  localStorage.setItem('at_token', t);
+  init();
+}
+
+function init() {
+  const token = getToken();
+  if (!token) {
+    document.getElementById('tokenScreen').style.display = 'block';
+    document.getElementById('mainContent').style.display = 'none';
+  } else {
+    document.getElementById('tokenScreen').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+    fetchProducts();
+    addAttr();
+  }
+}
+
+function headers() {
+  return { 'Authorization': `Bearer ${getToken()}`, 'Content-Type': 'application/json' };
+}
+
 function compressImage(file, cb) {
   const reader = new FileReader();
   reader.onload = e => {
@@ -232,7 +279,7 @@ function compressImage(file, cb) {
       }
       canvas.width = w; canvas.height = h;
       canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      cb(canvas.toDataURL('image/jpeg', 0.75));
+      cb(canvas.toDataURL('image/jpeg', 0.72));
     };
     img.src = e.target.result;
   };
@@ -253,163 +300,131 @@ function loadPhoto(e) {
 
 function setEstado(e) {
   currentEstado = e;
-  document.getElementById('btnNuevo').className = 'pill-opt' + (e === 'Nuevo' ? ' sel-new' : '');
-  document.getElementById('btnUsado').className = 'pill-opt' + (e === 'Usado' ? ' sel-used' : '');
+  document.getElementById('btnNuevo').className = 'pill-opt' + (e==='Nuevo'?' sel-new':'');
+  document.getElementById('btnUsado').className = 'pill-opt' + (e==='Usado'?' sel-used':'');
 }
 
 function addAttr() {
   attrCount++;
   const d = document.createElement('div');
   d.className = 'attr-row';
-  d.id = 'attr-' + attrCount;
+  d.id = 'attr-'+attrCount;
   d.innerHTML = `<input placeholder="Ej. Talla" class="ak"><input placeholder="Ej. 9.5 US" class="av"><div class="attr-del" onclick="this.parentElement.remove()">✕</div>`;
   document.getElementById('attrList').appendChild(d);
 }
-addAttr();
 
-// ── Fetch products from Airtable ──
 async function fetchProducts() {
   try {
-    const r = await fetch('/api/productos');
-    const data = await r.json();
-    products = data.map(rec => ({
+    const r = await fetch(`${AT}?filterByFormula=AND({Activo})&sort[0][field]=Nombre`, { headers: headers() });
+    const d = await r.json();
+    if (d.error) { toast('⚠️ Token inválido. Recarga y vuelve a ingresar el token.'); localStorage.removeItem('at_token'); return; }
+    products = (d.records||[]).map(rec => ({
       id: rec.id,
-      nombre: rec.fields.Nombre || '',
-      marca: rec.fields.Marca || '',
-      categoria: rec.fields.Categoria || 'Otro',
-      estado: rec.fields.Estado || 'Nuevo',
-      precio: rec.fields.Precio || 0,
-      precioOriginal: rec.fields.Precio_Original || 0,
-      stock: rec.fields.Stock || 0,
-      descripcion: rec.fields.Descripcion || '',
-      atributos: rec.fields.Atributos || '',
-      imagen: rec.fields.Imagen || ''
+      nombre: rec.fields.Nombre||'',
+      marca: rec.fields.Marca||'',
+      categoria: rec.fields.Categoria||'Otro',
+      estado: rec.fields.Estado||'Nuevo',
+      precio: rec.fields.Precio||0,
+      precioOriginal: rec.fields.Precio_Original||0,
+      stock: rec.fields.Stock||0,
+      descripcion: rec.fields.Descripcion||'',
+      atributos: rec.fields.Atributos||'',
+      imagen: rec.fields.Imagen||''
     }));
     renderAdmin();
     renderStore();
-  } catch (e) {
-    toast('⚠️ Error cargando productos');
-    products = [];
-    renderAdmin();
-    renderStore();
-  }
+  } catch(e) { toast('⚠️ Error cargando productos'); }
 }
 
-// ── Publish to Airtable ──
 async function publish() {
   const nombre = document.getElementById('pName').value.trim();
   const marca = document.getElementById('pBrand').value.trim();
   const precio = parseFloat(document.getElementById('pPrice').value);
-  const precioOriginal = parseFloat(document.getElementById('pOrig').value) || 0;
-  const stock = parseInt(document.getElementById('pStock').value) || 1;
+  if (!nombre||!marca||!precio) { toast('⚠️ Completa nombre, marca y precio'); return; }
+  const precioOriginal = parseFloat(document.getElementById('pOrig').value)||0;
+  const stock = parseInt(document.getElementById('pStock').value)||1;
   const categoria = document.getElementById('pCat').value;
   const descripcion = document.getElementById('pDesc').value.trim();
-
-  if (!nombre || !marca || !precio) { toast('⚠️ Completa nombre, marca y precio'); return; }
-
   const attrPairs = [];
-  document.querySelectorAll('.attr-row').forEach(r => {
-    const k = r.querySelector('.ak').value.trim();
-    const v = r.querySelector('.av').value.trim();
-    if (k && v) attrPairs.push(k + ': ' + v);
+  document.querySelectorAll('.attr-row').forEach(r=>{
+    const k=r.querySelector('.ak').value.trim();
+    const v=r.querySelector('.av').value.trim();
+    if(k&&v) attrPairs.push(k+': '+v);
   });
-
   const btn = document.getElementById('btnPublish');
-  btn.disabled = true;
-  btn.textContent = '⏳ Publicando...';
-
+  btn.disabled=true; btn.textContent='⏳ Publicando...';
   try {
-    const r = await fetch('/api/productos', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        nombre, marca, categoria, estado: currentEstado,
-        precio, precioOriginal, stock, descripcion,
-        atributos: attrPairs.join('\n'),
-        imagen: currentPhoto || ''
-      })
+    const r = await fetch(AT, {
+      method:'POST', headers: headers(),
+      body: JSON.stringify({ records:[{ fields:{
+        Nombre:nombre, Marca:marca, Categoria:categoria, Estado:currentEstado,
+        Precio:precio, Precio_Original:precioOriginal, Stock:stock,
+        Descripcion:descripcion, Atributos:attrPairs.join('\n'),
+        Imagen:currentPhoto||'', Activo:true
+      }}]})
     });
     const d = await r.json();
-    if (d.error) throw new Error(d.error);
+    if (d.error) throw new Error(d.error.message||d.error);
     await fetchProducts();
     resetForm();
     toast('✅ ¡Producto publicado en la nube!');
-  } catch (e) {
-    toast('⚠️ Error: ' + e.message);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = '📦 Publicar en mi tienda';
-  }
+  } catch(e) { toast('⚠️ Error: '+e.message); }
+  finally { btn.disabled=false; btn.textContent='📦 Publicar en mi tienda'; }
 }
 
 function resetForm() {
-  document.getElementById('pName').value = '';
-  document.getElementById('pBrand').value = '';
-  document.getElementById('pPrice').value = '';
-  document.getElementById('pOrig').value = '';
-  document.getElementById('pStock').value = '';
-  document.getElementById('pDesc').value = '';
-  document.getElementById('attrList').innerHTML = '';
-  document.getElementById('fileInput').value = '';
-  document.getElementById('photoArea').innerHTML = `<div class="ic">📷</div><div class="txt">Toca para elegir foto<br><span style="font-size:11px">desde tu galería o cámara</span></div><div class="overlay"><span class="change">✏️ Cambiar foto</span></div>`;
+  ['pName','pPrice','pOrig','pStock','pDesc'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('attrList').innerHTML='';
+  document.getElementById('fileInput').value='';
+  document.getElementById('photoArea').innerHTML=`<div class="ic">📷</div><div class="txt">Toca para elegir foto<br><span style="font-size:11px">desde tu galería o cámara</span></div><div class="overlay"><span class="change">✏️ Cambiar foto</span></div>`;
   document.getElementById('photoArea').classList.remove('has-img');
-  currentPhoto = null;
-  attrCount = 0;
-  addAttr();
-  setEstado('Nuevo');
+  currentPhoto=null; attrCount=0; addAttr(); setEstado('Nuevo');
 }
 
-// ── Delete from Airtable ──
 async function del(id) {
-  if (!confirm('¿Eliminar este producto?')) return;
+  if(!confirm('¿Eliminar?')) return;
   try {
-    await fetch('/api/productos?id=' + id, { method: 'DELETE' });
+    await fetch(`${AT}/${id}`, {method:'DELETE', headers: headers()});
     await fetchProducts();
-    toast('🗑 Producto eliminado');
-  } catch (e) { toast('⚠️ Error al eliminar'); }
+    toast('🗑 Eliminado');
+  } catch(e) { toast('⚠️ Error'); }
 }
 
-// ── Render admin list ──
 function renderAdmin() {
-  const n = products.length;
-  document.getElementById('pubCount').textContent = n;
-  document.getElementById('storeCount').textContent = n;
-  const list = document.getElementById('pubList');
-  if (!n) { list.innerHTML = '<div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">Aún no has publicado productos.</div>'; return; }
-  list.innerHTML = products.map(p => `
+  const n=products.length;
+  document.getElementById('pubCount').textContent=n;
+  document.getElementById('storeCount').textContent=n;
+  const list=document.getElementById('pubList');
+  if(!n){list.innerHTML='<div style="color:var(--muted);font-size:13px;text-align:center;padding:20px">Aún no has publicado productos.</div>';return;}
+  list.innerHTML=products.map(p=>`
     <div class="prod-item">
-      <div class="thumb">${p.imagen ? `<img src="${p.imagen}">` : '📦'}</div>
+      <div class="thumb">${p.imagen?`<img src="${p.imagen}">`:'📦'}</div>
       <div class="info">
         <div class="nm">${p.nombre}</div>
-        <div class="pr">$${p.precio.toFixed(2)} ${p.precioOriginal ? `<span style="color:var(--muted);text-decoration:line-through;font-size:10px">$${p.precioOriginal.toFixed(2)}</span>` : ''}</div>
-        <span class="st ${p.estado === 'Nuevo' ? 'st-nuevo' : 'st-usado'}">${p.estado.toUpperCase()}</span>
+        <div class="pr">$${p.precio.toFixed(2)}</div>
+        <span class="st ${p.estado==='Nuevo'?'st-nuevo':'st-usado'}">${p.estado.toUpperCase()}</span>
       </div>
       <button class="btn-del" onclick="del('${p.id}')">🗑</button>
     </div>`).join('');
 }
 
-// ── Render store ──
 function renderStore() {
-  const grid = document.getElementById('storeGrid');
-  let list = products;
-  if (activeFilter === 'Nuevo') list = products.filter(p => p.estado === 'Nuevo');
-  else if (activeFilter === 'Usado') list = products.filter(p => p.estado === 'Usado');
-  else if (activeFilter !== 'todo') list = products.filter(p => p.categoria === activeFilter);
-
-  if (!list.length) {
-    grid.innerHTML = `<div class="empty"><span class="big">🛍️</span>Aún no hay productos.<br>Publícalos desde "Publicar producto".</div>`;
-    return;
-  }
-  grid.innerHTML = list.map(p => {
-    const disc = p.precioOriginal ? Math.round((1 - p.precio / p.precioOriginal) * 100) : null;
+  const grid=document.getElementById('storeGrid');
+  let list=products;
+  if(activeFilter==='Nuevo') list=products.filter(p=>p.estado==='Nuevo');
+  else if(activeFilter==='Usado') list=products.filter(p=>p.estado==='Usado');
+  else if(activeFilter!=='todo') list=products.filter(p=>p.categoria===activeFilter);
+  if(!list.length){grid.innerHTML=`<div class="empty"><span style="font-size:36px;display:block;margin-bottom:8px">🛍️</span>Sin productos aún.</div>`;return;}
+  grid.innerHTML=list.map(p=>{
+    const disc=p.precioOriginal?Math.round((1-p.precio/p.precioOriginal)*100):null;
     return `<div class="card" onclick="openModal('${p.id}')">
-      <span class="cbadge ${p.estado === 'Nuevo' ? 'st-nuevo' : 'st-usado'}">${p.estado === 'Nuevo' ? '✨ NUEVO' : '🔄 USADO'}</span>
-      ${disc ? `<span class="cdisc">-${disc}%</span>` : ''}
-      <div class="card-img">${p.imagen ? `<img src="${p.imagen}">` : '📦'}</div>
+      <span class="cbadge ${p.estado==='Nuevo'?'st-nuevo':'st-usado'}">${p.estado==='Nuevo'?'✨ NUEVO':'🔄 USADO'}</span>
+      ${disc?`<span class="cdisc">-${disc}%</span>`:''}
+      <div class="card-img">${p.imagen?`<img src="${p.imagen}">`:'📦'}</div>
       <div class="card-body">
         <div class="card-brand">${p.marca.toUpperCase()}</div>
         <div class="card-name">${p.nombre}</div>
-        <div><span class="card-price">$${p.precio.toFixed(2)}</span>${p.precioOriginal ? `<span class="card-orig">$${p.precioOriginal.toFixed(2)}</span>` : ''}</div>
+        <div><span class="card-price">$${p.precio.toFixed(2)}</span>${p.precioOriginal?`<span class="card-orig">$${p.precioOriginal.toFixed(2)}</span>`:''}</div>
         <div class="card-stock">Quedan <b>${p.stock}</b></div>
         <button class="btn-add">🛒 Comprar</button>
       </div>
@@ -417,54 +432,38 @@ function renderStore() {
   }).join('');
 }
 
-function filter(el, f) {
-  document.querySelectorAll('.f-chip').forEach(c => c.classList.remove('on'));
-  el.classList.add('on');
-  activeFilter = f;
-  renderStore();
-}
+function filter(el,f){document.querySelectorAll('.f-chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');activeFilter=f;renderStore();}
 
-function openModal(id) {
-  currentProd = products.find(p => p.id === id);
-  if (!currentProd) return;
-  currentQty = 1;
-  document.getElementById('mImg').innerHTML = currentProd.imagen ? `<img src="${currentProd.imagen}">` : '📦';
-  document.getElementById('mBrand').textContent = currentProd.marca.toUpperCase();
-  document.getElementById('mName').textContent = currentProd.nombre;
-  document.getElementById('mPrice').textContent = '$' + currentProd.precio.toFixed(2);
-  document.getElementById('mOrig').textContent = currentProd.precioOriginal ? ' $' + currentProd.precioOriginal.toFixed(2) : '';
-  const disc = currentProd.precioOriginal ? Math.round((1 - currentProd.precio / currentProd.precioOriginal) * 100) : null;
-  document.getElementById('mSave').textContent = disc ? `✓ Ahorras ${disc}% · Envío incluido` : '✓ Envío incluido a RD';
-  document.getElementById('mDesc').textContent = currentProd.descripcion || 'Producto disponible en Miami, listo para envío a RD.';
-  document.getElementById('qNum').textContent = 1;
-  const ab = document.getElementById('mAttrs');
-  const attrLines = currentProd.atributos ? currentProd.atributos.split('\n').filter(Boolean).map(line => {
-    const [k, ...v] = line.split(':');
-    return `<div class="attr-line"><span class="k">${k.trim()}</span><span class="v">${v.join(':').trim()}</span></div>`;
-  }).join('') : '';
-  ab.innerHTML = attrLines + `<div class="attr-line"><span class="k">Stock</span><span class="v">${currentProd.stock} disponibles</span></div>`;
+function openModal(id){
+  currentProd=products.find(p=>p.id===id);if(!currentProd)return;
+  currentQty=1;
+  document.getElementById('mImg').innerHTML=currentProd.imagen?`<img src="${currentProd.imagen}">`:'📦';
+  document.getElementById('mBrand').textContent=currentProd.marca.toUpperCase();
+  document.getElementById('mName').textContent=currentProd.nombre;
+  document.getElementById('mPrice').textContent='$'+currentProd.precio.toFixed(2);
+  document.getElementById('mOrig').textContent=currentProd.precioOriginal?' $'+currentProd.precioOriginal.toFixed(2):'';
+  const disc=currentProd.precioOriginal?Math.round((1-currentProd.precio/currentProd.precioOriginal)*100):null;
+  document.getElementById('mSave').textContent=disc?`✓ Ahorras ${disc}% · Envío incluido`:'✓ Envío incluido a RD';
+  document.getElementById('mDesc').textContent=currentProd.descripcion||'Producto en Miami, listo para envío a RD.';
+  document.getElementById('qNum').textContent=1;
+  const ab=document.getElementById('mAttrs');
+  const lines=currentProd.atributos?currentProd.atributos.split('\n').filter(Boolean).map(l=>{const[k,...v]=l.split(':');return`<div class="attr-line"><span class="k">${k.trim()}</span><span class="v">${v.join(':').trim()}</span></div>`;}).join(''):'';
+  ab.innerHTML=lines+`<div class="attr-line"><span class="k">Stock</span><span class="v">${currentProd.stock} disponibles</span></div>`;
   document.getElementById('overlay').classList.add('open');
 }
-function closeModal() { document.getElementById('overlay').classList.remove('open'); }
-function bgClose(e) { if (e.target.id === 'overlay') closeModal(); }
-function qty(d) { currentQty = Math.max(1, currentQty + d); document.getElementById('qNum').textContent = currentQty; }
-function buy() { closeModal(); window.location.href = '/orden.html'; }
-
-function setTab(t) {
-  document.getElementById('adminView').style.display = t === 'admin' ? 'block' : 'none';
-  document.getElementById('storeView').style.display = t === 'store' ? 'block' : 'none';
-  document.getElementById('tabAdmin').className = 'tab' + (t === 'admin' ? ' active' : '');
-  document.getElementById('tabStore').className = 'tab' + (t === 'store' ? ' active' : '');
+function closeModal(){document.getElementById('overlay').classList.remove('open');}
+function bgClose(e){if(e.target.id==='overlay')closeModal();}
+function qty(d){currentQty=Math.max(1,currentQty+d);document.getElementById('qNum').textContent=currentQty;}
+function buy(){closeModal();window.location.href='/orden.html';}
+function setTab(t){
+  document.getElementById('adminView').style.display=t==='admin'?'block':'none';
+  document.getElementById('storeView').style.display=t==='store'?'block':'none';
+  document.getElementById('tabAdmin').className='tab'+(t==='admin'?' active':'');
+  document.getElementById('tabStore').className='tab'+(t==='store'?' active':'');
 }
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
-}
-
-fetchProducts();
+init();
 </script>
 </body>
 </html>
