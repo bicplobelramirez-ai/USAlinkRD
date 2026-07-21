@@ -411,6 +411,11 @@ function HomePage({onNavigate,geo}){
         ))}
       </div>
       {/* Bruce's Picks */}
+<div onClick={()=>setPicksOpen(p=>!p)} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"13px 16px",cursor:"pointer",background:"linear-gradient(90deg,rgba(227,30,36,.15),rgba(8,27,75,.8))",borderTop:"1px solid rgba(227,30,36,.3)",borderBottom:"1px solid rgba(227,30,36,.2)"}}>
+<div style={{display:"flex",alignItems:"center",gap:10}}><span style={{background:"rgba(227,30,36,.2)",border:"1px solid rgba(227,30,36,.4)",color:"#ff9a9c",fontSize:10,fontWeight:800,letterSpacing:"1.5px",padding:"4px 10px",borderRadius:20}}>🛍️ BRUCE'S PICKS</span><span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:18}}>MI TIENDA <span style={{color:"#E31E24"}}>· OFERTAS</span></span></div>
+<div style={{width:30,height:30,borderRadius:"50%",background:"rgba(227,30,36,.12)",border:"1px solid rgba(227,30,36,.3)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,transform:picksOpen?"rotate(180deg)":"rotate(0deg)",transition:"transform .3s"}}>▼</div>
+</div>
+<div style={{maxHeight:picksOpen?"700px":"0",overflow:"hidden",opacity:picksOpen?1:0,transition:"max-height .4s ease,opacity .3s ease"}}>
 <div style={{margin:"16px 16px 0"}}>
   <div style={{background:"linear-gradient(135deg,#0d0820,#1a0c35,#0d1a45)",border:"1px solid rgba(227,30,36,.35)",borderRadius:18,overflow:"hidden",boxShadow:"0 10px 32px rgba(227,30,36,.18)"}}>
     <div style={{padding:"20px 16px 16px"}}>
