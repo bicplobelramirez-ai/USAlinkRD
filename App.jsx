@@ -456,8 +456,10 @@ function HomePage({onNavigate,geo}){
       </div>
     ))}
   </div>
+ </div>
 </div>
-      {/* Aphrodite Hero Banner */}
+</div>
+{/* Aphrodite Hero Banner */}
       <div style={{margin:"14px 16px 0",background:"linear-gradient(135deg,#081B4B,#0a1534)",borderRadius:20,overflow:"hidden",position:"relative",display:"flex",alignItems:"stretch",minHeight:138}}>
         <div style={{flex:1,padding:"18px 16px",display:"flex",flexDirection:"column",justifyContent:"center",zIndex:2}}>
           <div style={{fontSize:9,fontWeight:800,letterSpacing:"0.12em",textTransform:"uppercase",color:SKY,marginBottom:6}}>✨ IA DISPONIBLE</div>
