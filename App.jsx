@@ -1080,8 +1080,7 @@ function AppContent(){
   const [geo,setGeo]=useState(null);
   const [paymentPlan,setPaymentPlan]=useState(null);
   const [showOnboarding,setShowOnboarding]=useState(false);
-  const [fabUnread,setFabUnread]=useState(1);
-
+const [fabUnread,setFabUnread]=useState(1);const [picksOpen,setPicksOpen]=useState(false);
   useEffect(()=>{
     if(profile?.country&&GEO_RATES[profile.country]) setGeo({...GEO_RATES[profile.country],code:profile.country});
     else fetch("https://ipapi.co/json/").then(r=>r.json()).then(d=>{
