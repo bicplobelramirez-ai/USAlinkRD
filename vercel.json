@@ -2,6 +2,7 @@
   "rewrites": [
     { "source": "/orden.html", "destination": "/orden.html" },
     { "source": "/mi-tienda-admin.html", "destination": "/mi-tienda-admin.html" },
+    { "source": "/mi-tienda.html", "destination": "/mi-tienda.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
