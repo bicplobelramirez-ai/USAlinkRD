@@ -411,48 +411,51 @@ function HomePage({onNavigate,geo}){
         ))}
       </div>
       {/* Bruce's Picks */}
-      <div style={{margin:"16px 16px 0"}}>
-        <div style={{background:"linear-gradient(135deg,#0d0820,#1a0c35,#0d1a45)",border:"1px solid rgba(227,30,36,.35)",borderRadius:18,overflow:"hidden",boxShadow:"0 10px 32px rgba(227,30,36,.18)"}}>
-          <div style={{padding:"20px 16px 16px"}}>
-            <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:10,marginBottom:14}}>
-              <div style={{flex:1}}>
-                <div style={{display:"inline-flex",background:"rgba(227,30,36,.2)",border:"1px solid rgba(227,30,36,.4)",color:"#ff9a9c",fontSize:10,fontWeight:800,letterSpacing:"1.5px",padding:"4px 12px",borderRadius:20,marginBottom:10}}>🛍️ BRUCE'S PICKS</div>
-                <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:30,lineHeight:.92,marginBottom:6}}>MI TIENDA,<br/><span style={{color:"#E31E24"}}>MIS MEJORES OFERTAS.</span></div>
-                <div style={{fontSize:12,color:"#d4b8c8",lineHeight:1.5,marginBottom:16}}>Productos seleccionados por Bruce. Precios bajos, alta calidad y envío rápido desde EE.UU.</div>
-                <button onClick={()=>window.location.href='/mi-tienda-admin.html'} style={{background:"#E31E24",color:"#fff",border:"none",borderRadius:10,padding:"12px 20px",fontSize:14,fontWeight:700,width:"100%",cursor:"pointer"}}>Ver mi tienda →</button>
-              </div>
-              <div style={{width:86,height:78,background:"linear-gradient(135deg,#f0ebe4,#ddd5c8)",borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",fontSize:34,flexShrink:0,position:"relative",boxShadow:"0 6px 18px rgba(0,0,0,.5)"}}>
-                📦
-                <div style={{position:"absolute",bottom:-8,right:-8,background:"#E31E24",fontFamily:"'Bebas Neue',sans-serif",fontSize:9,padding:"4px 7px",borderRadius:6,border:"2px solid rgba(255,255,255,.2)",color:"#fff",lineHeight:1.2,textAlign:"center"}}>OFERTAS<br/>EXCLUSIVAS</div>
-              </div>
-            </div>
-          </div>
-          <div style={{display:"flex",borderTop:"1px solid rgba(255,255,255,.1)"}}>
-            {[["🏷️","Precios exclusivos","Mejores que Amazon"],["📦","Stock limitado","Productos únicos"],["🚀","Envío rápido","Desde almacén USA"]].map(([ic,t,s])=>(
-              <div key={t} style={{flex:1,padding:"12px 8px",textAlign:"center",borderRight:"1px solid rgba(255,255,255,.1)"}}>
-                <div style={{fontSize:18,marginBottom:4}}>{ic}</div>
-                <div style={{fontSize:10,fontWeight:700,marginBottom:2}}>{t}</div>
-                <div style={{fontSize:9,color:"#8ba0c8",lineHeight:1.3}}>{s}</div>
-              </div>
-            ))}
-          </div>
+<div style={{margin:"16px 16px 0"}}> style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"13px 16px",cursor:"pointer",background:"linear-gradient(90deg,rgba(227,30,36,.15),rgba(8,27,75,.8))",borderTop:"1px solid rgba(227,30,36,.3)",borderBottom:"1px solid rgba(227,30,36,.2)"}}>
+<div style={{display:"flex",alignItems:"center",gap:10}}><span style={{background:"rgba(227,30,36,.2)",border:"1px solid rgba(227,30,36,.4)",color:"#ff9a9c",fontSize:10,fontWeight:800,letterSpacing:"1.5px",padding:"4px 10px",borderRadius:20}}>🛍️ BRUCE'S PICKS</span><span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:18}}>MI TIENDA <span style={{color:"#E31E24"}}>· OFERTAS</span></span></div>
+<div style={{width:30,height:30,borderRadius:"50%",background:"rgba(227,30,36,.12)",border:"1px solid rgba(227,30,36,.3)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,transform:picksOpen?"rotate(180deg)":"rotate(0deg)",transition:"transform .3s"}}>▼</div>
+</div>
+
+  <div style={{background:"linear-gradient(135deg,#0d0820,#1a0c35,#0d1a45)",border:"1px solid rgba(227,30,36,.35)",borderRadius:18,overflow:"hidden",boxShadow:"0 10px 32px rgba(227,30,36,.18)"}}>
+    <div style={{padding:"20px 16px 16px"}}>
+      <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:10,marginBottom:14}}>
+        <div style={{flex:1}}>
+          <div style={{display:"inline-flex",background:"rgba(227,30,36,.2)",border:"1px solid rgba(227,30,36,.4)",color:"#ff9a9c",fontSize:10,fontWeight:800,letterSpacing:"1.5px",padding:"4px 12px",borderRadius:20,marginBottom:10}}>🛍️ BRUCE'S PICKS</div>
+          <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:30,lineHeight:.92,marginBottom:6}}>MI TIENDA,<br/><span style={{color:"#E31E24"}}>MIS MEJORES OFERTAS.</span></div>
+          <div style={{fontSize:12,color:"#d4b8c8",lineHeight:1.5,marginBottom:16}}>Productos seleccionados por Bruce. Precios bajos, alta calidad y envío rápido desde EE.UU.</div>
+          <button style={{background:"#E31E24",color:"#fff",border:"none",borderRadius:10,padding:"12px 20px",fontSize:14,fontWeight:700,width:"100%",cursor:"pointer",onClick:()=>window.location.href='/mi-tienda-admin.html'}}>Ver mi tienda →</button>
         </div>
-        <div style={{display:"flex",gap:12,overflowX:"auto",padding:"14px 0 6px",scrollbarWidth:"none"}}>
-          {[{e:"🎧",n:"AirPods Pro 2nd Gen",p:"US$159.99",o:"$229.99",d:"-30%"},{e:"👟",n:"Nike Air Force 1",p:"US$89.99",o:"$119.99",d:"-25%"},{e:"🔊",n:"JBL Flip 6 Speaker",p:"US$79.99",o:"$99.99",d:"-20%"},{e:"⌚",n:"Apple Watch SE 2",p:"US$189.99",o:"$259.99",d:"-28%"},{e:"🎒",n:"North Face Jester",p:"US$54.99",o:"$84.99",d:"-35%"}].map(p=>(
-            <div key={p.n} style={{background:"linear-gradient(160deg,#0c2257,#081B4B)",border:"1px solid rgba(255,255,255,.1)",borderRadius:16,overflow:"hidden",flexShrink:0,width:140,position:"relative"}}>
-              <div style={{position:"absolute",top:8,left:8,background:"#E31E24",color:"#fff",fontSize:10,fontWeight:800,padding:"3px 8px",borderRadius:6}}>{p.d}</div>
-              <div style={{width:"100%",height:100,display:"flex",alignItems:"center",justifyContent:"center",fontSize:40,background:"rgba(255,255,255,.04)",borderBottom:"1px solid rgba(255,255,255,.1)"}}>{p.e}</div>
-              <div style={{padding:10}}>
-                <div style={{fontSize:11,fontWeight:700,lineHeight:1.3,marginBottom:5}}>{p.n}</div>
-                <div><span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:16}}>{p.p}</span><span style={{fontSize:10,color:"#8ba0c8",textDecoration:"line-through",marginLeft:3}}>{p.o}</span></div>
-                <div style={{color:"#FFD166",fontSize:10,margin:"4px 0"}}>★★★★★</div>
-                <button style={{width:"100%",border:"none",cursor:"pointer",fontWeight:700,borderRadius:8,fontSize:11,padding:8,background:"#E31E24",color:"#fff"}}>🛒 Agregar</button>
-              </div>
-            </div>
-          ))}
+        <div style={{width:86,height:78,background:"linear-gradient(135deg,#f0ebe4,#ddd5c8)",borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",fontSize:34,flexShrink:0,position:"relative",boxShadow:"0 6px 18px rgba(0,0,0,.5)"}}>
+          📦
+          <div style={{position:"absolute",bottom:-8,right:-8,background:"#E31E24",fontFamily:"'Bebas Neue',sans-serif",fontSize:9,padding:"4px 7px",borderRadius:6,border:"2px solid rgba(255,255,255,.2)",color:"#fff",lineHeight:1.2,textAlign:"center"}}>OFERTAS<br/>EXCLUSIVAS</div>
         </div>
       </div>
-
+    </div>
+    <div style={{display:"flex",borderTop:"1px solid rgba(255,255,255,.1)"}}>
+      {[["🏷️","Precios exclusivos","Mejores que Amazon"],["📦","Stock limitado","Productos únicos"],["🚀","Envío rápido","Desde almacén USA"]].map(([ic,t,s])=>(
+        <div key={t} style={{flex:1,padding:"12px 8px",textAlign:"center",borderRight:"1px solid rgba(255,255,255,.1)"}}>
+          <div style={{fontSize:18,marginBottom:4}}>{ic}</div>
+          <div style={{fontSize:10,fontWeight:700,marginBottom:2}}>{t}</div>
+          <div style={{fontSize:9,color:"#8ba0c8",lineHeight:1.3}}>{s}</div>
+        </div>
+      ))}
+    </div>
+  </div>
+  <div style={{display:"flex",gap:12,overflowX:"auto",padding:"14px 0 6px",scrollbarWidth:"none"}}>
+    {[{e:"🎧",n:"AirPods Pro 2nd Gen",p:"US$159.99",o:"$229.99",d:"-30%"},{e:"👟",n:"Nike Air Force 1",p:"US$89.99",o:"$119.99",d:"-25%"},{e:"🔊",n:"JBL Flip 6 Speaker",p:"US$79.99",o:"$99.99",d:"-20%"},{e:"⌚",n:"Apple Watch SE 2",p:"US$189.99",o:"$259.99",d:"-28%"},{e:"🎒",n:"North Face Jester",p:"US$54.99",o:"$84.99",d:"-35%"}].map(p=>(
+      <div key={p.n} style={{background:"linear-gradient(160deg,#0c2257,#081B4B)",border:"1px solid rgba(255,255,255,.1)",borderRadius:16,overflow:"hidden",flexShrink:0,width:140,position:"relative"}}>
+        <div style={{position:"absolute",top:8,left:8,background:"#E31E24",color:"#fff",fontSize:10,fontWeight:800,padding:"3px 8px",borderRadius:6}}>{p.d}</div>
+        <div style={{width:"100%",height:100,display:"flex",alignItems:"center",justifyContent:"center",fontSize:40,background:"rgba(255,255,255,.04)",borderBottom:"1px solid rgba(255,255,255,.1)"}}>{p.e}</div>
+        <div style={{padding:10}}>
+          <div style={{fontSize:11,fontWeight:700,lineHeight:1.3,marginBottom:5}}>{p.n}</div>
+          <div><span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:16}}>{p.p}</span><span style={{fontSize:10,color:"#8ba0c8",textDecoration:"line-through",marginLeft:3}}>{p.o}</span></div>
+          <div style={{color:"#FFD166",fontSize:10,margin:"4px 0"}}>★★★★★</div>
+          <button style={{width:"100%",border:"none",cursor:"pointer",fontWeight:700,borderRadius:8,fontSize:11,padding:8,background:"#E31E24",color:"#fff"}}>🛒 Agregar</button>
+        </div>
+      </div>
+    ))}
+  </div>
+ 
 {/* Aphrodite Hero Banner */}
       <div style={{margin:"14px 16px 0",background:"linear-gradient(135deg,#081B4B,#0a1534)",borderRadius:20,overflow:"hidden",position:"relative",display:"flex",alignItems:"stretch",minHeight:138}}>
         <div style={{flex:1,padding:"18px 16px",display:"flex",flexDirection:"column",justifyContent:"center",zIndex:2}}>
@@ -1081,7 +1084,7 @@ function AppContent(){
   const [geo,setGeo]=useState(null);
   const [paymentPlan,setPaymentPlan]=useState(null);
   const [showOnboarding,setShowOnboarding]=useState(false);
-  const [fabUnread,setFabUnread]=useState(1);
+const [fabUnread,setFabUnread]=useState(1);const [picksOpen,setPicksOpen]=useState(false);
   useEffect(()=>{
     if(profile?.country&&GEO_RATES[profile.country]) setGeo({...GEO_RATES[profile.country],code:profile.country});
     else fetch("https://ipapi.co/json/").then(r=>r.json()).then(d=>{
@@ -1262,4 +1265,91 @@ function RegisterScreen({ onSwitch }) {
       <div style={{fontSize:72,marginBottom:20}}>🎉</div>
       <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:32,color:"#fff",marginBottom:10}}>Cuenta creada!</div>
       <div style={{fontSize:14,color:"rgba(255,255,255,0.55)",marginBottom:8,maxWidth:300}}>Revisa tu email <strong style={{color:"#fff"}}>{email}</strong> para verificar tu cuenta.</div>
-      <button onClick={onSwitch} style={{marginTop:24,padding:"14px 40px",borderRadius:14,background:"#E31E24",color:"#fff",fontSize:15,fontWeigh
+      <button onClick={onSwitch} style={{marginTop:24,padding:"14px 40px",borderRadius:14,background:"#E31E24",color:"#fff",fontSize:15,fontWeight:800,border:"none",cursor:"pointer"}}>Ir al login →</button>
+    </div>
+  );
+  return (
+    <div style={{minHeight:"100vh",background:"linear-gradient(155deg,#050f2b,#0a1f55)",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:20}}>
+      <div style={{textAlign:"center",marginBottom:24}}>
+        <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:30,color:"#fff",letterSpacing:"0.08em"}}>USALINK</div>
+        <div style={{fontSize:13,color:"rgba(255,255,255,0.45)",marginTop:4}}>Crea tu cuenta gratis</div>
+      </div>
+      <div style={{width:"100%",maxWidth:380,background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.1)",borderRadius:24,padding:"28px 24px"}}>
+        {error&&<div style={{background:"rgba(227,30,36,0.12)",border:"1px solid rgba(227,30,36,0.3)",borderRadius:12,padding:"11px 14px",fontSize:13,color:"#ff6b6b",marginBottom:18,textAlign:"center"}}>{error}</div>}
+        {step===1&&<>
+          <div style={{marginBottom:14}}>
+            <label style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,0.5)",textTransform:"uppercase",letterSpacing:"0.08em",display:"block",marginBottom:7}}>Nombre completo</label>
+            <input value={fullName} onChange={e=>setFullName(e.target.value)} placeholder="Juan Pérez" style={{width:"100%",padding:"13px 16px",background:"rgba(255,255,255,0.07)",border:"1.5px solid rgba(255,255,255,0.12)",borderRadius:14,fontSize:14,color:"#fff",outline:"none",boxSizing:"border-box"}}/>
+          </div>
+          <div style={{marginBottom:14}}>
+            <label style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,0.5)",textTransform:"uppercase",letterSpacing:"0.08em",display:"block",marginBottom:7}}>Email</label>
+            <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="tu@email.com" style={{width:"100%",padding:"13px 16px",background:"rgba(255,255,255,0.07)",border:"1.5px solid rgba(255,255,255,0.12)",borderRadius:14,fontSize:14,color:"#fff",outline:"none",boxSizing:"border-box"}}/>
+          </div>
+          <div style={{marginBottom:22}}>
+            <label style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,0.5)",textTransform:"uppercase",letterSpacing:"0.08em",display:"block",marginBottom:10}}>País</label>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:8}}>
+              {COUNTRIES.slice(0,6).map(c=>(
+                <button key={c.code} onClick={()=>setCountry(c.code)} style={{padding:"10px 6px",borderRadius:12,border:"1.5px solid",borderColor:country===c.code?"#E31E24":"rgba(255,255,255,0.1)",background:country===c.code?"rgba(227,30,36,0.15)":"rgba(255,255,255,0.04)",cursor:"pointer",textAlign:"center"}}>
+                  <div style={{fontSize:20}}>{c.flag}</div>
+                  <div style={{fontSize:9,fontWeight:700,color:country===c.code?"#fff":"rgba(255,255,255,0.5)",marginTop:3}}>{c.name}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+          <button onClick={next} style={{width:"100%",padding:14,borderRadius:14,background:"#E31E24",color:"#fff",fontSize:15,fontWeight:800,border:"none",cursor:"pointer"}}>Continuar →</button>
+        </>}
+        {step===2&&<>
+          <button onClick={()=>setStep(1)} style={{background:"none",border:"none",color:"rgba(255,255,255,0.5)",fontSize:13,cursor:"pointer",marginBottom:16,padding:0}}>‹ Volver</button>
+          <div style={{marginBottom:14}}>
+            <label style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,0.5)",textTransform:"uppercase",letterSpacing:"0.08em",display:"block",marginBottom:7}}>Contraseña</label>
+            <input type="password" value={pass} onChange={e=>setPass(e.target.value)} placeholder="Mínimo 6 caracteres" style={{width:"100%",padding:"13px 16px",background:"rgba(255,255,255,0.07)",border:"1.5px solid rgba(255,255,255,0.12)",borderRadius:14,fontSize:14,color:"#fff",outline:"none",boxSizing:"border-box"}}/>
+          </div>
+          <div style={{marginBottom:22}}>
+            <label style={{fontSize:11,fontWeight:700,color:"rgba(255,255,255,0.5)",textTransform:"uppercase",letterSpacing:"0.08em",display:"block",marginBottom:7}}>Confirmar contraseña</label>
+            <input type="password" value={confirm} onChange={e=>setConfirm(e.target.value)} onKeyDown={e=>e.key==="Enter"&&handle()} placeholder="Repite tu contraseña" style={{width:"100%",padding:"13px 16px",background:"rgba(255,255,255,0.07)",border:`1.5px solid ${confirm&&confirm!==pass?"rgba(227,30,36,0.5)":confirm&&confirm===pass?"rgba(16,185,129,0.5)":"rgba(255,255,255,0.12)"}`,borderRadius:14,fontSize:14,color:"#fff",outline:"none",boxSizing:"border-box"}}/>
+            {confirm&&confirm===pass&&<div style={{fontSize:11,color:"#10b981",marginTop:5}}>✓ Contraseñas coinciden</div>}
+          </div>
+          <button onClick={handle} disabled={loading} style={{width:"100%",padding:14,borderRadius:14,background:"#E31E24",color:"#fff",fontSize:15,fontWeight:800,border:"none",cursor:"pointer",opacity:loading?0.6:1}}>
+            {loading?"Creando cuenta...":"Crear cuenta gratis 🎉"}
+          </button>
+        </>}
+      </div>
+      <div style={{marginTop:20,display:"flex",alignItems:"center",gap:8}}>
+        <span style={{fontSize:13,color:"rgba(255,255,255,0.35)"}}>¿Ya tienes cuenta?</span>
+ <button onClick={onSwitch} style={{background:"none",border:"none",color:"rgba(255,255,255,0.7)",fontSize:13,cursor:"pointer",marginBottom:16,padding:0}}>{mode==="login"?"Crear cuenta gratis":"Ya tengo cuenta"}</button>
+      </div>
+    </div>
+  );
+}
+
+function AuthGate({ children }) {
+  const { user, loading } = useAuthHook();
+  const [screen, setScreen] = useState("login");
+  if (loading) return (
+    <div style={{minHeight:"100vh",background:"#050f2b",display:"flex",alignItems:"center",justifyContent:"center"}}>
+      <div style={{width:56,height:56,background:"#E31E24",borderRadius:14,display:"flex",alignItems:"center",justifyContent:"center"}}>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      </div>
+      <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:28,color:"#fff",letterSpacing:"0.05em",marginLeft:12}}>USALINK</div>
+      <style>{"@keyframes spin{to{transform:rotate(360deg)}}"}</style>
+      <div style={{width:36,height:36,border:"3px solid rgba(227,30,36,0.3)",borderTop:"3px solid #E31E24",borderRadius:"50%",marginLeft:16}}/>
+    </div>
+  );
+  if (!user) {
+    if (screen==="login") return <LoginScreen onSwitch={()=>setScreen("register")}/>;
+    return <RegisterScreen onSwitch={()=>setScreen("login")}/>;
+  }
+  return children;
+}
+
+export default function App(){
+  return (
+    <AuthProvider>
+      <CartProvider>
+        <AuthGate>
+          <AppContent/>
+        </AuthGate>
+      </CartProvider>
+    </AuthProvider>
+  );
+  }
