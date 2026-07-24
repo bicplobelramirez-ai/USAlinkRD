@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>USALINK — Hacer una orden</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#081B4B;--deep:#050f2e;--card:#0d255f;--red:#E31E24;--sky:#3B9EFF;--muted:#8ba0c8;--line:rgba(255,255,255,.10);--green:#27e36a}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--deep);color:#fff;min-height:100vh;padding:0 0 40px}
+.display{font-family:'Bebas Neue',sans-serif;letter-spacing:.5px}
+
+/* Header */
+header{background:var(--navy);border-bottom:1px solid var(--line);padding:14px 18px;
+  display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:20}
+.logo{display:flex;align-items:center;gap:9px}
+.mark{width:38px;height:38px;border-radius:10px;background:var(--red);display:grid;place-items:center;font-size:18px}
+.logo b{font-family:'Bebas Neue';font-size:22px;letter-spacing:1px}
+.logo span{font-size:9px;color:var(--muted);letter-spacing:2px;display:block;font-weight:600}
+.back{margin-left:auto;background:rgba(255,255,255,.06);border:1px solid var(--line);
+  border-radius:20px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;color:#fff}
+
+/* Progress */
+.progress{padding:18px 18px 0;max-width:480px;margin:0 auto}
+.steps{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.step{flex:1;height:4px;border-radius:4px;background:rgba(255,255,255,.1);transition:.3s}
+.step.done{background:var(--red)}
+.step.active{background:var(--sky)}
+.step-lbl{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);font-weight:600}
+
+/* Wrap */
+.wrap{max-width:480px;margin:0 auto;padding:20px 18px}
+
+/* SCREEN 1 — Pega el link */
+.hero-link{background:linear-gradient(135deg,#1a0c20,#2a0d18);border:1px solid rgba(227,30,36,.35);
+  border-radius:20px;padding:28px 22px;margin-bottom:18px;text-align:center}
+.hero-link h2{font-family:'Bebas Neue';font-size:36px;line-height:.95;margin:10px 0 8px}
+.hero-link h2 span{color:var(--red)}
+.hero-link p{color:#f0d8da;font-size:14px;margin-bottom:20px}
+.url-box{display:flex;gap:10px}
+.url-box input{flex:1;background:#0a1f52;border:1px solid var(--line);border-radius:12px;
+  padding:14px 14px;color:#fff;font-size:14px;font-family:'DM Sans';outline:none}
+.url-box input:focus{border-color:var(--sky)}
+.url-box input::placeholder{color:#6f84ad}
+.btn{border:none;cursor:pointer;font-family:'DM Sans';font-weight:700;border-radius:12px;font-size:15px;padding:14px 20px;transition:.1s}
+.btn-red{background:var(--red);color:#fff;box-shadow:0 8px 20px rgba(227,30,36,.3)}
+.btn-red:active{transform:scale(.98)}
+.btn-full{width:100%;padding:16px;font-size:16px;margin-top:4px}
+.stores{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}
+.store{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:20px;
+  padding:6px 14px;font-size:13px;font-weight:600;color:#cfe0ff}
+
+/* SCREEN 2 — Resumen de Compra (Apple/Stripe style, white card) */
+.summary-card{background:#fff;color:#0f1729;border-radius:20px;padding:26px 22px;margin-bottom:16px;
+  box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.summary-card h2{font-size:19px;font-weight:800;letter-spacing:-0.01em;margin-bottom:4px;color:#0f1729}
+.summary-card .store-line{font-size:13px;color:#6b7690;margin-bottom:18px}
+.summary-card .store-line b{color:#0f1729}
+
+.sum-row{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid #eef0f5}
+.sum-row .ic{width:36px;height:36px;border-radius:10px;background:#f4f6fb;display:grid;place-items:center;font-size:16px;flex-shrink:0}
+.sum-row .txt{flex:1;min-width:0}
+.sum-row .txt .lbl{font-size:14px;font-weight:600;color:#0f1729}
+.sum-row .txt .sub{font-size:11.5px;color:#8892a6;margin-top:1px;line-height:1.4}
+.sum-row .amt{font-size:15px;font-weight:700;color:#0f1729;flex-shrink:0}
+.sum-row .amt.free{color:#12b76a}
+
+.sum-total{display:flex;justify-content:space-between;align-items:center;padding-top:18px;margin-top:4px}
+.sum-total .lbl{font-size:14px;font-weight:700;color:#0f1729;letter-spacing:.2px}
+.sum-total .amt{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--red);letter-spacing:.5px}
+
+.savings-box{background:linear-gradient(135deg,#eafff3,#e6f9ee);border:1px solid #b7ecd0;border-radius:14px;
+  padding:14px 16px;margin-top:16px}
+.savings-box .row{display:flex;justify-content:space-between;font-size:13px;color:#4b5a6b;padding:3px 0}
+.savings-box .row.strike .val{text-decoration:line-through;color:#9aa5b8}
+.savings-box .row.win{font-weight:800;color:#0e9f5a;font-size:14px;padding-top:6px;border-top:1px dashed #b7ecd0;margin-top:4px}
+
+.note-box{border-radius:16px;padding:16px 18px;margin-bottom:14px;font-size:13px;line-height:1.65}
+.note-box.info{background:rgba(59,158,255,.08);border:1px solid rgba(59,158,255,.25);color:#cfe0ff}
+.note-box.policy{background:rgba(255,255,255,.05);border:1px solid var(--line);color:#dfe6f5}
+.note-box .note-title{font-weight:800;font-size:13px;margin-bottom:8px;color:#fff;display:flex;align-items:center;gap:6px}
+.note-box ul{list-style:none;display:flex;flex-direction:column;gap:6px}
+.note-box li{display:flex;gap:8px;align-items:flex-start}
+
+/* SCREEN 3 — Datos del cliente */
+.section-title{font-family:'Bebas Neue';font-size:26px;margin-bottom:4px}
+.section-sub{font-size:14px;color:var(--muted);margin-bottom:20px}
+.field{margin-bottom:14px}
+label{display:block;font-size:11px;font-weight:700;color:#cfe0ff;margin-bottom:6px;letter-spacing:.3px}
+input,select,textarea{width:100%;background:#0a1f52;border:1px solid var(--line);border-radius:12px;
+  padding:13px 14px;color:#fff;font-size:15px;font-family:'DM Sans';outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--sky);box-shadow:0 0 0 3px rgba(59,158,255,.15)}
+input::placeholder,textarea::placeholder{color:#6f84ad}
+textarea{height:80px;resize:none}
+.row2{display:flex;gap:10px}.row2 .field{flex:1}
+.err{color:#ff8a8d;font-size:12px;margin:-10px 0 12px;display:none}
+
+/* Payment chips */
+.pay-chips{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.pay-chip{background:#0a1f52;border:2px solid var(--line);border-radius:12px;
+  padding:13px 16px;cursor:pointer;display:flex;align-items:center;gap:12px;font-weight:600;transition:.2s}
+.pay-chip.selected{border-color:var(--sky);background:rgba(59,158,255,.08)}
+.pay-chip .icon{font-size:22px}
+.pay-chip .name{flex:1}
+.pay-chip .check{width:20px;height:20px;border-radius:50%;border:2px solid var(--muted);transition:.2s}
+.pay-chip.selected .check{background:var(--sky);border-color:var(--sky)}
+
+/* SCREEN 4 — Confirmación */
+.success{text-align:center}
+.check-circle{width:78px;height:78px;border-radius:50%;background:rgba(39,227,106,.12);
+  border:2px solid var(--green);display:grid;place-items:center;font-size:36px;margin:0 auto 16px}
+.order-box{background:var(--navy);border:1px dashed var(--sky);border-radius:16px;padding:18px;margin:18px 0;text-align:left}
+.order-box .lbl{font-size:11px;letter-spacing:1.5px;color:var(--muted);font-weight:700}
+.order-box .id{font-family:'Bebas Neue';font-size:38px;color:var(--sky);letter-spacing:2px}
+.steps-list{background:rgba(255,255,255,.04);border-radius:14px;padding:16px;text-align:left;margin-bottom:18px}
+.step-item{display:flex;gap:12px;padding:8px 0;border-bottom:1px solid var(--line);font-size:14px;align-items:flex-start}
+.step-item:last-child{border:none}
+.step-item .num{width:26px;height:26px;border-radius:50%;background:var(--red);
+  display:grid;place-items:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+.step-item p{color:#cfe0ff;line-height:1.4}
+.wa-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;
+  background:#25D366;color:#fff;font-weight:700;font-size:15px;border-radius:12px;
+  padding:15px;text-decoration:none;margin-bottom:10px}
+
+/* Utility */
+.hidden{display:none!important}
+.screen{animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="mark">🔗</div>
+    <div><b>USALINK</b><span>TU TIENDA A UN CLIC</span></div>
+  </div>
+  <button class="back" onclick="goBack()">← Atrás</button>
+</header>
+
+<!-- PROGRESS -->
+<div class="progress">
+  <div class="steps">
+    <div class="step active" id="s1"></div>
+    <div class="step" id="s2"></div>
+    <div class="step" id="s3"></div>
+    <div class="step" id="s4"></div>
+  </div>
+  <div class="step-lbl"><span id="step-txt">Paso 1 de 4</span><span id="step-name">Pega el link</span></div>
+</div>
+
+<!-- ===== SCREEN 1 ===== -->
+<div class="wrap screen" id="screen1">
+  <div class="hero-link">
+    <div style="font-size:36px">🔗</div>
+    <h2>PEGA EL LINK,<br><span>NOSOTROS COMPRAMOS.</span></h2>
+    <p>Copia la URL del producto desde Amazon, Shein, Nike o donde sea.</p>
+    <div class="url-box">
+      <input id="urlInput" placeholder="https://amazon.com/producto..." type="url">
+      <button class="btn btn-red" onclick="analizar()">Buscar</button>
+    </div>
+    <div class="stores">
+      <span class="store">🛒 Amazon</span><span class="store">👟 Nike</span>
+      <span class="store">🍎 Apple</span><span class="store">👗 Shein</span>
+      <span class="store">🏪 Target</span><span class="store">+ 40 tiendas</span>
+    </div>
+  </div>
+  <p style="text-align:center;font-size:13px;color:var(--muted)">Sin registro · Sin cuenta · 100% gratis cotizar</p>
+</div>
+
+<!-- ===== SCREEN 2 — Resumen de Compra ===== -->
+<div class="wrap screen hidden" id="screen2">
+  <div class="summary-card">
+    <h2>Resumen de tu compra</h2>
+    <div class="store-line">Producto en <b id="prod-store">Amazon.com</b> — <span id="prod-name">Producto desde USA</span></div>
+
+    <div class="sum-row">
+      <div class="ic">🛍️</div>
+      <div class="txt"><div class="lbl">Producto</div></div>
+      <div class="amt" id="row-price">$99.99</div>
+    </div>
+
+    <div class="sum-row">
+      <div class="ic">🏛️</div>
+      <div class="txt"><div class="lbl">Sales Tax</div><div class="sub">Impuesto cobrado por la tienda</div></div>
+      <div class="amt" id="row-tax">$0.00</div>
+    </div>
+
+    <div class="sum-row">
+      <div class="ic">📦</div>
+      <div class="txt"><div class="lbl">Envío al Courier (Miami)</div></div>
+      <div class="amt" id="row-shipping">Gratis</div>
+    </div>
+
+    <div class="sum-row">
+      <div class="ic">🤝</div>
+      <div class="txt"><div class="lbl">Servicio UsaLink</div></div>
+      <div class="amt" id="row-service">$8.00</div>
+    </div>
+
+    <div class="sum-total">
+      <div class="lbl">TOTAL A PAGAR</div>
+      <div class="amt" id="prod-total">$0.00</div>
+    </div>
+
+    <div class="savings-box hidden" id="savings-box">
+      <div class="row strike"><span>Precio original</span><span class="val" id="save-orig">$0.00</span></div>
+      <div class="row"><span>Precio conseguido</span><span class="val" id="save-got">$0.00</span></div>
+      <div class="row win"><span>🎉 Ahorraste</span><span id="save-amt">$0.00</span></div>
+    </div>
+  </div>
+
+  <div class="note-box info">
+    <div class="note-title">ℹ️ Información importante</div>
+    <ul>
+      <li>• El envío internacional desde Miami hasta tu país <b>NO</b> está incluido.</li>
+      <li>• Ese costo será cobrado directamente por tu courier.</li>
+      <li>• Todos los impuestos mostrados corresponden al monto real cobrado por la tienda de EE.UU.</li>
+    </ul>
+  </div>
+
+  <div class="note-box policy">
+    <div class="note-title">📋 Política de Envío</div>
+    <ul>
+      <li>✅ Compras de $50 USD o más generalmente califican para envío gratuito en la mayoría de las tiendas participantes.</li>
+      <li>📦 Compras menores de $50 USD muestran el costo real de envío cobrado por la tienda.</li>
+    </ul>
+  </div>
+
+  <button class="btn btn-red btn-full" onclick="goStep(3)">Continuar con mi orden →</button>
+  <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:12px">El precio final puede variar según el peso y dimensiones del paquete.</p>
+</div>
+
+<!-- ===== SCREEN 3 — Datos + Pago ===== -->
+<div class="wrap screen hidden" id="screen3">
+  <div class="section-title">TUS DATOS</div>
+  <p class="section-sub">Sin registro — solo necesitamos dónde contactarte y entregar.</p>
+
+  <div class="field"><label>NOMBRE COMPLETO</label>
+    <input id="c-nombre" placeholder="Ej. María García"></div>
+  <div class="row2">
+    <div class="field"><label>WHATSAPP</label>
+      <input id="c-tel" placeholder="809 000 0000"></div>
+    <div class="field"><label>CORREO</label>
+      <input id="c-email" type="email" placeholder="tucorreo@gmail.com"></div>
+  </div>
+  <div class="field"><label>DIRECCIÓN EN RD (calle, sector, ciudad)</label>
+    <textarea id="c-dir" placeholder="Ej. Calle El Sol #12, Naco, Santo Domingo"></textarea></div>
+  <p class="err" id="form-err">Por favor completa todos los campos.</p>
+
+  <div style="font-family:'Bebas Neue';font-size:22px;margin:6px 0 12px">MÉTODO DE PAGO</div>
+  <div class="pay-chips">
+    <div class="pay-chip selected" onclick="selectPay(this,'tarjeta')">
+      <span class="icon">💳</span><span class="name">Pagar con Tarjeta</span><span class="check"></span>
+    </div>
+    <div class="pay-chip" onclick="selectPay(this,'cashapp')">
+      <span class="icon">💵</span><span class="name">Cash App · $BicplobelRamirez</span><span class="check"></span>
+    </div>
+    <div class="pay-chip" onclick="selectPay(this,'zelle')">
+      <span class="icon">🏦</span><span class="name">Zelle · Bicplobelramirez@gmail.com</span><span class="check"></span>
+    </div>
+    <div class="pay-chip" onclick="selectPay(this,'whatsapp')">
+      <span class="icon">🟢</span><span class="name">Coordinar por WhatsApp</span><span class="check"></span>
+    </div>
+  </div>
+
+  <button class="btn btn-red btn-full" onclick="confirmar()">Confirmar orden →</button>
+</div>
+
+<!-- ===== SCREEN 4 — Confirmación ===== -->
+<div class="wrap screen hidden" id="screen4">
+  <div class="success">
+    <div class="check-circle">✓</div>
+    <div style="font-family:'Bebas Neue';font-size:38px">¡ORDEN RECIBIDA!</div>
+    <p style="color:var(--muted);font-size:14px;margin:6px 0 4px">Te contactaremos por WhatsApp para coordinar.</p>
+
+    <div class="order-box">
+      <div class="lbl">NÚMERO DE ORDEN</div>
+      <div class="id" id="order-id">USL-00000</div>
+      <div style="font-size:13px;color:#cfe0ff;margin-top:6px">Guarda este número para rastrear tu paquete.</div>
+    </div>
+
+    <div class="steps-list">
+      <div class="step-item"><div class="num">1</div><p><b>Verificamos tu orden</b> y te confirmamos disponibilidad por WhatsApp.</p></div>
+      <div class="step-item"><div class="num">2</div><p><b>Realizas el pago</b> por el método que elegiste.</p></div>
+      <div class="step-item"><div class="num">3</div><p><b>Compramos tu producto</b> y lo enviamos a Miami.</p></div>
+      <div class="step-item"><div class="num">4</div><p><b>Llega a RD</b> en 5-8 días hábiles. Rastreo incluido.</p></div>
+    </div>
+
+    <a class="wa-btn" href="https://wa.me/18565622190?text=Hola%2C%20acabo%20de%20hacer%20una%20orden%20en%20USALINK%20🔗%20Mi%20número%20es%3A%20" id="wa-link" target="_blank">
+      🟢 Confirmar por WhatsApp
+    </a>
+    <button class="btn btn-red btn-full" onclick="reset()">Hacer otra orden</button>
+  </div>
+</div>
+
+<script>
+let currentStep=1;
+let payMethod='tarjeta';
+
+const stepNames=['','Pega el link','Revisa el costo','Tus datos y pago','¡Confirmado!'];
+const SERVICE_RATE=0.08; // Servicio UsaLink = 8% del valor del producto
+
+function updateProgress(s){
+  for(let i=1;i<=4;i++){
+    const el=document.getElementById('s'+i);
+    el.className='step'+(i<s?' done':i===s?' active':'');
+  }
+  document.getElementById('step-txt').textContent='Paso '+s+' de 4';
+  document.getElementById('step-name').textContent=stepNames[s];
+}
+
+function showScreen(n){
+  for(let i=1;i<=4;i++) document.getElementById('screen'+i).classList.add('hidden');
+  document.getElementById('screen'+n).classList.remove('hidden');
+  updateProgress(n);
+  currentStep=n;
+  window.scrollTo(0,0);
+}
+
+function goBack(){
+  if(currentStep>1) showScreen(currentStep-1);
+  else window.history.back();
+}
+
+function goStep(n){ showScreen(n); }
+
+function money(n){ return '$'+n.toFixed(2); }
+
+function analizar(){
+  const url=document.getElementById('urlInput').value.trim();
+  if(!url){ alert('Pega el link del producto primero'); return; }
+
+  // Simulamos detección de tienda, precio, impuesto real y envío al courier.
+  // taxRate = sales tax real cobrado por la tienda de EE.UU. (varía por estado)
+  // shipToMiami = costo real de envío cobrado por la tienda (si aplica)
+  // storeChargesShipAbove50 = true si esa tienda cobra envío aunque el producto sea >= $50
+  let store='AMAZON.COM', name='Producto desde USA', price=99.99, taxRate=0.07, shipToMiami=7.95, storeChargesShipAbove50=false;
+  let originalPrice=null; // si existe, se muestra el bloque de ahorro
+
+  if(url.includes('nike')){ store='NIKE.COM'; name='Nike — Producto seleccionado'; price=115.00; taxRate=0.065; shipToMiami=6.50; originalPrice=140.00; }
+  else if(url.includes('shein')){ store='SHEIN.COM'; name='Shein — Producto seleccionado'; price=35.00; taxRate=0.06; shipToMiami=5.99; }
+  else if(url.includes('apple')){ store='APPLE.COM'; name='Apple — Producto seleccionado'; price=399.00; taxRate=0.07; shipToMiami=0; }
+  else if(url.includes('target')){ store='TARGET.COM'; name='Target — Producto seleccionado'; price=60.00; taxRate=0.0825; shipToMiami=0; }
+
+  const salesTax = price*taxRate;
+  const freeShip = price>=50 && !storeChargesShipAbove50;
+  const shipping = freeShip ? 0 : shipToMiami;
+  const servicio = price*SERVICE_RATE;
+  const total = price + salesTax + shipping + servicio;
+
+  document.getElementById('prod-store').textContent=store.charAt(0)+store.slice(1).toLowerCase();
+  document.getElementById('prod-name').textContent=name;
+  document.getElementById('row-price').textContent=money(price);
+  document.getElementById('row-tax').textContent=money(salesTax);
+  const shipEl=document.getElementById('row-shipping');
+  if(freeShip){ shipEl.textContent='Gratis'; shipEl.classList.add('free'); }
+  else{ shipEl.textContent=money(shipping); shipEl.classList.remove('free'); }
+  document.getElementById('row-service').textContent=money(servicio);
+  document.getElementById('prod-total').textContent=money(total);
+
+  const savingsBox=document.getElementById('savings-box');
+  if(originalPrice && originalPrice>price){
+    document.getElementById('save-orig').textContent=money(originalPrice);
+    document.getElementById('save-got').textContent=money(price);
+    document.getElementById('save-amt').textContent=money(originalPrice-price);
+    savingsBox.classList.remove('hidden');
+  } else {
+    savingsBox.classList.add('hidden');
+  }
+
+  showScreen(2);
+}
+
+function selectPay(el,method){
+  document.querySelectorAll('.pay-chip').forEach(c=>c.classList.remove('selected'));
+  el.classList.add('selected');
+  payMethod=method;
+}
+
+function confirmar(){
+  const n=document.getElementById('c-nombre').value.trim();
+  const t=document.getElementById('c-tel').value.trim();
+  const e=document.getElementById('c-email').value.trim();
+  const d=document.getElementById('c-dir').value.trim();
+  const err=document.getElementById('form-err');
+  if(!n||!t||!e||!d){ err.style.display='block'; return; }
+  err.style.display='none';
+  const id='USL-'+Math.floor(10000+Math.random()*89999);
+  document.getElementById('order-id').textContent=id;
+  const msg=encodeURIComponent('Hola, acabo de hacer una orden en USALINK 🔗 Mi número es: '+id);
+  document.getElementById('wa-link').href='https://wa.me/18565622190?text='+msg;
+  showScreen(4);
+}
+
+function reset(){ showScreen(1); document.getElementById('urlInput').value=''; }
+</script>
+</body>
+</html>
