@@ -469,20 +469,7 @@ function HomePage({onNavigate,geo}){
             ))}
           </div>
         </div>
-        <div style={{display:"flex",gap:12,overflowX:"auto",padding:"14px 0 6px",scrollbarWidth:"none"}}>
-          {[{e:"🎧",n:"AirPods Pro 2nd Gen",p:"US$159.99",o:"$229.99",d:"-30%"},{e:"👟",n:"Nike Air Force 1",p:"US$89.99",o:"$119.99",d:"-25%"},{e:"🔊",n:"JBL Flip 6 Speaker",p:"US$79.99",o:"$99.99",d:"-20%"},{e:"⌚",n:"Apple Watch SE 2",p:"US$189.99",o:"$259.99",d:"-28%"},{e:"🎒",n:"North Face Jester",p:"US$54.99",o:"$84.99",d:"-35%"}].map(p=>(
-            <div key={p.n} style={{background:"linear-gradient(160deg,#0c2257,#081B4B)",border:"1px solid rgba(255,255,255,.1)",borderRadius:16,overflow:"hidden",flexShrink:0,width:140,position:"relative"}}>
-              <div style={{position:"absolute",top:8,left:8,background:"#E31E24",color:"#fff",fontSize:10,fontWeight:800,padding:"3px 8px",borderRadius:6}}>{p.d}</div>
-              <div style={{width:"100%",height:100,display:"flex",alignItems:"center",justifyContent:"center",fontSize:40,background:"rgba(255,255,255,.04)",borderBottom:"1px solid rgba(255,255,255,.1)"}}>{p.e}</div>
-              <div style={{padding:10}}>
-                <div style={{fontSize:11,fontWeight:700,lineHeight:1.3,marginBottom:5}}>{p.n}</div>
-                <div><span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:16}}>{p.p}</span><span style={{fontSize:10,color:"#8ba0c8",textDecoration:"line-through",marginLeft:3}}>{p.o}</span></div>
-                <div style={{color:"#FFD166",fontSize:10,margin:"4px 0"}}>★★★★★</div>
-                <button style={{width:"100%",border:"none",cursor:"pointer",fontWeight:700,borderRadius:8,fontSize:11,padding:8,background:"#E31E24",color:"#fff"}}>🛒 Agregar</button>
-              </div>
-            </div>
-          ))}
-        </div>
+        
       </div>
 
 {/* Aphrodite Hero Banner */}
