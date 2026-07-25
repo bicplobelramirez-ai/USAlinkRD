@@ -1343,7 +1343,6 @@ export default function App(){
   return (
     <AuthProvider>
       <CartProvider>
-        <AuthGate>
           <AppContent/>
         </AuthGate>
       </CartProvider>
