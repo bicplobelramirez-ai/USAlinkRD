@@ -405,8 +405,8 @@ function HomePage({onNavigate,geo}){
   return (
     <div>
       <HeroSlider onNavigate={onNavigate}/>
-      <DealsOfTheDay/>
       <StoreMarquee onStoreClick={(s)=>onNavigate("stores",s.cat)}/>
+      <DealsOfTheDay/>
       {profile&&<div style={{background:"linear-gradient(90deg,#081B4B,#0d2560)",padding:"10px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
         <div style={{fontSize:13,color:"rgba(255,255,255,0.85)",fontWeight:600}}>
           👋 Hola, <strong>{profile.full_name?.split(" ")[0]}</strong>
