@@ -251,6 +251,8 @@ function HeroSlider({onNavigate}){
     <div style={{height:200,position:"relative",overflow:"hidden",background:s.bg,transition:"background 0.5s"}}
       onTouchStart={e=>{touchX.current=e.touches[0].clientX;}}
       onTouchEnd={e=>{const dx=e.changedTouches[0].clientX-touchX.current;if(Math.abs(dx)>40)go(dx<0?1:-1);}}>
+      {s.video&&<video src={s.video} autoPlay muted loop playsInline style={{position:"absolute",inset:0,width:"100%",height:"100%",objectFit:"cover",zIndex:0}}/>}
+      {s.video&&<div style={{position:"absolute",inset:0,background:"rgba(0,0,0,0.45)",zIndex:1}}/>}
       <div style={{position:"absolute",inset:0,backgroundImage:"linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px)",backgroundSize:"44px 44px"}}/>
       <div style={{position:"absolute",top:18,right:18,fontSize:44,zIndex:2,filter:"drop-shadow(0 3px 10px rgba(0,0,0,0.3))"}}>{s.emoji}</div>
       <div style={{position:"absolute",bottom:0,left:0,right:0,padding:"0 20px 18px",zIndex:3}}>
