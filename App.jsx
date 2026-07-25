@@ -1344,8 +1344,13 @@ export default function App(){
     <AuthProvider>
       <CartProvider>
           <AppContent/>
-        </AuthGate>
       </CartProvider>
     </AuthProvider>
   );
 }
+
+
+
+
+
+
