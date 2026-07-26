@@ -371,7 +371,7 @@ function StoreMarquee({onStoreClick}){
 }
 function DealsOfTheDay(){
   const deals=[
-    {e:"👟",n:"Nike Air Max 270",p:79.99,o:119.99,d:"-33%"},
+    {e:"👟",n:"Nike Air Force 1 '07",p:89.99,o:119.99,d:"-25%"},
     {e:"🎧",n:"Sony WH-1000XM5",p:249.99,o:349.99,d:"-29%"},
     {e:"⌚",n:"Apple Watch Series 9",p:329.99,o:399.99,d:"-18%"},
     {e:"👜",n:"Coach Tote Bag",p:129.99,o:228.00,d:"-43%"},
