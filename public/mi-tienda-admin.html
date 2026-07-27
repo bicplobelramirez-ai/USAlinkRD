@@ -166,7 +166,7 @@ function loadProducts(){
       stock:rec.fields.Stock||0,
       descripcion:rec.fields.Descripcion||'',
       atributos:rec.fields.Atributos||'',
-      imagen:rec.fields.Imagen||''
+      imagen:(rec.fields.Foto&&rec.fields.Foto[0]&&rec.fields.Foto[0].url)||rec.fields.Imagen_URL||rec.fields.Imagen||''
     };});
     renderGrid();
   })
