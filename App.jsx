@@ -370,13 +370,29 @@ function StoreMarquee({onStoreClick}){
   );
 }
 function DealsOfTheDay(){
-  const deals=[
-    {e:"👟",n:"Nike Air Force 1 '07",p:89.99,o:119.99,d:"-25%"},
-    {e:"🎧",n:"Sony WH-1000XM5",p:249.99,o:349.99,d:"-29%"},
-    {e:"⌚",n:"Apple Watch Series 9",p:329.99,o:399.99,d:"-18%"},
-    {e:"👜",n:"Coach Tote Bag",p:129.99,o:228.00,d:"-43%"},
-    {e:"📱",n:"Samsung Galaxy Buds",p:89.99,o:149.99,d:"-40%"},
-  ];
+  const [deals,setDeals]=useState([]);
+  const [loading,setLoading]=useState(true);
+  useEffect(()=>{
+    const BASE='appSrCkBCihEkjQRE';
+    const TABLE='tbl3ypuRZ6cnGICdP';
+    const TOKEN='patKpVG2vrdAVpAys.bef5e412e9e89c51aa223f45d09d078370d2e9ef4952921fa1ae203578bbf101';
+    fetch('https://api.airtable.com/v0/'+BASE+'/'+TABLE+'?filterByFormula={Oferta del Día}',{headers:{'Authorization':'Bearer '+TOKEN}})
+      .then(r=>r.json())
+      .then(d=>{
+        const list=(d.records||[]).map(rec=>({
+          n:rec.fields.Nombre||rec.fields.Marca||'',
+          p:rec.fields.Precio||0,
+          o:rec.fields.Precio_Original||0,
+          img:rec.fields.Imagen_URL||rec.fields.Imagen||'',
+          e:'📦'
+        }));
+        setDeals(list);
+        setLoading(false);
+      })
+      .catch(()=>setLoading(false));
+  },[]);
+  if(loading) return null;
+  if(!deals.length) return null;
   return (
     <div style={{margin:"16px 16px 0"}}>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
@@ -384,17 +400,19 @@ function DealsOfTheDay(){
         <span style={{fontSize:11,fontWeight:700,color:"#E31E24",background:"rgba(227,30,36,.08)",padding:"4px 10px",borderRadius:999}}>Solo hoy</span>
       </div>
       <div style={{display:"flex",gap:12,overflowX:"auto",paddingBottom:6,scrollbarWidth:"none"}}>
-        {deals.map(p=>(
-          <div key={p.n} style={{background:"#fff",border:"1.5px solid #dde2f0",borderRadius:16,overflow:"hidden",flexShrink:0,width:140,boxShadow:"0 2px 12px rgba(8,27,75,0.07)",position:"relative"}}>
-            <div style={{position:"absolute",top:8,left:8,background:"#E31E24",color:"#fff",fontSize:10,fontWeight:800,padding:"3px 8px",borderRadius:6,zIndex:2}}>{p.d}</div>
-            <div style={{width:"100%",height:100,display:"flex",alignItems:"center",justifyContent:"center",fontSize:40,background:"#F3F5FB",borderBottom:"1px solid #dde2f0"}}>{p.e}</div>
+        {deals.map((p,i)=>{
+          const disc=p.o?Math.round((1-p.p/p.o)*100):null;
+          return (
+          <div key={i} style={{background:"#fff",border:"1.5px solid #dde2f0",borderRadius:16,overflow:"hidden",flexShrink:0,width:140,boxShadow:"0 2px 12px rgba(8,27,75,0.07)",position:"relative"}}>
+            {disc?<div style={{position:"absolute",top:8,left:8,background:"#E31E24",color:"#fff",fontSize:10,fontWeight:800,padding:"3px 8px",borderRadius:6,zIndex:2}}>-{disc}%</div>:null}
+            <div style={{width:"100%",height:100,display:"flex",alignItems:"center",justifyContent:"center",fontSize:40,background:"#F3F5FB",borderBottom:"1px solid #dde2f0",overflow:"hidden"}}>{p.img?<img src={p.img} style={{width:"100%",height:"100%",objectFit:"cover"}}/>:p.e}</div>
             <div style={{padding:10}}>
               <div style={{fontSize:11,fontWeight:700,color:NAVY,lineHeight:1.3,marginBottom:5,minHeight:28}}>{p.n}</div>
-              <div><span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:16,color:NAVY}}>${p.p}</span><span style={{fontSize:10,color:"#8b96b8",textDecoration:"line-through",marginLeft:3}}>${p.o}</span></div>
+              <div><span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:16,color:NAVY}}>${p.p}</span>{p.o?<span style={{fontSize:10,color:"#8b96b8",textDecoration:"line-through",marginLeft:3}}>${p.o}</span>:null}</div>
               <button style={{width:"100%",border:"none",cursor:"pointer",fontWeight:700,borderRadius:8,fontSize:11,padding:8,background:"#E31E24",color:"#fff",marginTop:6}}>🛒 Ver oferta</button>
             </div>
           </div>
-        ))}
+        );})}
       </div>
     </div>
   );
