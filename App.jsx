@@ -383,8 +383,8 @@ function DealsOfTheDay(){
           n:rec.fields.Nombre||rec.fields.Marca||'',
           p:rec.fields.Precio||0,
           o:rec.fields.Precio_Original||0,
-          imagen:(rec.fields.Foto&&rec.fields.Foto[0]&&rec.fields.Foto[0].url)||rec.fields.Imagen_URL||rec.fields.Imagen||''
-          e:'📦'
+          imagen:(rec.fields.Foto&&rec.fields.Foto[0]&&rec.fields.Foto[0].url),
+e:'📦'
         }));
         setDeals(list);
         setLoading(false);
