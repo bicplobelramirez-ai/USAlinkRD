@@ -405,7 +405,7 @@ e:'📦'
           return (
           <div key={i} style={{background:"#fff",border:"1.5px solid #dde2f0",borderRadius:16,overflow:"hidden",flexShrink:0,width:140,boxShadow:"0 2px 12px rgba(8,27,75,0.07)",position:"relative"}}>
             {disc?<div style={{position:"absolute",top:8,left:8,background:"#E31E24",color:"#fff",fontSize:10,fontWeight:800,padding:"3px 8px",borderRadius:6,zIndex:2}}>-{disc}%</div>:null}
-            <div style={{width:"100%",height:100,display:"flex",alignItems:"center",justifyContent:"center",fontSize:40,background:"#F3F5FB",borderBottom:"1px solid #dde2f0",overflow:"hidden"}}>{p.img?<img src={p.img} style={{width:"100%",height:"100%",objectFit:"cover"}}/>:p.e}</div>
+            <div style={{width:"100%",height:100,display:"flex",alignItems:"center",justifyContent:"center",fontSize:40,background:"#F3F5FB",borderBottom:"1px solid #dde2f0",overflow:"hidden"}}>{p.imagen?<img src={p.imagen} style={{width:"100%",height:"100%",objectFit:"cover"}}/>:p.e}</div>
             <div style={{padding:10}}>
               <div style={{fontSize:11,fontWeight:700,color:NAVY,lineHeight:1.3,marginBottom:5,minHeight:28}}>{p.n}</div>
               <div><span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:16,color:NAVY}}>${p.p}</span>{p.o?<span style={{fontSize:10,color:"#8b96b8",textDecoration:"line-through",marginLeft:3}}>${p.o}</span>:null}</div>
