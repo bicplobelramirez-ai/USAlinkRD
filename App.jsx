@@ -106,7 +106,7 @@ const CATS = [
 ];
 
 const SLIDES = [
-  {title:"Compra en USA.", em:"Recíbelo en tu país.", sub:"Accede a miles de tiendas.",video:"https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-woman-shopping-online-with-a-credit-card-42272-large.mp4", emoji:"✈️", bg:"linear-gradient(145deg,#050f2b,#081b4b)", cta:"Ver tiendas", page:"stores"},
+  {title:"Compra en USA.", em:"Recíbelo en tu país.", sub:"Accede a miles de tiendas.",video:"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", emoji:"✈️", bg:"linear-gradient(145deg,#050f2b,#081b4b)", cta:"Ver tiendas", page:"stores"},
   {title:"Tiendas USA", em:"Destacadas.", sub:"Nike, Apple, Saks, Amazon y más.", emoji:"🛍️", bg:"linear-gradient(145deg,#0d1f4e,#0a2866)", cta:"Explorar", page:"stores"},
   {title:"Sneakers, tech", em:"y moda viral.", sub:"Los productos más pedidos desde USA.", emoji:"👟", bg:"linear-gradient(145deg,#0a1a3d,#061230)", cta:"Ver calzado", page:"stores"},
   {title:"Pega el link.", em:"Nosotros compramos.", sub:"Copia la URL de cualquier producto USA.", emoji:"🔗", bg:"linear-gradient(145deg,#1a0a3d,#0d0a2e)", cta:"Pegar link", page:"link"},
