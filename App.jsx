@@ -418,7 +418,7 @@ e:'📦'
   );
 }
 const FEATURED_IDS = ["tiktokshop","etsy","uniqlo","nike","sephora","coachoutlet"];
-const FEATURED_TAGS = {tiktokshop:"Virales", etsy:"Únicos", uniqlo:"Moda", nike:"Deportes", sephora:"Belleza", coachoutlet:"Lujo accesible"};
+const FEATURED_TAGS = {tiktokshop:"Virales", etsy:"Personalizados", uniqlo:"Moda", nike:"Deportes", sephora:"Belleza", coachoutlet:"Lujo accesible"};
 
 function FeaturedStores({onNavigate}){
   const featured = FEATURED_IDS.map(id=>STORES.find(s=>s.id===id)).filter(Boolean);
@@ -485,34 +485,8 @@ function HomePage({onNavigate,geo}){
           </div>
         ))}
       </div>
-      {/* Bruce's Picks */}
-      <div style={{margin:"16px 16px 0"}}>
-        <div style={{background:"linear-gradient(135deg,#0d0820,#1a0c35,#0d1a45)",border:"1px solid rgba(227,30,36,.35)",borderRadius:18,overflow:"hidden",boxShadow:"0 10px 32px rgba(227,30,36,.18)"}}>
-          <div style={{padding:"20px 16px 16px"}}>
-            <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:10,marginBottom:14}}>
-              <div style={{flex:1}}>
-                <div style={{display:"inline-flex",background:"rgba(227,30,36,.2)",border:"1px solid rgba(227,30,36,.4)",color:"#ff9a9c",fontSize:10,fontWeight:800,letterSpacing:"1.5px",padding:"4px 12px",borderRadius:20,marginBottom:10}}>🛍️ BRUCE'S PICKS</div>
-                <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:30,lineHeight:.92,marginBottom:6}}>MI TIENDA,<br/><span style={{color:"#E31E24"}}>MIS MEJORES OFERTAS.</span></div>
-                <div style={{fontSize:12,color:"#d4b8c8",lineHeight:1.5,marginBottom:16}}>Productos seleccionados por Bruce. Precios bajos, alta calidad y envío rápido desde EE.UU.</div>
-                <button onClick={()=>window.location.href='/mi-tienda-admin.html'} style={{background:"#E31E24",color:"#fff",border:"none",borderRadius:10,padding:"12px 20px",fontSize:14,fontWeight:700,width:"100%",cursor:"pointer"}}>Ver mi tienda →</button>
-              </div>
-              <div style={{width:86,height:78,background:"linear-gradient(135deg,#f0ebe4,#ddd5c8)",borderRadius:12,display:"flex",alignItems:"center",justifyContent:"center",fontSize:34,flexShrink:0,position:"relative",boxShadow:"0 6px 18px rgba(0,0,0,.5)"}}>
-                📦
-                <div style={{position:"absolute",bottom:-8,right:-8,background:"#E31E24",fontFamily:"'Bebas Neue',sans-serif",fontSize:9,padding:"4px 7px",borderRadius:6,border:"2px solid rgba(255,255,255,.2)",color:"#fff",lineHeight:1.2,textAlign:"center"}}>OFERTAS<br/>EXCLUSIVAS</div>
-              </div>
-            </div>
-          </div>
-          <div style={{display:"flex",borderTop:"1px solid rgba(255,255,255,.1)"}}>
-            {[["🏷️","Precios exclusivos","Mejores que Amazon"],["📦","Stock limitado","Productos únicos"],["🚀","Envío rápido","Desde almacén USA"]].map(([ic,t,s])=>(
-              <div key={t} style={{flex:1,padding:"12px 8px",textAlign:"center",borderRight:"1px solid rgba(255,255,255,.1)"}}>
-                <div style={{fontSize:18,marginBottom:4}}>{ic}</div>
-                <div style={{fontSize:10,fontWeight:700,marginBottom:2}}>{t}</div>
-                <div style={{fontSize:9,color:"#8ba0c8",lineHeight:1.3}}>{s}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-        
+      <FeaturedStores onNavigate={onNavigate}/>
+      
       </div>
 
 {/* Aphrodite Hero Banner */}
