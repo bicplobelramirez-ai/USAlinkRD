@@ -417,6 +417,31 @@ e:'📦'
     </div>
   );
 }
+const FEATURED_IDS = ["tiktokshop","etsy","uniqlo","nike","sephora","coachoutlet"];
+const FEATURED_TAGS = {tiktokshop:"Virales", etsy:"Únicos", uniqlo:"Moda", nike:"Deportes", sephora:"Belleza", coachoutlet:"Lujo accesible"};
+
+function FeaturedStores({onNavigate}){
+  const featured = FEATURED_IDS.map(id=>STORES.find(s=>s.id===id)).filter(Boolean);
+  return (
+    <div style={{margin:"16px 16px 0"}}>
+      <div style={{display:"flex",alignItems:"flex-end",justifyContent:"space-between",marginBottom:4}}>
+        <span style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:26,color:NAVY}}>Tiendas Destacadas</span>
+        <button onClick={()=>onNavigate("stores")} style={{fontSize:12,fontWeight:700,color:RED,background:"none",border:"none",cursor:"pointer"}}>Ver todas →</button>
+      </div>
+      <div style={{fontSize:12,color:"#8b96b8",marginBottom:14}}>Compra en las tiendas favoritas de EE.UU.</div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
+        {featured.map((s,i)=>(
+          <div key={s.id} onClick={()=>onNavigate("stores",s.cat)} style={{background:"#fff",border:"1.5px solid #dde2f0",borderRadius:16,padding:"16px 14px",cursor:"pointer",boxShadow:"0 2px 10px rgba(8,27,75,0.06)",position:"relative"}}>
+            <div style={{position:"absolute",top:10,right:10,fontSize:9,fontWeight:800,color:"#c4cce0"}}>{String(i+1).padStart(2,"0")}</div>
+            <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:20,color:NAVY,marginBottom:2}}>{s.name}</div>
+            <div style={{fontSize:10,fontWeight:700,color:"#8b96b8",marginBottom:10}}>{FEATURED_TAGS[s.id]}</div>
+            <div style={{fontSize:12,fontWeight:800,color:RED}}>Comprar →</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 function HomePage({onNavigate,geo}){
   const {profile}=useAuthHook();
   const rate=geo?geo.rate:8.50;
