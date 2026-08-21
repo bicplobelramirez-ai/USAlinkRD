@@ -487,7 +487,7 @@ function HomePage({onNavigate,geo}){
       </div>
       <FeaturedStores onNavigate={onNavigate}/>
       
-      </div>
+      
 
 {/* Aphrodite Hero Banner */}
       <div style={{margin:"14px 16px 0",background:"linear-gradient(135deg,#081B4B,#0a1534)",borderRadius:20,overflow:"hidden",position:"relative",display:"flex",alignItems:"stretch",minHeight:138}}>
