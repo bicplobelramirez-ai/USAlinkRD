@@ -431,7 +431,7 @@ function FeaturedStores({onNavigate}){
       <div style={{fontSize:12,color:"#8b96b8",marginBottom:14}}>Compra en las tiendas favoritas de EE.UU.</div>
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10}}>
         {featured.map((s,i)=>(
-           <div key={s.id} onClick={()=>window.open(s.url,"_blank")} style={{background:"#fff"... style={{background:"#fff",border:"1.5px solid #dde2f0",borderRadius:16,padding:"16px 14px",cursor:"pointer",boxShadow:"0 2px 10px rgba(8,27,75,0.06)",position:"relative"}}>
+           <div key={s.id} onClick={()=>window.open(s.url,"_blank")} style={{background:"#fff",border:"1.5px solid #dde2f0",borderRadius:16,padding:"16px 14px",cursor:"pointer",boxShadow:"0 2px 10px rgba(8,27,75,0.06)",position:"relative"}}>
             <div style={{position:"absolute",top:10,right:10,fontSize:9,fontWeight:800,color:"#c4cce0"}}>{String(i+1).padStart(2,"0")}</div>
             <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:20,color:NAVY,marginBottom:2}}>{s.name}</div>
             <div style={{fontSize:10,fontWeight:700,color:"#8b96b8",marginBottom:10}}>{FEATURED_TAGS[s.id]}</div>
