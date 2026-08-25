@@ -686,12 +686,16 @@ function TrackPage(){
 }
 
 function CalcPage({geo}){
-  const [weight,setWeight]=useState(""), [country,setCountry]=useState(geo?String(geo.rate):""), [result,setResult]=useState(null);
+const [weight,setWeight]=useState(""), [country,setCountry]=useState(geo?String(geo.rate):""), [price,setPrice]=useState("")  , [result,setResult]=useState(null);
   const calc=()=>{
-    const w=parseFloat(weight)||0, r=parseFloat(country)||0;
-    if(!w||!r){alert("Completa todos los campos");return;}
-    setResult({bill:w.toFixed(2),base:(w*r).toFixed(2),total:(w*r+3).toFixed(2)});
-  };
+  const w=parseFloat(weight)||0, r=parseFloat(country)||0, p=parseFloat(price)||0;
+  if(!w||!r||!p){alert("Completa todos los campos");return;}
+  const shipping=(w*r);
+  const service=(p*0.08);
+  const handling=3;
+  const total=(p+shipping+handling+service);
+  setResult({price:p.toFixed(2),shipping:shipping.toFixed(2),service:service.toFixed(2),handling:handling.toFixed(2),total:total.toFixed(2)});
+};
   return (
     <div>
       <div style={{background:"#050f2b",padding:"24px 20px 28px"}}>
