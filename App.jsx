@@ -706,7 +706,10 @@ const [weight,setWeight]=useState(""), [country,setCountry]=useState(geo?String(
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:12}}>
           <div>
             <label style={{fontSize:11,fontWeight:700,color:"#5d6a8e",textTransform:"uppercase",letterSpacing:"0.09em",display:"block",marginBottom:7}}>Peso (lbs)</label>
-            <input type="number" value={weight} onChange={e=>setWeight(e.target.value)} placeholder="0.0" style={{width:"100%",padding:"11px 14px",border:"1.5px solid #dde2f0",borderRadius:14,fontSize:14,color:NAVY,outline:"none",boxSizing:"border-box"}}/>
+           <div>
+  <label style={{fontSize:11,fontWeight:700,color:"#5d6a8e",textTransform:"uppercase"}}>Precio del producto ($)</label>
+  <input type="number" value={price} onChange={e=>setPrice(e.target.value)} placeholder="Ej: 89.99" style={{width:"100%",padding:12,borderRadius:10,border:"1.5px solid #dde2f0",fontSize:15}}/>
+</div>onChange={e=>setWeight(e.target.value)} placeholder="0.0" style={{width:"100%",padding:"11px 14px",border:"1.5px solid #dde2f0",borderRadius:14,fontSize:14,color:NAVY,outline:"none",boxSizing:"border-box"}}/>
           </div>
           <div>
             <label style={{fontSize:11,fontWeight:700,color:"#5d6a8e",textTransform:"uppercase",letterSpacing:"0.09em",display:"block",marginBottom:7}}>País</label>
