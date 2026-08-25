@@ -722,7 +722,7 @@ const [weight,setWeight]=useState(""), [country,setCountry]=useState(geo?String(
         <button onClick={calc} style={{width:"100%",padding:15,borderRadius:14,background:RED,color:"#fff",fontSize:14,fontWeight:800,border:"none",cursor:"pointer",boxShadow:"0 6px 20px rgba(227,30,36,0.35)"}}>📦 Calcular</button>
         {result&&(
           <div style={{marginTop:14,background:"linear-gradient(135deg,#081B4B,#050f2b)",borderRadius:14,padding:16}}>
-            {[["Peso",result.bill+" lbs"],["Base","$"+result.base],["Manejo","$3.00"]].map(([l,v])=>(
+           {[["Precio","$"+result.price],["Envío","$"+result.shipping],["Manejo","$"+result.handling],["Servicio USALINK (8%)","$"+result.service]].map(([l,v])=>( ,["Base","$"+result.base],["Manejo","$3.00"]].map(([l,v])=>(
               <div key={l} style={{display:"flex",justifyContent:"space-between",fontSize:13,color:"rgba(255,255,255,0.55)",marginBottom:8}}><span>{l}</span><span style={{color:"rgba(255,255,255,0.85)"}}>{v}</span></div>
             ))}
             <div style={{display:"flex",justifyContent:"space-between",fontSize:16,fontWeight:800,color:"#fff",paddingTop:10,borderTop:"1px solid rgba(255,255,255,0.1)"}}>
