@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, createContext, useContext } from "react";
 
-const APHRODITE_IMG = "__APHRODITE_IMG__";
+const APHRODITE_IMG = "/aphrodite.jpg";
 
 /* ─── LOCAL AUTH ─── */
 const AuthCtx = createContext({});
