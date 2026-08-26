@@ -705,18 +705,21 @@ const [weight,setWeight]=useState(""), [country,setCountry]=useState(geo?String(
       <div style={{margin:"14px 16px",background:"#fff",borderRadius:20,padding:20,boxShadow:"0 6px 24px rgba(8,27,75,0.11)",border:"1.5px solid #dde2f0"}}>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:12}}>
           <div>
-            <label style={{fontSize:11,fontWeight:700,color:"#5d6a8e",textTransform:"uppercase",letterSpacing:"0.09em",display:"block",marginBottom:7}}>Peso (lbs)</label>
-           <div>
-  <label style={{fontSize:11,fontWeight:700,color:"#5d6a8e",textTransform:"uppercase"}}>Precio del producto ($)</label>
-  <input type="number" value={price} onChange={e=>setPrice(e.target.value)} placeholder="Ej: 89.99" style={{width:"100%",padding:12,borderRadius:10,border:"1.5px solid #dde2f0",fontSize:15}}/>
-<input type="number" value={price} onChange={e=>setPrice(e.target.value)} placeholder="0.0" style={{width:"100%",padding:"10px 12px",border:"1px solid #ddd",borderRadius:8,fontSize:14}} />
-            <label style={{fontSize:11,fontWeight:700,color:"#5d6a8e",textTransform:"uppercase",letterSpacing:"0.09em",display:"block",marginBottom:7}}>País</label>
-            <select value={country} onChange={e=>setCountry(e.target.value)} style={{width:"100%",padding:"11px 14px",border:"1.5px solid #dde2f0",borderRadius:14,fontSize:13,color:NAVY,outline:"none",background:"#fff",WebkitAppearance:"none",boxSizing:"border-box"}}>
-              <option value="">Seleccionar...</option>
-              {Object.entries(GEO_RATES).map(([k,v])=><option key={k} value={v.rate}>{v.flag} {v.name}</option>)}
-            </select>
-          </div>
-        </div>
+<label style={{fontSize:11,fontWeight:700,color:"#5d6a8e",textTransform:"uppercase",letterSpacing:"0.09em",display:"block",marginBottom:7}}>Peso (lbs)</label>
+<input type="number" value={weight} onChange={e=>setWeight(e.target.value)} placeholder="0.0" style={{width:"100%",padding:12,borderRadius:10,border:"1.5px solid #dde2f0",fontSize:15}} />
+</div>
+<div>
+<label style={{fontSize:11,fontWeight:700,color:"#5d6a8e",textTransform:"uppercase",letterSpacing:"0.09em",display:"block",marginBottom:7}}>Precio del producto ($)</label>
+<input type="number" value={price} onChange={e=>setPrice(e.target.value)} placeholder="Ej: 89.99" style={{width:"100%",padding:12,borderRadius:10,border:"1.5px solid #dde2f0",fontSize:15}} />
+</div>
+</div>
+<div>
+<label style={{fontSize:11,fontWeight:700,color:"#5d6a8e",textTransform:"uppercase",letterSpacing:"0.09em",display:"block",marginBottom:7}}>País</label>
+<select value={country} onChange={e=>setCountry(e.target.value)} style={{width:"100%",padding:"11px 14px",border:"1.5px solid #dde2f0",borderRadius:14,fontSize:13,color:"NAVY"}}>
+<option value="">Seleccionar...</option>
+{Object.entries(GEO_RATES).map(([k,v])=><option key={k} value={v.rate}>{v.flag} {v.name}</option>)}
+</select>
+</div>
         <button onClick={calc} style={{width:"100%",padding:15,borderRadius:14,background:RED,color:"#fff",fontSize:14,fontWeight:800,border:"none",cursor:"pointer",boxShadow:"0 6px 20px rgba(227,30,36,0.35)"}}>📦 Calcular</button>
         {result&&(
           <div style={{marginTop:14,background:"linear-gradient(135deg,#081B4B,#050f2b)",borderRadius:14,padding:16}}>
