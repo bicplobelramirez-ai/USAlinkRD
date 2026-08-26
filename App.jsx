@@ -709,9 +709,7 @@ const [weight,setWeight]=useState(""), [country,setCountry]=useState(geo?String(
            <div>
   <label style={{fontSize:11,fontWeight:700,color:"#5d6a8e",textTransform:"uppercase"}}>Precio del producto ($)</label>
   <input type="number" value={price} onChange={e=>setPrice(e.target.value)} placeholder="Ej: 89.99" style={{width:"100%",padding:12,borderRadius:10,border:"1.5px solid #dde2f0",fontSize:15}}/>
-</div>onChange={e=>setWeight(e.target.value)} placeholder="0.0" style={{width:"100%",padding:"11px 14px",border:"1.5px solid #dde2f0",borderRadius:14,fontSize:14,color:NAVY,outline:"none",boxSizing:"border-box"}}/>
-          </div>
-          <div>
+<input type="number" value={price} onChange={e=>setPrice(e.target.value)} placeholder="0.0" style={{width:"100%",padding:"10px 12px",border:"1px solid #ddd",borderRadius:8,fontSize:14}} />
             <label style={{fontSize:11,fontWeight:700,color:"#5d6a8e",textTransform:"uppercase",letterSpacing:"0.09em",display:"block",marginBottom:7}}>País</label>
             <select value={country} onChange={e=>setCountry(e.target.value)} style={{width:"100%",padding:"11px 14px",border:"1.5px solid #dde2f0",borderRadius:14,fontSize:13,color:NAVY,outline:"none",background:"#fff",WebkitAppearance:"none",boxSizing:"border-box"}}>
               <option value="">Seleccionar...</option>
