@@ -834,7 +834,7 @@ function LinkPage({geo}){
     const link=url.trim(); setUrl("");
     const nc=[...chat,{bot:false,text:link}]; setChat(nc); setLoading(true);
     callAI([{role:"user",content:"Analiza este link: "+link+". Dime qué tienda es, tipo de producto, y pide el precio si no está en la URL. Luego pide el peso para calcular envío a "+(geo?geo.name:"mi país")+" a $"+rate+"/lb."}],
-      "Eres Aphrodite de USALINK. Analiza links de productos USA y calcula costos de envío. Sé amigable y entusiasta. Responde en español.",
+      "Eres Aphrodite de USALINK. Analiza links de productos USA. IMPORTANTE: no tienes acceso real a la página, solo puedes estimar el producto y precio aproximado según la tienda y el tipo de artículo. SIEMPRE inicia tu respuesta aclarando: '⚠️ Este es un precio ESTIMADO, confirma el precio real en la página del producto.' Luego da tu mejor estimado de precio, tipo de producto y costo de envío. Sé amigable y entusiasta. Responde en español.",
       r=>{setChat(c=>[...c,{bot:true,text:r}]);setLoading(false);setTimeout(()=>{if(chatRef.current)chatRef.current.scrollTop=chatRef.current.scrollHeight;},100);},
       ()=>{setChat(c=>[...c,{bot:true,text:"Sin conexión 🙏"}]);setLoading(false);}
     );
