@@ -589,6 +589,7 @@ function AIPage({geo}){
   const send=(msg)=>{
     if(!msg.trim()||loading)return;
     const m=msg.trim(); setInput("");
+    if(mode==="link"){setChat(c=>[...c,{bot:false,text:m},{bot:true,text:"¡Recibido! ✅ Ya tengo tu producto. Para darte el precio exacto y confirmar disponibilidad, te conecto directo con nuestro equipo por WhatsApp — te responden en minutos.\n\n💬 https://wa.me/18565622190"}]);return;}
     const nc=[...chat,{bot:false,text:m}]; setChat(nc); setLoading(true);
     const msgs=nc.map(c=>({role:c.bot?"assistant":"user",content:c.text}));
     callAI(msgs,SYSTEM[mode],
