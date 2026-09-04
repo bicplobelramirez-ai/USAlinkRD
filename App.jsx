@@ -865,6 +865,7 @@ function LinkPage({geo}){
         </div>
       </div>
       <div ref={chatRef} style={{flex:1,overflowY:"auto",padding:"14px 14px 8px",display:"flex",flexDirection:"column",gap:12,background:"#F3F5FB"}}>
+        {lastLink&&<div style={{margin:"0 14px 10px",padding:"14px",background:"#fff",border:"1.5px solid #e6e9f2",borderRadius:16,boxShadow:"0 2px 8px rgba(8,27,75,.05)"}}><a href={"https://wa.me/18565622190?text="+encodeURIComponent("Hola, quiero cotizar este producto: "+lastLink)} target="_blank" style={{display:"flex",alignItems:"center",justifyContent:"center",gap:10,background:"#25D366",color:"#fff",textDecoration:"none",fontWeight:700,fontSize:14.5,padding:14,borderRadius:14}}>💬 Continuar por WhatsApp</a><div style={{textAlign:"center",fontSize:11,color:"#6b7690",marginTop:8}}>Nuestro equipo te confirma precio y disponibilidad antes de que pagues.</div></div>}
         {chat.map((m,i)=>(
           <div key={i} style={{display:"flex",justifyContent:m.bot?"flex-start":"flex-end",gap:8,alignItems:"flex-end"}}>
             {m.bot&&<AphroditeAvatar size={28}/>}
