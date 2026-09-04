@@ -631,7 +631,7 @@ function AIPage({geo}){
         {chat.map((m,i)=>(
           <div key={i} style={{display:"flex",justifyContent:m.bot?"flex-start":"flex-end",gap:8,alignItems:"flex-end"}}>
             {m.bot&&<AphroditeAvatar size={30}/>}
-            <div style={{maxWidth:"78%",padding:"11px 14px",borderRadius:18,background:m.bot?"#fff":NAVY,color:m.bot?"#1a2240":"#fff",fontSize:13,lineHeight:1.6,boxShadow:m.bot?"0 2px 8px rgba(8,27,75,0.07)":"none"}}>{m.text}</div>
+            <div style={{maxWidth:"78%",padding:"11px 14px",borderRadius:18,background:m.bot?"#fff":NAVY,color:m.bot?"#1a2240":"#fff",fontSize:13,lineHeight:1.6,boxShadow:m.bot?"0 2px 8px rgba(8,27,75,0.07)":"none"}}>{m.text.includes("wa.me")?(<>{m.text.split("https://wa.me")[0]}<a href={"https://wa.me"+m.text.split("https://wa.me")[1]} target="_blank" style={{display:"flex",alignItems:"center",justifyContent:"center",gap:8,background:"#25D366",color:"#fff",textDecoration:"none",fontWeight:700,fontSize:13.5,padding:"10px 14px",borderRadius:12,marginTop:8}}>💬 Continuar por WhatsApp</a></>):m.text}</div>
           </div>
         ))}
         {loading&&(
