@@ -309,6 +309,16 @@ function StoreDetail({store,geo,onBack,onNavigate}){
         <a href={store.url} target="_blank" rel="noreferrer" style={{flex:1,background:NAVY,color:"#fff",fontSize:13,fontWeight:800,padding:12,borderRadius:14,textAlign:"center",textDecoration:"none"}}>🔗 Ir a la tienda</a>
         <button onClick={()=>setShowLink(true)} style={{flex:1,background:RED,color:"#fff",fontSize:13,fontWeight:800,padding:12,borderRadius:14,border:"none",cursor:"pointer"}}>🤝 Compra asistida</button>
       </div>
+      {showLink && (
+  <TiendaLinkPage
+    tienda={{ nombre: store.name, icono: "🛍️", dominio: store.url }}
+    onBack={() => setShowLink(false)}
+    onContinue={(link) => {
+      const msg = `Quiero cotizar este producto de ${store.name}: ${link}`;
+      window.open(`https://wa.me/18565622190?text=${encodeURIComponent(msg)}`, "_blank");
+    }}
+  />
+)}
       <div style={{display:"flex",background:"#F3F5FB",borderBottom:"1px solid #dde2f0"}}>
         {[["✈","$"+rate+"/lb","Envío"],["⏱","3-7 días","Entrega"],["🛡️","Incluido","Seguro"],["⭐",store.rating,"Rating"]].map(([icon,val,lbl])=>(
           <div key={lbl} style={{flex:1,textAlign:"center",padding:"12px 4px",borderRight:"1px solid #dde2f0"}}>
