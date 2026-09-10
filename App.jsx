@@ -1,3 +1,4 @@
+import TiendaLinkPage from "./TiendaLinkPage";
 import { useState, useEffect, useRef, createContext, useContext } from "react";
 
 const APHRODITE_IMG = "/aphrodite.png";
@@ -282,6 +283,7 @@ function StoreDetail({store,geo,onBack,onNavigate}){
   const [chat,setChat]=useState([{bot:true,text:"¡Hola! 👋 Soy Aphrodite. ¿Qué te interesa comprar en "+store.name+"? Te digo si es buen deal 😊"}]);
   const [loading,setLoading]=useState(false);
   const chatRef=useRef(null);
+  const [showLink, setShowLink] = useState(false);
   const rate=geo?geo.rate:8.50;
   const send=()=>{
     if(!aiMsg.trim()||loading)return;
@@ -305,7 +307,7 @@ function StoreDetail({store,geo,onBack,onNavigate}){
       </div>
       <div style={{display:"flex",gap:10,padding:"12px 16px",background:"#fff",borderBottom:"1px solid #dde2f0"}}>
         <a href={store.url} target="_blank" rel="noreferrer" style={{flex:1,background:NAVY,color:"#fff",fontSize:13,fontWeight:800,padding:12,borderRadius:14,textAlign:"center",textDecoration:"none"}}>🔗 Ir a la tienda</a>
-        <button onClick={()=>onNavigate("account")} style={{flex:1,background:RED,color:"#fff",fontSize:13,fontWeight:800,padding:12,borderRadius:14,border:"none",cursor:"pointer"}}>🤝 Compra asistida</button>
+        <button onClick={()=>setShowLink(true)} style={{flex:1,background:RED,color:"#fff",fontSize:13,fontWeight:800,padding:12,borderRadius:14,border:"none",cursor:"pointer"}}>🤝 Compra asistida</button>
       </div>
       <div style={{display:"flex",background:"#F3F5FB",borderBottom:"1px solid #dde2f0"}}>
         {[["✈","$"+rate+"/lb","Envío"],["⏱","3-7 días","Entrega"],["🛡️","Incluido","Seguro"],["⭐",store.rating,"Rating"]].map(([icon,val,lbl])=>(
