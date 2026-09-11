@@ -454,7 +454,7 @@ function FeaturedStores({onNavigate}){
     </div>
   );
 }
-function HomePage({onNavigate,geo}){
+function HomePage({onNavigate,geo,onStoreSelect}){
   const {profile}=useAuthHook();
   const rate=geo?geo.rate:8.50;
   return (
