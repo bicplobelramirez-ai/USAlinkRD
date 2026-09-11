@@ -522,7 +522,7 @@ function HomePage({onNavigate,geo}){
         <div style={{fontSize:9,fontWeight:800,letterSpacing:"0.12em",textTransform:"uppercase",color:"rgba(255,255,255,0.5)",marginBottom:7}}>✨ NUEVO</div>
         <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:22,color:"#fff",marginBottom:6}}>Pega el link.<br/><span style={{color:RED}}>Nosotros compramos.</span></div>
         <div style={{fontSize:12,color:"rgba(255,255,255,0.55)",lineHeight:1.6,marginBottom:14}}>Copia cualquier URL de Amazon, Nike, Apple o donde sea.</div>
-        <button onClick={()=>window.location.href='/orden.html'} style={{background:RED,color:"#fff",fontSize:12,fontWeight:800,padding:"10px 20px",borderRadius:999,border:"none",cursor:"pointer",boxShadow:"0 6px 20px rgba(227,30,36,0.4)"}}>🔗 Pegar link ahora</button>
+        <button onClick={()=>onNavigate("stores")}style={{background:RED,color:"#fff",fontSize:12,fontWeight:800,padding:"10px 20px",borderRadius:999,border:"none",cursor:"pointer",boxShadow:"0 6px 20px rgba(227,30,36,0.4)"}}>🔗 Pegar link ahora</button>
       </div>
       <div style={{padding:"18px 16px 0"}}>
         <div style={{fontFamily:"'Bebas Neue',sans-serif",fontSize:24,color:NAVY,marginBottom:14}}>Por qué USALINK?</div>
