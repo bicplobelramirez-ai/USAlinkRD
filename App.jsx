@@ -1211,7 +1211,7 @@ function AppContent(){
 
         <div style={{flex:1,overflow:"hidden",position:"relative"}}>
           {[
-            {id:"home",       show:!selectedStore&&page==="home",       el:<HomePage onNavigate={navigate} geo={geo}/>},
+            {id:"home",       show:!selectedStore&&page==="home",       el:<HomePage onNavigate={navigate} onStoreSelect={s=>setSelectedStore(s)}geo={geo}/>},
             {id:"stores",     show:!selectedStore&&page==="stores",     el:<StoresPage initialCat={storeCat} onStoreSelect={s=>setSelectedStore(s)}/>},
             {id:"store-d",    show:!!selectedStore,                      el:selectedStore?<StoreDetail store={selectedStore} geo={geo} onBack={()=>setSelectedStore(null)} onNavigate={navigate}/>:null},
             {id:"ai",         show:!selectedStore&&page==="ai",          el:<AIPage geo={geo}/>},
