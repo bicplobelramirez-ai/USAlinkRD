@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>USALINK — Completar pago</title>
+<style>
+  :root{
+    --navy:#081B4B;
+    --red:#E31E24;
+    --bg:#F3F5FB;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'DM Sans', -apple-system, sans-serif;
+    background:var(--bg);
+    color:var(--navy);
+  }
+  header{
+    background:var(--navy);
+    color:#fff;
+    padding:16px 20px;
+    font-family:'Bebas Neue', sans-serif;
+    font-size:20px;
+    letter-spacing:0.05em;
+  }
+  main{
+    max-width:420px;
+    margin:0 auto;
+    padding:20px 16px 60px;
+  }
+  .card{
+    background:#fff;
+    border-radius:14px;
+    border:1px solid #e6e9f2;
+    padding:16px;
+    margin-bottom:16px;
+  }
+  .name{font-size:15px;font-weight:700;margin:0 0 2px;}
+  .sub{font-size:12px;color:#8b96b8;margin:0;}
+  .summary{background:var(--bg);border-radius:10px;padding:12px 14px;margin-top:14px;}
+  .summary-row{display:flex;justify-content:space-between;font-size:13px;color:#5d6a8e;margin-bottom:6px;}
+  .summary-total{display:flex;justify-content:space-between;font-size:16px;font-weight:800;padding-top:8px;border-top:1px solid #dde2f0;margin-top:4px;}
+  .pay-label{font-size:12px;color:#8b96b8;margin:18px 0 10px;}
+  button.pay{
+    width:100%;
+    display:flex;align-items:center;gap:10px;
+    padding:13px 14px;
+    margin-bottom:10px;
+    border-radius:10px;
+    border:1px solid #dde2f0;
+    background:#fff;
+    font-size:14px;
+    font-weight:700;
+    color:var(--navy);
+    cursor:pointer;
+  }
+  button.pay.primary{
+    background:var(--red);
+    color:#fff;
+    border:none;
+  }
+  .note{
+    font-size:12px;color:#5d6a8e;
+    background:#eaf7ee;border-radius:8px;padding:10px 12px;
+    margin-top:14px;line-height:1.5;
+  }
+  .paid-note{
+    font-size:14px;font-weight:700;color:#1d9e75;
+    background:#eaf7ee;border-radius:10px;padding:14px;
+    text-align:center;
+  }
+  .manual-box{
+    display:none;
+    background:var(--bg);
+    border-radius:10px;
+    padding:14px;
+    margin-top:10px;
+    font-size:13px;
+    line-height:1.6;
+  }
+  .manual-box.show{display:block;}
+  .manual-box b{color:var(--navy);}
+  .whatsapp-btn{
+    display:block;text-align:center;
+    background:#25D366;color:#fff;
+    padding:12px;border-radius:10px;
+    text-decoration:none;font-weight:700;font-size:14px;
+    margin-top:10px;
+  }
+  #loading,#error{
+    text-align:center;padding:60px 20px;color:#8b96b8;font-size:14px;
+  }
+  #error{color:var(--red);display:none;}
+  #content{display:none;}
+</style>
+</head>
+<body>
+
+<header>USALINK — Completar pago</header>
+
+<main>
+  <div id="loading">Cargando tu pedido…</div>
+  <div id="error">No pudimos encontrar este pedido. Verifica el link que te enviamos por WhatsApp.</div>
+
+  <div id="content">
+    <div class="card">
+      <p class="name" id="nombre">—</p>
+      <p class="sub" id="cliente">—</p>
+      <div class="summary">
+        <div class="summary-row"><span>Producto</span><span id="precioProducto">—</span></div>
+        <div class="summary-total"><span>Total a pagar</span><span id="precioTotal">—</span></div>
+      </div>
+    </div>
+
+    <div class="card" id="pagoCard">
+      <p class="pay-label">Elige cómo quieres pagar</p>
+
+      <button class="pay primary" id="btnTarjeta">💳 Pagar con tarjeta</button>
+      <button class="pay" id="btnCashapp">💵 Cash App</button>
+      <button class="pay" id="btnZelle">🏦 Zelle</button>
+
+      <div class="manual-box" id="cashappBox">
+        Envía <b>$<span class="montoManual"></span></b> a nuestro Cash App: <b>$UsaLinkRD</b><br/>
+        Luego toca el botón para avisarnos por WhatsApp.
+        <a class="whatsapp-btn" id="whatsappCashapp" href="#" target="_blank">Ya envié el pago →</a>
+      </div>
+
+      <div class="manual-box" id="zelleBox">
+        Envía <b>$<span class="montoManual"></span></b> por Zelle a: <b>pagos@usalinkrd.com</b><br/>
+        Luego toca el botón para avisarnos por WhatsApp.
+        <a class="whatsapp-btn" id="whatsappZelle" href="#" target="_blank">Ya envié el pago →</a>
+      </div>
+
+      <div class="note">🔒 El pago con tarjeta es procesado de forma segura por Stripe. Nunca almacenamos tu tarjeta.</div>
+    </div>
+
+    <div class="card" id="pagadoCard" style="display:none;">
+      <div class="paid-note">✓ Este pedido ya fue pagado. ¡Gracias!</div>
+    </div>
+  </div>
+</main>
+
+<script>
+  const WHATSAPP_ADMIN = '18565622190'; // tu mismo número usado en el resto de la app
+
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get('id');
+  const status = params.get('status');
+
+  const els = {
+    loading: document.getElementById('loading'),
+    error: document.getElementById('error'),
+    content: document.getElementById('content'),
+  };
+
+  if (!id) {
+    els.loading.style.display = 'none';
+    els.error.style.display = 'block';
+  } else {
+    fetch(`/api/pedido?id=${encodeURIComponent(id)}`)
+      .then(r => { if (!r.ok) throw new Error('not found'); return r.json(); })
+      .then(d => {
+        const p = d.pedido;
+        const nombre = p.Nombre_Producto || 'Producto';
+        const cliente = p.Nombre_cliente || '';
+        const total = Number(p.Total_usd || p.Precio_usd || 0);
+        const yaPagado = p.Estado === 'Pagado';
+
+        document.getElementById('nombre').textContent = nombre;
+        document.getElementById('cliente').textContent = cliente ? `Para: ${cliente}` : '';
+        document.getElementById('precioProducto').textContent = `$${total.toFixed(2)}`;
+        document.getElementById('precioTotal').textContent = `$${total.toFixed(2)}`;
+        document.querySelectorAll('.montoManual').forEach(el => el.textContent = total.toFixed(2));
+
+        const waMsg = encodeURIComponent(`Ya envié el pago de mi pedido #${id} (${nombre}, $${total.toFixed(2)})`);
+        document.getElementById('whatsappCashapp').href = `https://wa.me/${WHATSAPP_ADMIN}?text=${waMsg}`;
+        document.getElementById('whatsappZelle').href = `https://wa.me/${WHATSAPP_ADMIN}?text=${waMsg}`;
+
+        els.loading.style.display = 'none';
+        els.content.style.display = 'block';
+
+        if (yaPagado || status === 'success') {
+          document.getElementById('pagoCard').style.display = 'none';
+          document.getElementById('pagadoCard').style.display = 'block';
+          return;
+        }
+
+        document.getElementById('btnTarjeta').onclick = () => {
+          document.getElementById('btnTarjeta').textContent = 'Redirigiendo…';
+          fetch('/api/create-checkout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'pedido', pedidoId: id })
+          })
+            .then(r => r.json())
+            .then(res => { if (res.url) window.location.href = res.url; else alert('No pudimos iniciar el pago. Intenta de nuevo.'); })
+            .catch(() => alert('No pudimos iniciar el pago. Intenta de nuevo.'));
+        };
+
+        document.getElementById('btnCashapp').onclick = () => {
+          document.getElementById('cashappBox').classList.add('show');
+          document.getElementById('zelleBox').classList.remove('show');
+        };
+        document.getElementById('btnZelle').onclick = () => {
+          document.getElementById('zelleBox').classList.add('show');
+          document.getElementById('cashappBox').classList.remove('show');
+        };
+      })
+      .catch(() => {
+        els.loading.style.display = 'none';
+        els.error.style.display = 'block';
+      });
+  }
+</script>
+
+</body>
+</html>
+
