@@ -306,7 +306,7 @@ function StoreDetail({store,geo,onBack,onNavigate}){
         </div>
       </div>
       <div style={{display:"flex",gap:10,padding:"12px 16px",background:"#fff",borderBottom:"1px solid #dde2f0"}}>
-        <a href={store.url} target="_blank" rel="noreferrer" style={{flex:1,background:NAVY,color:"#fff",fontSize:13,fontWeight:800,padding:12,borderRadius:14,textAlign:"center",textDecoration:"none"}}>🔗 Ir a la tienda</a>
+        <a href={store.url} target="_blank" rel="noreferrer" onClick={()=>alert("Se abrirá "+store.name+" en una pestaña nueva.\n\nCuando copies el link del producto, regresa a esta pestaña (usa el botón Atrás o cambia de pestaña) y toca 'Compra asistida' para pegarlo.")} style={{flex:1,background:NAVY,co...
         <button onClick={()=>setShowLink(true)} style={{flex:1,background:RED,color:"#fff",fontSize:13,fontWeight:800,padding:12,borderRadius:14,border:"none",cursor:"pointer"}}>🤝 Compra asistida</button>
       </div>
       {showLink && (
