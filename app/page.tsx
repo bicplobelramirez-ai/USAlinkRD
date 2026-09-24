@@ -35,7 +35,7 @@ const featuredStores = [
   ['Etsy', 'Únicos y personalizados'],
 ]
 
-const moreStores = ['Target', 'Lululemon', 'Foot Locker', 'SHEIN', 'Apple', 'Amazon']
+const moreStores = ['Target', 'Bath & Body Works', 'Lululemon', 'Foot Locker', 'SHEIN', 'Amazon']
 
 const deals = [
   { name: 'AirPods Pro 2da', price: '$199', oldPrice: '$249', icon: Headphones },
@@ -92,7 +92,7 @@ export default function Home() {
       </div>
 
       <SectionHeading title="Más tiendas" />
-      <div className="flex gap-2.5 overflow-x-auto px-4 py-3 [scrollbar-width:none]">{moreStores.map((store) => <button key={store} onClick={() => { if (store === 'Target') window.location.href = '/target.html' }} className="min-w-[78px] rounded-2xl border border-[#eeeeee] px-2 py-3 text-center text-[11px] font-semibold text-[#4c514d] transition hover:border-[#b9dfbd] hover:text-[#0a8a43]"><span className="mb-1.5 block text-[#0a8a43]"><Target className="mx-auto size-4" /></span>{store}</button>)}</div>
+      <div className="flex gap-2.5 overflow-x-auto px-4 py-3 [scrollbar-width:none]">{moreStores.map((store) => <button key={store} onClick={() => { if (store === 'Target') window.location.href = '/target.html'; if (store === 'Bath & Body Works') window.location.href = '/bath.html' }} className="min-w-[78px] rounded-2xl border border-[#eeeeee] px-2 py-3 text-center text-[11px] font-semibold text-[#4c514d] transition hover:border-[#b9dfbd] hover:text-[#0a8a43]"><span className="mb-1.5 block text-[#0a8a43]"><Target className="mx-auto size-4" /></span>{store}</button>)}</div>
 
       <SectionHeading title="Ofertas del día" />
       <div className="grid grid-cols-2 gap-3 px-4 py-3">{deals.map(({ name, price, oldPrice, icon: Icon }) => <article key={name} className="overflow-hidden rounded-2xl border border-[#eeeeee] bg-white"><div className="flex h-28 items-center justify-center bg-[#f7f7f7] text-[#0a8a43]"><Icon className="size-10" strokeWidth={1.5} /></div><div className="p-3"><b className="text-[13px]">{name}</b><p className="mt-1 text-sm font-semibold">{price} <s className="ml-1 text-xs font-normal text-[#999]">{oldPrice}</s></p></div></article>)}</div>
