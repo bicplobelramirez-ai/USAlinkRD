@@ -88,7 +88,7 @@ export default function Home() {
 
       <SectionHeading title="Tiendas destacadas" />
       <div className="grid grid-cols-2 gap-3 px-4 py-3 sm:grid-cols-3">
-        {featuredStores.map(([name, description]) => <button key={name} onClick={() => { if (name === 'TikTok Shop') window.location.href = '/tiktok.html'; if (name === 'Nike') window.location.href = '/nike.html'; }} className="rounded-2xl border border-[#eeeeee] bg-white p-4 text-center shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition hover:-translate-y-0.5 hover:border-[#b9dfbd]"><b className="text-sm">{name}</b><span className="mt-2 inline-block rounded-full bg-[#e9f7eb] px-2 py-1 text-[10px] font-semibold text-[#0a8a43]">{description}</span></button>)}
+        {featuredStores.map(([name, description]) => <button key={name} onClick={() => { if (name === 'TikTok Shop') window.location.href = '/tiktok.html'; if (name === 'Nike') window.location.href = '/nike.html'; if (name === 'Coach Outlet') window.location.href = '/coach.html'; }} className="rounded-2xl border border-[#eeeeee] bg-white p-4 text-center shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition hover:-translate-y-0.5 hover:border-[#b9dfbd]"><b className="text-sm">{name}</b><span className="mt-2 inline-block rounded-full bg-[#e9f7eb] px-2 py-1 text-[10px] font-semibold text-[#0a8a43]">{description}</span></button>)}
       </div>
 
       <SectionHeading title="Más tiendas" />
