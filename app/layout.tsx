@@ -3,8 +3,8 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
+  title: 'USALINK | Compras desde Estados Unidos',
+  description: 'Pega el link de cualquier producto de Estados Unidos y nosotros lo compramos por ti.',
   generator: 'v0.app',
   icons: {
     icon: [
