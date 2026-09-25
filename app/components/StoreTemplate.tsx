@@ -26,18 +26,51 @@ export default function StoreTemplate({ name, slogan, placeholder, logoColor }: 
   }
 
   return (
-    <main className="min-h-screen bg-[#f8fafc] p-4 text-slate-950">
-      <a href="/" className="text-sm font-semibold text-slate-600">← Volver a USALINK</a>
-      <section className="mx-auto mt-6 max-w-lg">
-        <div className="rounded-3xl p-6 text-white" style={{ backgroundColor: logoColor }}>
-          <p className="text-sm font-bold uppercase tracking-widest opacity-80">USALINK · Tienda USA</p>
-          <h1 className="mt-3 text-3xl font-black">{name}</h1>
-          <p className="mt-2 text-sm opacity-90">{slogan}</p>
+    <main className="min-h-screen bg-[#f5f5f7] px-4 pb-8 text-slate-950">
+      <section className="mx-auto max-w-lg">
+        <header className="-mx-4 overflow-hidden rounded-b-[2rem] px-5 pb-7 pt-5 text-white shadow-lg" style={{ background: `linear-gradient(135deg, ${logoColor}, #111827)` }}>
+          <a href="/" className="inline-flex items-center gap-2 text-sm font-bold text-white/80 transition hover:text-white">
+            <span aria-hidden="true">←</span> Volver a USALINK
+          </a>
+          <div className="mt-8 flex items-end justify-between gap-4">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/70">USALINK · Tienda USA</p>
+              <h1 className="mt-2 text-3xl font-black tracking-tight">{name}</h1>
+              <p className="mt-2 text-sm text-white/80">{slogan}</p>
+            </div>
+            <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-white/15 text-2xl font-black ring-1 ring-white/20" aria-hidden="true">
+              {name.charAt(0)}
+            </div>
+          </div>
+        </header>
+
+        <div className="-mt-4 flex items-center justify-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-bold text-slate-700 shadow-md ring-1 ring-black/5">
+          <span className="size-2 rounded-full bg-emerald-500" aria-hidden="true" /> Compra 100% protegida <span className="text-slate-300" aria-hidden="true">•</span> Envío a RD
         </div>
-        <div className="mt-5 rounded-2xl bg-white p-5 shadow-sm ring-1 ring-black/5">
-          <label htmlFor={`${name}-link`} className="text-sm font-bold">Pega el link del producto</label>
-          <input id={`${name}-link`} value={link} onChange={(event) => setLink(event.target.value)} placeholder={placeholder} className="mt-3 w-full rounded-xl border border-slate-200 p-3 text-sm outline-none focus:ring-2 focus:ring-slate-300" />
-          <button onClick={cotizar} className="mt-3 w-full rounded-xl bg-slate-950 p-3 font-bold text-white transition hover:bg-slate-800">Cotizar por WhatsApp</button>
+
+        <div className="mt-6 rounded-[1.5rem] bg-white p-5 shadow-xl shadow-slate-200/60 ring-1 ring-black/5">
+          <label htmlFor={`${name}-link`} className="text-base font-black">Pega el link del producto</label>
+          <p className="mt-1 text-xs text-slate-500">Encuéntralo en {name} y nosotros lo llevamos a RD.</p>
+          <div className="mt-4 flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 transition focus-within:border-slate-900 focus-within:bg-white focus-within:ring-4 focus-within:ring-slate-900/5">
+            <span className="text-lg text-slate-400" aria-hidden="true">↗</span>
+            <input id={`${name}-link`} value={link} onChange={(event) => setLink(event.target.value)} placeholder={placeholder} className="min-w-0 flex-1 bg-transparent py-4 text-sm outline-none placeholder:text-slate-400" />
+          </div>
+          <button onClick={cotizar} className="mt-3 w-full rounded-2xl bg-slate-950 p-4 font-black text-white shadow-lg shadow-slate-950/20 transition hover:-translate-y-0.5 hover:bg-slate-800 active:translate-y-0">
+            Cotizar por WhatsApp <span aria-hidden="true">→</span>
+          </button>
+        </div>
+
+        <div className="mt-6 grid grid-cols-3 gap-2 text-center">
+          {[
+            ['01', 'Envío rápido'],
+            ['02', 'Pago seguro'],
+            ['03', 'Soporte RD'],
+          ].map(([number, label]) => (
+            <div key={number} className="rounded-2xl bg-white px-2 py-4 shadow-sm ring-1 ring-black/5">
+              <span className="mx-auto flex size-8 items-center justify-center rounded-full bg-emerald-50 text-xs font-black text-emerald-700">{number}</span>
+              <p className="mt-2 text-[11px] font-bold text-slate-600">{label}</p>
+            </div>
+          ))}
         </div>
       </section>
     </main>
