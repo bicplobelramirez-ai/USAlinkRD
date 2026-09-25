@@ -14,8 +14,17 @@ const WHATSAPP_NUMBER = '18565622190'
 export default function StoreTemplate({ name, slogan, placeholder, logoColor }: StoreTemplateProps) {
   const [link, setLink] = useState('')
   const [price, setPrice] = useState('')
+  const [quote, setQuote] = useState<{
+    link: string
+    price: number
+    tax: number
+    shippingUSA: number
+    profit: number
+    totalUSD: number
+    totalDOP: number
+  } | null>(null)
 
-  function cotizar() {
+  function calcularCotizacion() {
     const trimmedLink = link.trim()
     const parsedPrice = Number.parseFloat(price)
 
@@ -29,17 +38,34 @@ export default function StoreTemplate({ name, slogan, placeholder, logoColor }: 
     const profit = parsedPrice * 0.3
     const totalUSD = parsedPrice + tax + shippingUSA + profit
     const totalDOP = totalUSD * 61
+
+    setQuote({
+      link: trimmedLink,
+      price: parsedPrice,
+      tax,
+      shippingUSA,
+      profit,
+      totalUSD,
+      totalDOP,
+    })
+  }
+
+  function enviarPorWhatsApp() {
+    if (!quote) return
+
     const message = [
       `Hola USALINK! - ${name}`,
-      `Link: ${trimmedLink}`,
-      `Precio USA: $${parsedPrice.toFixed(2)} USD`,
+      `Link: ${quote.link}`,
+      `Precio del producto: $${quote.price.toFixed(2)} USD`,
+      `Impuesto USA (8%): $${quote.tax.toFixed(2)} USD`,
+      `Envío dentro de USA: $${quote.shippingUSA.toFixed(2)} USD`,
+      `Gestión USALINK (30%): $${quote.profit.toFixed(2)} USD`,
       '',
-      `Total puesto en RD: $${totalUSD.toFixed(2)} USD (~$${totalDOP.toFixed(0)} DOP) + envío RD`,
-      '',
-      'Incluye impuestos, traída y gestión. ¿Lo ordenamos?',
+      `TOTAL ESTIMADO: $${quote.totalUSD.toFixed(2)} USD (~RD$${quote.totalDOP.toFixed(0)})`,
+      'El envío local en RD se confirma aparte. ¿Lo ordenamos?',
     ].join('\n')
 
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer')
+    window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`
   }
 
   return (
@@ -77,9 +103,26 @@ export default function StoreTemplate({ name, slogan, placeholder, logoColor }: 
             <span className="text-lg font-bold text-slate-400" aria-hidden="true">$</span>
             <input id={`${name}-price`} value={price} onChange={(event) => setPrice(event.target.value)} type="number" min="0.01" step="0.01" inputMode="decimal" placeholder="Ej: 49.99" className="min-w-0 flex-1 bg-transparent py-4 text-sm outline-none placeholder:text-slate-400" />
           </div>
-          <button onClick={cotizar} className="mt-3 w-full rounded-2xl bg-slate-950 p-4 font-black text-white shadow-lg shadow-slate-950/20 transition hover:-translate-y-0.5 hover:bg-slate-800 active:translate-y-0">
-            Cotizar por WhatsApp <span aria-hidden="true">→</span>
+          <button onClick={calcularCotizacion} className="mt-3 w-full rounded-2xl bg-slate-950 p-4 font-black text-white shadow-lg shadow-slate-950/20 transition hover:-translate-y-0.5 hover:bg-slate-800 active:translate-y-0">
+            Calcular cotización <span aria-hidden="true">→</span>
           </button>
+
+          {quote ? (
+            <section className="mt-5 rounded-2xl bg-emerald-50 p-4 ring-1 ring-emerald-100" aria-live="polite">
+              <h2 className="font-black text-emerald-950">Detalle de tu cotización</h2>
+              <dl className="mt-3 flex flex-col gap-2 text-sm text-emerald-950">
+                <div className="flex justify-between gap-3"><dt>Producto</dt><dd>${quote.price.toFixed(2)} USD</dd></div>
+                <div className="flex justify-between gap-3"><dt>Impuesto USA (8%)</dt><dd>${quote.tax.toFixed(2)}</dd></div>
+                <div className="flex justify-between gap-3"><dt>Envío USA</dt><dd>${quote.shippingUSA.toFixed(2)}</dd></div>
+                <div className="flex justify-between gap-3"><dt>Gestión USALINK</dt><dd>${quote.profit.toFixed(2)}</dd></div>
+                <div className="mt-2 flex justify-between gap-3 border-t border-emerald-200 pt-2 text-base font-black"><dt>Total estimado</dt><dd>RD${quote.totalDOP.toFixed(0)}</dd></div>
+              </dl>
+              <button onClick={enviarPorWhatsApp} className="mt-4 w-full rounded-2xl bg-emerald-600 p-4 font-black text-white transition hover:bg-emerald-700 active:scale-[0.99]">
+                Enviar detalle por WhatsApp <span aria-hidden="true">→</span>
+              </button>
+              <p className="mt-2 text-center text-[11px] text-emerald-800">El envío dentro de RD se confirma aparte.</p>
+            </section>
+          ) : null}
         </div>
 
         <div className="mt-6 grid grid-cols-3 gap-2 text-center">
