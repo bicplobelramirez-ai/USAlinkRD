@@ -62,8 +62,8 @@ export default function Home() {
 
     const message = `Hola USALINK, quiero cotizar este producto: ${trimmedLink}`
     const whatsappUrl = `https://wa.me/18565622190?text=${encodeURIComponent(message)}`
-    window.open(whatsappUrl, '_blank', 'noopener,noreferrer')
     setMessage('Abriendo WhatsApp para enviar tu cotización.')
+    window.location.assign(whatsappUrl)
   }
 
   return (
