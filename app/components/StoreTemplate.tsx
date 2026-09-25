@@ -13,15 +13,32 @@ const WHATSAPP_NUMBER = '18565622190'
 
 export default function StoreTemplate({ name, slogan, placeholder, logoColor }: StoreTemplateProps) {
   const [link, setLink] = useState('')
+  const [price, setPrice] = useState('')
 
   function cotizar() {
     const trimmedLink = link.trim()
-    if (!trimmedLink) {
-      window.alert('Pega el link del producto')
+    const parsedPrice = Number.parseFloat(price)
+
+    if (!trimmedLink || !price.trim() || !Number.isFinite(parsedPrice) || parsedPrice <= 0) {
+      window.alert('Pega el link y un precio USD válido')
       return
     }
 
-    const message = `Hola USALINK! Quiero cotizar esto de ${name}: ${trimmedLink}`
+    const tax = parsedPrice * 0.08
+    const shippingUSA = 8
+    const profit = parsedPrice * 0.3
+    const totalUSD = parsedPrice + tax + shippingUSA + profit
+    const totalDOP = totalUSD * 61
+    const message = [
+      `Hola USALINK! - ${name}`,
+      `Link: ${trimmedLink}`,
+      `Precio USA: $${parsedPrice.toFixed(2)} USD`,
+      '',
+      `Total puesto en RD: $${totalUSD.toFixed(2)} USD (~$${totalDOP.toFixed(0)} DOP) + envío RD`,
+      '',
+      'Incluye impuestos, traída y gestión. ¿Lo ordenamos?',
+    ].join('\n')
+
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer')
   }
 
@@ -54,6 +71,11 @@ export default function StoreTemplate({ name, slogan, placeholder, logoColor }: 
           <div className="mt-4 flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 transition focus-within:border-slate-900 focus-within:bg-white focus-within:ring-4 focus-within:ring-slate-900/5">
             <span className="text-lg text-slate-400" aria-hidden="true">↗</span>
             <input id={`${name}-link`} value={link} onChange={(event) => setLink(event.target.value)} placeholder={placeholder} className="min-w-0 flex-1 bg-transparent py-4 text-sm outline-none placeholder:text-slate-400" />
+          </div>
+          <label htmlFor={`${name}-price`} className="mt-4 block text-base font-black">Precio del producto (USD)</label>
+          <div className="mt-3 flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 transition focus-within:border-slate-900 focus-within:bg-white focus-within:ring-4 focus-within:ring-slate-900/5">
+            <span className="text-lg font-bold text-slate-400" aria-hidden="true">$</span>
+            <input id={`${name}-price`} value={price} onChange={(event) => setPrice(event.target.value)} type="number" min="0.01" step="0.01" inputMode="decimal" placeholder="Ej: 49.99" className="min-w-0 flex-1 bg-transparent py-4 text-sm outline-none placeholder:text-slate-400" />
           </div>
           <button onClick={cotizar} className="mt-3 w-full rounded-2xl bg-slate-950 p-4 font-black text-white shadow-lg shadow-slate-950/20 transition hover:-translate-y-0.5 hover:bg-slate-800 active:translate-y-0">
             Cotizar por WhatsApp <span aria-hidden="true">→</span>
