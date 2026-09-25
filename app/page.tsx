@@ -54,11 +54,16 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState('Inicio')
 
   function handleQuote() {
-    if (!link.trim()) {
+    const trimmedLink = link.trim()
+    if (!trimmedLink) {
       setMessage('Pega primero el enlace del producto que quieres comprar.')
       return
     }
-    setMessage('¡Listo! Revisaremos tu enlace y prepararemos tu cotización.')
+
+    const message = `Hola USALINK, quiero cotizar este producto: ${trimmedLink}`
+    const whatsappUrl = `https://wa.me/18565622190?text=${encodeURIComponent(message)}`
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer')
+    setMessage('Abriendo WhatsApp para enviar tu cotización.')
   }
 
   return (
