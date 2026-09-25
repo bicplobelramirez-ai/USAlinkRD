@@ -3,43 +3,48 @@
 import { useState } from 'react'
 import {
   Bell,
-  ChevronRight,
   CircleUserRound,
-  Crown,
-  ExternalLink,
-  Headphones,
   House,
+  Link2,
   MapPin,
+  Package,
   Search,
+  Shirt,
   ShoppingBag,
   Sparkles,
-  Target,
   Tag,
-  Shirt,
-  Smartphone,
+  Cpu,
 } from 'lucide-react'
 
 const categories = [
   { label: 'Outlets', icon: Tag },
   { label: 'Moda', icon: Shirt },
-  { label: 'Tech', icon: Smartphone },
+  { label: 'Tech', icon: Cpu },
   { label: 'Belleza', icon: Sparkles },
 ]
 
 const featuredStores = [
-  ['TikTok Shop', 'Viral y descubrimiento'],
-  ['Nike', 'Sneakers y deportes'],
-  ['Coach Outlet', 'Premium y outlet'],
-  ['Sephora', 'Belleza'],
-  ['Uniqlo', 'Moda'],
-  ['Etsy', 'Únicos y personalizados'],
+  ['TikTok Shop', 'Viral', '/tiktok.html'],
+  ['Nike', 'Sneakers', '/nike.html'],
+  ['Coach Outlet', 'Premium', '/coach.html'],
+  ['Sephora', 'Belleza', '/sephora.html'],
+  ['Uniqlo', 'Moda', '/uniqlo.html'],
+  ['Etsy', 'Únicos', '/etsy.html'],
 ]
 
-const moreStores = ['Target', 'Bath & Body Works', 'Lululemon', 'Foot Locker', 'Shop', "Carter's", "Macy's"]
+const moreStores = [
+  ['Target', '/target.html'],
+  ['Bath & Body', '/bath.html'],
+  ['Lululemon', '/lululemon.html'],
+  ['Foot Locker', '/footlocker.html'],
+  ['Shop', '/shop'],
+  ["Carter's", '/carters'],
+  ["Macy's", '/macys'],
+]
 
 const deals = [
-  { name: 'AirPods Pro 2da', price: '$199', oldPrice: '$249', icon: Headphones },
-  { name: 'Termo Stanley 1.2L', price: '$35.50', oldPrice: '$42', icon: ShoppingBag },
+  { name: 'AirPods Pro (2ª Gen)', price: '$199.99', oldPrice: '$249.99', discount: '-20%', icon: '🎧', rating: '4.8 · 1.2k' },
+  { name: 'Termo Stanley 1.2L', price: '$35.50', oldPrice: '$42.00', discount: '-15%', icon: '🥤', rating: '4.9 · 856' },
 ]
 
 export default function Home() {
@@ -57,53 +62,68 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-white pb-24 text-[#111]">
-      <header className="sticky top-0 z-10 flex items-center justify-between border-b border-[#f0f0f0] bg-white/95 px-4 py-4 backdrop-blur">
-        <div className="text-[27px] font-black tracking-[-0.06em] text-[#0a8a43]">USALINK</div>
-        <div className="flex items-center gap-3 text-[#3e4541]" aria-label="Acciones de cuenta">
-          <button aria-label="Notificaciones" className="rounded-full p-1 transition hover:bg-[#e9f7eb]"><Bell className="size-5" /></button>
-          <button aria-label="Cuenta" className="rounded-full p-1 transition hover:bg-[#e9f7eb]"><CircleUserRound className="size-5" /></button>
+    <main className="min-h-screen bg-[#f3f4f6] pb-24 text-[#101820]">
+      <header className="sticky top-0 z-20 flex items-center justify-between bg-white px-5 py-5 shadow-[0_5px_18px_rgba(16,24,32,0.08)]">
+        <div className="flex items-center gap-2.5 text-[#0a8a43]">
+          <Link2 className="size-10" strokeWidth={3} />
+          <span className="text-[29px] font-black tracking-[-0.06em]">USALINK</span>
+        </div>
+        <div className="flex items-center gap-3 text-[#17202b]">
+          <button aria-label="Notificaciones" className="rounded-full p-1 transition hover:bg-[#e9f7eb]"><Bell className="size-7" strokeWidth={2.4} /></button>
+          <button aria-label="Cuenta" className="rounded-full p-1 transition hover:bg-[#e9f7eb]"><CircleUserRound className="size-8" strokeWidth={2.2} /></button>
         </div>
       </header>
 
-      <section className="mx-3 mt-3 rounded-[20px] bg-[#e9f7eb] p-5">
-        <p className="mb-2 flex items-center gap-1 text-xs font-bold uppercase tracking-[0.16em] text-[#0a8a43]"><Crown className="size-3.5" /> Compras USA, sin complicaciones</p>
-        <h1 className="text-[29px] font-black leading-[1.08] tracking-[-0.04em]">Pega el link.<br />Nosotros compramos.</h1>
-        <p className="mt-2 text-sm text-[#5d665f]">Copia la URL de cualquier producto de Estados Unidos.</p>
-        <div className="mt-4 flex gap-2">
-          <div className="flex min-w-0 flex-1 items-center rounded-xl border border-[#d8e5da] bg-white px-3 focus-within:ring-2 focus-within:ring-[#93cf9d]">
-            <ExternalLink className="mr-2 size-4 shrink-0 text-[#0a8a43]" />
-            <input value={link} onChange={(event) => setLink(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter' && !event.nativeEvent.isComposing && event.keyCode !== 229) handleQuote() }} placeholder="Pega tu link de USA aquí" className="min-w-0 flex-1 bg-transparent py-3 text-sm outline-none placeholder:text-[#9ca39e]" aria-label="Enlace del producto" />
-          </div>
-          <button onClick={handleQuote} className="rounded-xl bg-[#0a8a43] px-4 text-sm font-bold text-white transition hover:bg-[#087238]">Cotizar</button>
+      <section className="bg-white px-7 pb-7 pt-12">
+        <h1 className="max-w-[520px] text-[42px] font-black leading-[1.02] tracking-[-0.055em] sm:text-5xl">Pega el link. Nosotros compramos.</h1>
+        <p className="mt-4 text-[19px] font-semibold text-[#656a72]">Copia la URL de cualquier producto USA</p>
+        <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+          <label className="flex min-w-0 flex-1 items-center rounded-full border border-[#cfd1d4] bg-white px-5 shadow-[0_2px_5px_rgba(0,0,0,0.08)] focus-within:ring-2 focus-within:ring-[#79c795]">
+            <Link2 className="mr-3 size-7 shrink-0 text-[#0a8a43]" strokeWidth={2.5} />
+            <input value={link} onChange={(event) => setLink(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter' && !event.nativeEvent.isComposing && event.keyCode !== 229) handleQuote() }} placeholder="Pega tu link de USA aquí" className="min-w-0 flex-1 bg-transparent py-5 text-lg outline-none placeholder:text-[#777c82]" aria-label="Enlace del producto" />
+          </label>
+          <button onClick={handleQuote} className="rounded-full bg-[#0aa052] px-8 py-4 text-lg font-extrabold text-white shadow-[0_4px_10px_rgba(10,160,82,0.25)] transition active:scale-[0.98] hover:bg-[#078643]">Cotizar ahora →</button>
         </div>
-        <p className="mt-3 text-center text-[11px] font-medium text-[#49524c]">PayPal · VISA · Pago seguro y protegido</p>
-        {message && <p role="status" className="mt-2 text-center text-xs font-semibold text-[#0a8a43]">{message}</p>}
+        <p className="mt-5 text-center text-[15px] font-semibold text-[#7a7d83]">Stripe&nbsp;&nbsp; PayPal&nbsp;&nbsp; VISA</p>
+        <p className="mt-1 text-center text-[14px] text-[#7a7d83]">Pago seguro y protegido</p>
+        {message && <p role="status" className="mt-3 text-center text-sm font-bold text-[#0a8a43]">{message}</p>}
       </section>
 
-      <SectionHeading title="Categorías" />
-      <div className="flex gap-2 overflow-x-auto px-4 py-3 [scrollbar-width:none]">
-        {categories.map(({ label, icon: Icon }) => <button key={label} onClick={() => setActiveCategory(label)} className={`flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-2 text-[13px] transition ${activeCategory === label ? 'border-[#c8eacb] bg-[#c8eacb] font-bold text-[#0a8a43]' : 'border-[#e8e8e8] bg-[#f6f6f6] text-[#4c514d]'}`}><Icon className="size-3.5" />{label}</button>)}
-      </div>
+      <section className="bg-[#f3f4f6] px-7 py-7">
+        <SectionHeading title="Categorías" />
+        <div className="mt-5 grid grid-cols-4 gap-3">
+          {categories.map(({ label, icon: Icon }) => <button key={label} onClick={() => setActiveCategory(label)} className={`flex flex-col items-center gap-3 rounded-2xl px-1 py-4 transition ${activeCategory === label ? 'bg-[#c7ead2]' : 'bg-[#dff2e4]'} hover:scale-[1.02]`}><Icon className="size-10 text-[#0a8a43]" strokeWidth={1.9} /><span className="text-sm font-semibold">{label}</span></button>)}
+        </div>
+      </section>
 
-      <SectionHeading title="Tiendas destacadas" />
-      <div className="grid grid-cols-2 gap-3 px-4 py-3 sm:grid-cols-3">
-        {featuredStores.map(([name, description]) => <button key={name} onClick={() => { if (name === 'TikTok Shop') window.location.href = '/tiktok.html'; if (name === 'Nike') window.location.href = '/nike.html'; if (name === 'Coach Outlet') window.location.href = '/coach.html'; if (name === 'Sephora') window.location.href = '/sephora.html'; if (name === 'Uniqlo') window.location.href = '/uniqlo.html'; if (name === 'Etsy') window.location.href = '/etsy.html'; if (name === 'Target') window.location.href = '/target.html'; if (name === 'Lululemon') window.location.href = '/lululemon.html'; if (name === 'Foot Locker') window.location.href = '/footlocker.html'; }} className="rounded-2xl border border-[#eeeeee] bg-white p-4 text-center shadow-[0_2px_10px_rgba(0,0,0,0.02)] transition hover:-translate-y-0.5 hover:border-[#b9dfbd]"><b className="text-sm">{name}</b><span className="mt-2 inline-block rounded-full bg-[#e9f7eb] px-2 py-1 text-[10px] font-semibold text-[#0a8a43]">{description}</span></button>)}
-      </div>
+      <section className="bg-[#f7f8fa] px-7 py-6">
+        <SectionHeading title="Tiendas destacadas" />
+        <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {featuredStores.map(([name, description, href]) => <button key={name} onClick={() => { window.location.href = href }} className="flex min-h-[82px] flex-col items-center justify-center rounded-2xl bg-white px-2 py-3 shadow-[0_3px_10px_rgba(16,24,32,0.12)] transition active:scale-[0.98] hover:-translate-y-0.5"><span className="text-sm font-black tracking-tight">{name}</span><span className="mt-2 text-xs text-[#4c5158]">{description}</span></button>)}
+        </div>
+      </section>
 
-      <SectionHeading title="Más tiendas" />
-      <div className="flex gap-2.5 overflow-x-auto px-4 py-3 [scrollbar-width:none]">{moreStores.map((store) => <button key={store} onClick={() => { if (store === 'Target') window.location.href = '/target.html'; if (store === 'Bath & Body Works') window.location.href = '/bath.html'; if (store === 'Lululemon') window.location.href = '/lululemon.html'; if (store === 'Foot Locker') window.location.href = '/footlocker.html'; if (store === 'Shop') window.location.href = '/shop'; if (store === "Carter's") window.location.href = '/carters'; if (store === "Macy's") window.location.href = '/macys' }} className="min-w-[78px] rounded-2xl border border-[#eeeeee] px-2 py-3 text-center text-[11px] font-semibold text-[#4c514d] transition hover:border-[#b9dfbd] hover:text-[#0a8a43]"><span className="mb-1.5 block text-[#0a8a43]"><Target className="mx-auto size-4" /></span>{store}</button>)}</div>
+      <section className="bg-[#f3f4f6] px-7 py-6">
+        <SectionHeading title="Más tiendas" />
+        <div className="mt-5 flex gap-3 overflow-x-auto pb-2 [scrollbar-width:none]">
+          {moreStores.map(([store, href]) => <button key={store} onClick={() => { window.location.href = href }} className="flex min-w-[92px] flex-col items-center gap-2 rounded-2xl bg-white px-2 py-4 text-center text-xs font-semibold shadow-[0_2px_8px_rgba(16,24,32,0.09)] transition hover:text-[#0a8a43]"><ShoppingBag className="size-6 text-[#0a8a43]" strokeWidth={1.8} />{store}</button>)}
+        </div>
+      </section>
 
-      <SectionHeading title="Ofertas del día" />
-      <div className="grid grid-cols-2 gap-3 px-4 py-3">{deals.map(({ name, price, oldPrice, icon: Icon }) => <article key={name} className="overflow-hidden rounded-2xl border border-[#eeeeee] bg-white"><div className="flex h-28 items-center justify-center bg-[#f7f7f7] text-[#0a8a43]"><Icon className="size-10" strokeWidth={1.5} /></div><div className="p-3"><b className="text-[13px]">{name}</b><p className="mt-1 text-sm font-semibold">{price} <s className="ml-1 text-xs font-normal text-[#999]">{oldPrice}</s></p></div></article>)}</div>
+      <section className="bg-[#f7f8fa] px-7 py-6">
+        <SectionHeading title="Ofertas del día" />
+        <div className="mt-5 grid grid-cols-2 gap-4">
+          {deals.map((deal) => <article key={deal.name} className="overflow-hidden rounded-3xl bg-white shadow-[0_3px_12px_rgba(16,24,32,0.1)]"><div className="relative flex h-36 items-center justify-center bg-white text-6xl"><span className="absolute left-3 top-3 rounded-lg bg-[#0a9b50] px-2 py-1 text-xs font-extrabold text-white">{deal.discount}</span>{deal.icon}</div><div className="px-4 pb-4"><b className="text-sm leading-tight">{deal.name}</b><p className="mt-2 text-lg font-extrabold text-[#0a8a43]">{deal.price}</p><s className="text-xs text-[#85898e]">{deal.oldPrice}</s><p className="mt-1 text-xs text-[#51565d]">★ {deal.rating}</p></div></article>)}
+        </div>
+      </section>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-10 flex justify-around border-t border-[#eeeeee] bg-white/95 px-2 py-3 backdrop-blur" aria-label="Navegación principal">
-        {[['Cuenta', CircleUserRound], ['Inicio', House], ['Tiendas', ShoppingBag], ['Rastreo', MapPin]].map(([label, Icon]) => <button key={label as string} onClick={() => setActiveTab(label as string)} className={`flex min-w-16 flex-col items-center gap-1 text-[10px] transition ${activeTab === label ? 'font-extrabold text-[#0a8a43]' : 'text-[#999]'}`}><Icon className="size-4" />{label as string}</button>)}
+      <nav className="fixed bottom-0 left-0 right-0 z-30 mx-auto flex max-w-3xl justify-around rounded-t-[28px] border border-[#dedfe1] bg-white/95 px-2 py-4 shadow-[0_-4px_18px_rgba(16,24,32,0.12)] backdrop-blur" aria-label="Navegación principal">
+        {[['Inicio', House], ['Tiendas', ShoppingBag], ['IA', Sparkles], ['Rastreo', MapPin], ['Cuenta', CircleUserRound]].map(([label, Icon]) => <button key={label as string} onClick={() => setActiveTab(label as string)} className={`flex min-w-14 flex-col items-center gap-1 text-xs transition ${activeTab === label ? 'font-extrabold text-[#0a8a43]' : 'text-[#777c82]'}`}><Icon className="size-7" strokeWidth={activeTab === label ? 2.7 : 1.8} />{label as string}</button>)}
       </nav>
     </main>
   )
 }
 
 function SectionHeading({ title }: { title: string }) {
-  return <div className="flex items-center justify-between px-4 pt-5"><h2 className="text-sm font-bold">{title}</h2><button className="flex items-center text-[13px] font-medium text-[#0a8a43]">Ver todo <ChevronRight className="size-3.5" /></button></div>
+  return <div className="flex items-center justify-between"><h2 className="text-[21px] font-extrabold tracking-[-0.04em]">{title}</h2><button className="text-[17px] font-bold text-[#0a8a43]">Ver todo</button></div>
 }
