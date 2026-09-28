@@ -67,6 +67,14 @@ export default function TikTokShop() {
           <p className="mt-1 text-sm text-white/65">124 productos en tendencia</p>
         </header>
         <input aria-label="Buscar productos" placeholder="Qué buscas: lip oil, projector..." className="mb-4 w-full rounded-2xl border border-slate-200 bg-white p-4 text-sm shadow-sm outline-none" />
+        <a
+          href="https://shop.tiktok.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mb-4 flex items-center justify-center rounded-2xl bg-blue-600 px-4 py-3 text-sm font-bold text-white shadow-md transition hover:bg-blue-700 active:scale-[.98]"
+        >
+          Ver más en TikTok Shop ↗
+        </a>
         <section aria-label="Productos virales" className="grid grid-cols-2 gap-3">
           {productos.map((producto) => (
             <article key={producto.id} className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
