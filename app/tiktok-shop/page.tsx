@@ -3,12 +3,12 @@
 import { useState } from "react"
 
 const productos = [
-  { id: 1, nombre: "Mini Projector 4K", precio: "$38.50", viral: "1.2k VIRAL" },
-  { id: 2, nombre: "Sunset Lamp 16 Colors", precio: "$24.90", viral: "890 VIRAL" },
-  { id: 3, nombre: "Lip Oil Dior Dupe", precio: "$18.00", viral: "2.1k VIRAL" },
-  { id: 4, nombre: "LED Strip 100ft", precio: "$28.00", viral: "756 VIRAL" },
-  { id: 5, nombre: "Hair Wax Stick", precio: "$12.50", viral: "540 VIRAL" },
-  { id: 6, nombre: "Cloud Slippers", precio: "$22.00", viral: "1.1k VIRAL" },
+  { id: 1, nombre: "Mini Projector 4K", precio: "$38.50", viral: "1.2k VIRAL", imagen: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=600&q=80" },
+  { id: 2, nombre: "Sunset Lamp 16 Colors", precio: "$24.90", viral: "890 VIRAL", imagen: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=600&q=80" },
+  { id: 3, nombre: "Lip Oil Dior Dupe", precio: "$18.00", viral: "2.1k VIRAL", imagen: "https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=600&q=80" },
+  { id: 4, nombre: "LED Strip 100ft", precio: "$28.00", viral: "756 VIRAL", imagen: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" },
+  { id: 5, nombre: "Hair Wax Stick", precio: "$12.50", viral: "540 VIRAL", imagen: "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=600&q=80" },
+  { id: 6, nombre: "Cloud Slippers", precio: "$22.00", viral: "1.1k VIRAL", imagen: "https://images.unsplash.com/photo-1525598912003-663126343e1f?w=600&q=80" },
 ]
 
 export default function TikTokShop() {
@@ -50,8 +50,13 @@ export default function TikTokShop() {
         <section aria-label="Productos virales" className="grid grid-cols-2 gap-3">
           {productos.map((producto) => (
             <article key={producto.id} className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm">
-              <div className="mb-3 flex h-24 items-center justify-center rounded-xl bg-gradient-to-br from-pink-100 via-white to-cyan-100">
-                <span className="text-xs font-black uppercase tracking-wider text-slate-700">Viral</span>
+              <div className="mb-3 h-28 overflow-hidden rounded-xl bg-slate-100">
+                <img
+                  src={producto.imagen}
+                  alt={producto.nombre}
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                />
               </div>
               <h2 className="text-sm font-bold leading-tight">{producto.nombre}</h2>
               <p className="mt-1 text-xs text-slate-500">Llega a RD por {producto.precio}</p>
