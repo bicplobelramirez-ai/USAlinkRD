@@ -25,18 +25,18 @@ const categories = [
 
 const featuredStores = [
   ['TikTok Shop', 'Viral', '/tiktok-shop'],
-  ['Nike', 'Sneakers', '/nike.html'],
-  ['Coach Outlet', 'Premium', '/coach.html'],
-  ['Sephora', 'Belleza', '/sephora.html'],
-  ['Uniqlo', 'Moda', '/uniqlo.html'],
-  ['Etsy', 'Únicos', '/etsy.html'],
+  ['Nike', 'Sneakers', '/nike'],
+  ['Coach Outlet', 'Premium', '/coach'],
+  ['Sephora', 'Belleza', '/sephora'],
+  ['Uniqlo', 'Moda', '/uniqlo'],
+  ['Etsy', 'Únicos', '/etsy'],
 ]
 
 const moreStores = [
-  ['Target', '/target.html'],
-  ['Bath & Body', '/bath.html'],
-  ['Lululemon', '/lululemon.html'],
-  ['Foot Locker', '/footlocker.html'],
+  ['Target', '/target'],
+  ['Bath & Body', '/bath-and-body-works'],
+  ['Lululemon', '/lululemon'],
+  ['Foot Locker', '/foot-locker'],
   ['Shop', '/shop'],
   ["Carter's", '/carters'],
   ["Macy's", '/macys'],
