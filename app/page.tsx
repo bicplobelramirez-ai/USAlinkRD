@@ -24,7 +24,7 @@ const categories = [
 ]
 
 const featuredStores = [
-  ['TikTok Shop', 'Viral', '/tiktok.html'],
+  ['TikTok Shop', 'Viral', '/tiktok-shop'],
   ['Nike', 'Sneakers', '/nike.html'],
   ['Coach Outlet', 'Premium', '/coach.html'],
   ['Sephora', 'Belleza', '/sephora.html'],
