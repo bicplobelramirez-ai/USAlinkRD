@@ -15,6 +15,7 @@ import {
   Tag,
   Cpu,
 } from 'lucide-react'
+import { PromoVideo } from './components/PromoVideo'
 
 const categories = [
   { label: 'Outlets', icon: Tag },
@@ -94,7 +95,9 @@ export default function Home() {
         {message && <p role="status" className="mt-3 text-center text-sm font-bold text-[#0a8a43]">{message}</p>}
       </section>
 
-      <section className="bg-[#18252c] px-7 py-7">
+      <PromoVideo />
+
+      <section className="bg-[#202e35] px-7 py-7">
         <SectionHeading title="Categorías" />
         <div className="mt-5 grid grid-cols-4 gap-3">
           {categories.map(({ label, icon: Icon }) => <button key={label} onClick={() => setActiveCategory(label)} className={`flex flex-col items-center gap-3 rounded-2xl px-1 py-4 text-[#101820] transition ${activeCategory === label ? 'bg-[#b9efca] shadow-[0_4px_12px_rgba(81,217,139,0.2)]' : 'bg-[#d7f1df]'} hover:scale-[1.02]`}><Icon className="size-10 text-[#0a8a43]" strokeWidth={1.9} /><span className="text-sm font-semibold">{label}</span></button>)}
