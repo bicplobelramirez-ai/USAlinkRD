@@ -5,6 +5,10 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --color-hub-pink: #ff0878;
+  --color-hub-navy: #071b45;
+  --color-hub-sky: #e8f4ff;
+  --color-hub-blush: #fff0f5;
   --color-ink: #14213d;
   --color-label: #fbfbf8;
   --color-tape: #f5c400;
