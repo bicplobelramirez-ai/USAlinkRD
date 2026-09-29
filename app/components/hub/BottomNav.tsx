@@ -3,7 +3,7 @@ import { Home, PackageSearch, Sparkles, Store } from "lucide-react"
 
 const links = [
   { href: "/", label: "Inicio", icon: Home },
-  { href: "/hub", label: "Tiendas", icon: Store },
+  { href: "/tiendas", label: "Tiendas", icon: Store },
   { href: "/concepto", label: "IA", icon: Sparkles, highlight: true },
   { href: "/concepto#rastreo", label: "Rastreo", icon: PackageSearch },
 ]
