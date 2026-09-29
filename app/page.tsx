@@ -24,12 +24,12 @@ const categories = [
 ]
 
 const featuredStores = [
-  ['TikTok Shop', 'Viral', '/tiktok-shop'],
-  ['Nike', 'Sneakers', '/nike'],
-  ['Coach Outlet', 'Premium', '/coach'],
-  ['Sephora', 'Belleza', '/sephora'],
-  ['Uniqlo', 'Moda', '/uniqlo'],
-  ['Etsy', 'Únicos', '/etsy'],
+  ['TikTok Shop', 'Viral', '/tiktok-shop', '/storefronts/nike.png'],
+  ['Nike', 'Sneakers', '/nike', '/storefronts/nike.png'],
+  ['Coach Outlet', 'Premium', '/coach', '/storefronts/coach-outlet.png'],
+  ['Sephora', 'Belleza', '/sephora', '/storefronts/sephora.png'],
+  ['Uniqlo', 'Moda', '/uniqlo', '/storefronts/lululemon.png'],
+  ['Etsy', 'Únicos', '/etsy', '/storefronts/apple-store.png'],
 ]
 
 const moreStores = [
@@ -43,8 +43,8 @@ const moreStores = [
 ]
 
 const deals = [
-  { name: 'AirPods Pro (2ª Gen)', price: '$199.99', oldPrice: '$249.99', discount: '-20%', icon: '🎧', rating: '4.8 · 1.2k' },
-  { name: 'Termo Stanley 1.2L', price: '$35.50', oldPrice: '$42.00', discount: '-15%', icon: '🥤', rating: '4.9 · 856' },
+  { name: 'AirPods Pro (2ª Gen)', price: '$199.99', oldPrice: '$249.99', discount: '-20%', image: '/target/airpods.png', rating: '4.8 · 1.2k' },
+  { name: 'Termo Stanley 1.2L', price: '$35.50', oldPrice: '$42.00', discount: '-15%', image: '/target/stanley.png', rating: '4.9 · 856' },
 ]
 
 export default function Home() {
@@ -104,7 +104,7 @@ export default function Home() {
       <section className="bg-[#202e35] px-7 py-6">
         <SectionHeading title="Tiendas destacadas" />
         <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {featuredStores.map(([name, description, href]) => <button key={name} onClick={() => { window.location.href = href }} className="flex min-h-[82px] flex-col items-center justify-center rounded-2xl bg-[#f7faf8] px-2 py-3 text-[#101820] shadow-[0_5px_14px_rgba(0,0,0,0.25)] transition active:scale-[0.98] hover:-translate-y-0.5"><span className="text-sm font-black tracking-tight">{name}</span><span className="mt-2 text-xs text-[#4c5158]">{description}</span></button>)}
+          {featuredStores.map(([name, description, href, image]) => <button key={name} onClick={() => { window.location.href = href }} className="group relative min-h-[148px] overflow-hidden rounded-2xl bg-[#f7faf8] text-left shadow-[0_5px_14px_rgba(0,0,0,0.25)] transition active:scale-[0.98] hover:-translate-y-0.5"><img src={image} alt={`${name} storefront`} className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105" /><span className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-[#101820] via-[#101820]/75 to-transparent" /><span className="absolute inset-x-3 bottom-3 text-white"><b className="block text-sm font-black tracking-tight">{name}</b><span className="mt-1 block text-xs text-white/80">{description}</span></span></button>)}
         </div>
       </section>
 
@@ -118,7 +118,7 @@ export default function Home() {
       <section className="bg-[#202e35] px-7 py-6">
         <SectionHeading title="Ofertas del día" />
         <div className="mt-5 grid grid-cols-2 gap-4">
-          {deals.map((deal) => <article key={deal.name} className="overflow-hidden rounded-3xl bg-white shadow-[0_3px_12px_rgba(16,24,32,0.1)]"><div className="relative flex h-36 items-center justify-center bg-white text-6xl"><span className="absolute left-3 top-3 rounded-lg bg-[#0a9b50] px-2 py-1 text-xs font-extrabold text-white">{deal.discount}</span>{deal.icon}</div><div className="px-4 pb-4"><b className="text-sm leading-tight">{deal.name}</b><p className="mt-2 text-lg font-extrabold text-[#0a8a43]">{deal.price}</p><s className="text-xs text-[#85898e]">{deal.oldPrice}</s><p className="mt-1 text-xs text-[#51565d]">★ {deal.rating}</p></div></article>)}
+          {deals.map((deal) => <article key={deal.name} className="overflow-hidden rounded-3xl bg-white shadow-[0_3px_12px_rgba(16,24,32,0.1)]"><div className="relative flex h-36 items-center justify-center overflow-hidden bg-[#f3f5f2]"><span className="absolute left-3 top-3 z-10 rounded-lg bg-[#0a9b50] px-2 py-1 text-xs font-extrabold text-white">{deal.discount}</span><img src={deal.image} alt={deal.name} className="h-full w-full object-contain" /></div><div className="px-4 pb-4 text-[#101820]"><b className="block text-sm leading-tight">{deal.name}</b><p className="mt-2 text-lg font-extrabold text-[#0a8a43]">{deal.price}</p><s className="text-xs text-[#85898e]">{deal.oldPrice}</s><p className="mt-1 text-xs text-[#51565d]">★ {deal.rating}</p></div></article>)}
         </div>
       </section>
 
