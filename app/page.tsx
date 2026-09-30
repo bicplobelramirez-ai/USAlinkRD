@@ -1,137 +1,88 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  Bell,
-  CircleUserRound,
-  House,
-  Link2,
-  MapPin,
-  Package,
-  Search,
-  Shirt,
-  ShoppingBag,
-  Sparkles,
-  Tag,
-  Cpu,
-} from 'lucide-react'
-import { PromoVideo } from './components/PromoVideo'
+import { ArrowRight, Bell, CircleUserRound, Home, Link2, MapPin, Package, Plane, Search, ShoppingBag, Sparkles, Tag, Truck } from 'lucide-react'
 
 const categories = [
-  { label: 'Outlets', icon: Tag },
-  { label: 'Moda', icon: Shirt },
-  { label: 'Tech', icon: Cpu },
-  { label: 'Belleza', icon: Sparkles },
+  ['Moda', '/macys/satin-dress.png', '/hub/moda'],
+  ['Tecnología', '/target/airpods.png', '/hub/tech'],
+  ['Calzado', '/foot-locker/air-max-90.png', '/hub/sneakers'],
+  ['Belleza', '/sephora/rare-beauty-blush.png', '/hub/belleza'],
+  ['Hogar', '/target/lamp.png', '/hub/outlets'],
 ]
 
-const featuredStores = [
-  ['TikTok Shop', 'Viral', '/tiktok-shop', '/storefronts/nike.png'],
-  ['Nike', 'Sneakers', '/nike', '/storefronts/nike.png'],
-  ['Coach Outlet', 'Premium', '/coach', '/storefronts/coach-outlet.png'],
-  ['Sephora', 'Belleza', '/sephora', '/storefronts/sephora.png'],
-  ['Uniqlo', 'Moda', '/uniqlo', '/storefronts/lululemon.png'],
-  ['Etsy', 'Únicos', '/etsy', '/storefronts/apple-store.png'],
+const stores = [
+  ['NIKE', 'Sneakers', '/nike', '/storefronts/nike.png'],
+  ['SEPHORA', 'Belleza', '/sephora', '/storefronts/sephora.png'],
+  ['COACH OUTLET', 'Premium', '/coach', '/storefronts/coach-outlet.png'],
+  ['TIKTOK SHOP', 'Lo más viral', '/tiktok-shop', '/storefronts/nike.png'],
+  ['UNIQLO', 'Moda casual', '/uniqlo', '/storefronts/lululemon.png'],
+  ['ETSY', 'Productos únicos', '/etsy', '/storefronts/apple-store.png'],
 ]
 
-const moreStores = [
-  ['Target', '/target'],
-  ['Bath & Body', '/bath-and-body-works'],
-  ['Lululemon', '/lululemon'],
-  ['Foot Locker', '/foot-locker'],
-  ['Shop', '/shop'],
-  ["Carter's", '/carters'],
-  ["Macy's", '/macys'],
+const offers = [
+  ['Nike Air Force 1', 'US$ 80', 'RD$ 5,200', '-30%', '/foot-locker/air-max-90.png'],
+  ['Apple AirPods 4', 'US$ 119', 'RD$ 7,800', '-20%', '/target/airpods.png'],
+  ['Perfume YSL Libre', 'US$ 110', 'RD$ 7,400', '-25%', '/sephora/dior-lip-oil.png'],
 ]
 
-const deals = [
-  { name: 'AirPods Pro (2ª Gen)', price: '$199.99', oldPrice: '$249.99', discount: '-20%', image: '/target/airpods.png', rating: '4.8 · 1.2k' },
-  { name: 'Termo Stanley 1.2L', price: '$35.50', oldPrice: '$42.00', discount: '-15%', image: '/target/stanley.png', rating: '4.9 · 856' },
-]
+const moreStores = ['Target', 'Best Buy', 'Ulta', 'Apple', 'Lululemon', 'Foot Locker']
 
 export default function Home() {
   const [link, setLink] = useState('')
   const [message, setMessage] = useState('')
-  const [activeCategory, setActiveCategory] = useState('Outlets')
-  const [activeTab, setActiveTab] = useState('Inicio')
 
-  function handleQuote() {
-    const trimmedLink = link.trim()
-    if (!trimmedLink) {
-      setMessage('Pega primero el enlace del producto que quieres comprar.')
-      return
-    }
-
-    const message = `Hola USALINK, quiero cotizar este producto: ${trimmedLink}`
-    const whatsappUrl = `https://wa.me/18565622190?text=${encodeURIComponent(message)}`
-    setMessage('Abriendo WhatsApp para enviar tu cotización.')
-    window.location.assign(whatsappUrl)
+  function quote() {
+    if (!link.trim()) return setMessage('Pega primero el enlace del producto.')
+    window.location.assign(`https://wa.me/18565622190?text=${encodeURIComponent(`Hola USALINK, quiero cotizar: ${link.trim()}`)}`)
   }
 
   return (
-    <main className="min-h-screen bg-[#101820] pb-24 text-[#f7faf8]">
-      <header className="sticky top-0 z-20 flex items-center justify-between bg-gradient-to-r from-[#087a3b] via-[#0a9b50] to-[#13b866] px-5 py-5 text-white shadow-[0_5px_18px_rgba(0,0,0,0.24)]">
-        <div className="flex items-center gap-2.5 text-white">
-          <Link2 className="size-10" strokeWidth={3} />
-          <span className="text-[29px] font-black tracking-[-0.06em]">USALINK</span>
+    <main className="min-h-screen bg-[#f7f9fc] pb-24 text-[#071b45]">
+      <section className="relative isolate overflow-hidden rounded-b-[32px] bg-gradient-to-br from-[#071b45] via-[#0b3970] to-[#1879b8] px-5 pb-7 pt-5 text-white shadow-[0_12px_30px_rgba(7,27,69,.2)]">
+        <div className="absolute -right-5 top-8 opacity-25"><Plane className="size-32 rotate-12" strokeWidth={1} /></div>
+        <div className="absolute bottom-4 right-3 opacity-80"><img src="/concepto/caja-usalink.png" alt="Caja de envío USALINK" className="h-24 w-28 object-cover object-left rounded-xl" /></div>
+        <header className="relative z-10 flex items-center justify-between">
+          <a href="/" className="text-[23px] font-black tracking-[-.07em]"><span>USA</span><span className="text-[#9bd9ff]">LINK</span></a>
+          <div className="flex items-center gap-1"><button aria-label="Buscar" className="rounded-full p-2 hover:bg-white/10"><Search className="size-5" /></button><button aria-label="Notificaciones" className="rounded-full p-2 hover:bg-white/10"><Bell className="size-5" /></button></div>
+        </header>
+        <div className="relative z-10 mt-8 max-w-[340px]">
+          <p className="mb-2 text-xs font-bold uppercase tracking-[.2em] text-[#9bd9ff]">Compras desde USA</p>
+          <h1 className="text-[35px] font-black leading-[.98] tracking-[-.06em]">Pega el link.<br />Nosotros compramos.</h1>
+          <p className="mt-3 text-sm font-medium text-blue-100">De tus tiendas favoritas a República Dominicana</p>
         </div>
-        <div className="flex items-center gap-3 text-white">
-          <button aria-label="Notificaciones" className="rounded-full p-1 transition hover:bg-[#e9f7eb]"><Bell className="size-7" strokeWidth={2.4} /></button>
-          <button aria-label="Cuenta" className="rounded-full p-1 transition hover:bg-[#e9f7eb]"><CircleUserRound className="size-8" strokeWidth={2.2} /></button>
+        <div className="relative z-10 mt-6 flex rounded-2xl bg-white p-1.5 shadow-xl">
+          <Link2 className="ml-3 mt-3 size-5 shrink-0 text-[#1879b8]" />
+          <input value={link} onChange={(e) => setLink(e.target.value)} placeholder="Pega aquí el enlace del producto" aria-label="Enlace del producto" className="min-w-0 flex-1 bg-transparent px-2 py-3 text-sm text-[#071b45] outline-none placeholder:text-slate-400" />
+          <button onClick={quote} className="rounded-xl bg-[#1879b8] px-3 text-xs font-extrabold text-white">Cotizar ahora <ArrowRight className="ml-1 inline size-3" /></button>
         </div>
-      </header>
-
-      <section className="bg-gradient-to-b from-[#17232b] to-[#101820] px-7 pb-8 pt-12 text-white">
-        <h1 className="max-w-[520px] text-[42px] font-black leading-[1.02] tracking-[-0.055em] sm:text-5xl">Pega el link. Nosotros compramos.</h1>
-        <p className="mt-4 text-[19px] font-semibold text-[#b7c2c0]">Copia la URL de cualquier producto USA</p>
-        <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-          <label className="flex min-w-0 flex-1 items-center rounded-full border border-[#cfd1d4] bg-[#f8fbf9] px-5 text-[#101820] shadow-[0_8px_22px_rgba(0,0,0,0.28)] focus-within:ring-2 focus-within:ring-[#79c795]">
-            <Link2 className="mr-3 size-7 shrink-0 text-[#0a8a43]" strokeWidth={2.5} />
-            <input value={link} onChange={(event) => setLink(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter' && !event.nativeEvent.isComposing && event.keyCode !== 229) handleQuote() }} placeholder="Pega tu link de USA aquí" className="min-w-0 flex-1 bg-transparent py-5 text-lg outline-none placeholder:text-[#777c82]" aria-label="Enlace del producto" />
-          </label>
-          <button onClick={handleQuote} className="rounded-full bg-[#0aa052] px-8 py-4 text-lg font-extrabold text-white shadow-[0_4px_10px_rgba(10,160,82,0.25)] transition active:scale-[0.98] hover:bg-[#078643]">Cotizar ahora →</button>
-        </div>
-        <p className="mt-5 text-center text-[15px] font-semibold text-[#b7c2c0]">Stripe&nbsp;&nbsp; PayPal&nbsp;&nbsp; VISA</p>
-        <p className="mt-1 text-center text-[14px] text-[#b7c2c0]">Pago seguro y protegido</p>
-        {message && <p role="status" className="mt-3 text-center text-sm font-bold text-[#0a8a43]">{message}</p>}
+        {message && <p role="status" className="relative z-10 mt-2 text-xs font-bold text-yellow-200">{message}</p>}
+        <p className="relative z-10 mt-4 text-center text-[10px] font-semibold tracking-wide text-blue-100">Stripe · PayPal · VISA · Mastercard</p>
+        <p className="relative z-10 mt-1 text-center text-[10px] text-blue-100">Pago seguro y protegido</p>
       </section>
 
-      <PromoVideo />
-
-      <section className="bg-[#202e35] px-7 py-7">
-        <SectionHeading title="Categorías" />
-        <div className="mt-5 grid grid-cols-4 gap-3">
-          {categories.map(({ label, icon: Icon }) => <button key={label} onClick={() => setActiveCategory(label)} className={`flex flex-col items-center gap-3 rounded-2xl px-1 py-4 text-[#101820] transition ${activeCategory === label ? 'bg-[#b9efca] shadow-[0_4px_12px_rgba(81,217,139,0.2)]' : 'bg-[#d7f1df]'} hover:scale-[1.02]`}><Icon className="size-10 text-[#0a8a43]" strokeWidth={1.9} /><span className="text-sm font-semibold">{label}</span></button>)}
+      <section className="mx-4 -mt-1 rounded-3xl bg-white px-4 py-5 shadow-[0_5px_24px_rgba(7,27,69,.08)]">
+        <div className="flex items-center justify-between"><h2 className="text-lg font-extrabold">Así funciona</h2><button className="text-xs font-bold text-[#1879b8]">Ver más</button></div>
+        <div className="mt-5 grid grid-cols-4 gap-2 text-center">
+          {[[Link2, '1. Cotiza', 'Pega el link', 'bg-blue-100 text-blue-700'], [Tag, '2. Recibe', 'Tu cotización', 'bg-sky-100 text-sky-700'], [ShoppingBag, '3. Paga', 'Seguro', 'bg-violet-100 text-violet-700'], [Package, '4. Recíbelo', 'En RD', 'bg-emerald-100 text-emerald-700']].map(([Icon, title, caption, color]) => <div key={title as string}><div className={`mx-auto flex size-10 items-center justify-center rounded-full ${color}`}><Icon className="size-5" /></div><b className="mt-2 block text-[10px] leading-tight">{title as string}</b><span className="mt-1 block text-[9px] text-slate-500">{caption as string}</span></div>)}
         </div>
       </section>
 
-      <section className="bg-[#202e35] px-7 py-6">
-        <SectionHeading title="Tiendas destacadas" />
-        <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {featuredStores.map(([name, description, href, image]) => <button key={name} onClick={() => { window.location.href = href }} className="group relative min-h-[148px] overflow-hidden rounded-2xl bg-[#f7faf8] text-left shadow-[0_5px_14px_rgba(0,0,0,0.25)] transition active:scale-[0.98] hover:-translate-y-0.5"><img src={image} alt={`${name} storefront`} className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105" /><span className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-[#101820] via-[#101820]/75 to-transparent" /><span className="absolute inset-x-3 bottom-3 text-white"><b className="block text-sm font-black tracking-tight">{name}</b><span className="mt-1 block text-xs text-white/80">{description}</span></span></button>)}
-        </div>
-      </section>
+      <Section title="Categorías" action="Ver todas"><div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none]">{categories.map(([name, image, href]) => <a key={name} href={href} className="min-w-[82px] text-center"><div className="h-[78px] overflow-hidden rounded-2xl bg-slate-100"><img src={image} alt={name} className="h-full w-full object-cover" /></div><span className="mt-2 block text-xs font-bold">{name}</span></a>)}</div></Section>
 
-      <section className="bg-[#18252c] px-7 py-6">
-        <SectionHeading title="Más tiendas" />
-        <div className="mt-5 flex gap-3 overflow-x-auto pb-2 [scrollbar-width:none]">
-          {moreStores.map(([store, href]) => <button key={store} onClick={() => { window.location.href = href }} className="flex min-w-[92px] flex-col items-center gap-2 rounded-2xl bg-[#f7faf8] px-2 py-4 text-center text-xs font-semibold text-[#101820] shadow-[0_3px_10px_rgba(0,0,0,0.22)] transition hover:text-[#0a8a43]"><ShoppingBag className="size-6 text-[#0a8a43]" strokeWidth={1.8} />{store}</button>)}
-        </div>
-      </section>
+      <Section title="Tiendas destacadas" action="Ver todas"><div className="grid grid-cols-2 gap-3">{stores.map(([name, caption, href, image]) => <a key={name} href={href} className="relative h-[134px] overflow-hidden rounded-2xl bg-slate-200"><img src={image} alt={`${name} storefront`} className="h-full w-full object-cover" /><span className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-[#071b45] to-transparent" /><span className="absolute bottom-3 left-3 text-white"><b className="block text-xs">{name}</b><small className="text-[10px] text-white/75">{caption}</small></span></a>)}</div></Section>
 
-      <section className="bg-[#202e35] px-7 py-6">
-        <SectionHeading title="Ofertas del día" />
-        <div className="mt-5 grid grid-cols-2 gap-4">
-          {deals.map((deal) => <article key={deal.name} className="overflow-hidden rounded-3xl bg-white shadow-[0_3px_12px_rgba(16,24,32,0.1)]"><div className="relative flex h-36 items-center justify-center overflow-hidden bg-[#f3f5f2]"><span className="absolute left-3 top-3 z-10 rounded-lg bg-[#0a9b50] px-2 py-1 text-xs font-extrabold text-white">{deal.discount}</span><img src={deal.image} alt={deal.name} className="h-full w-full object-contain" /></div><div className="px-4 pb-4 text-[#101820]"><b className="block text-sm leading-tight">{deal.name}</b><p className="mt-2 text-lg font-extrabold text-[#0a8a43]">{deal.price}</p><s className="text-xs text-[#85898e]">{deal.oldPrice}</s><p className="mt-1 text-xs text-[#51565d]">★ {deal.rating}</p></div></article>)}
-        </div>
-      </section>
+      <Section title="Ofertas del día" action="Ver todas"><div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none]">{offers.map(([name, usd, rd, discount, image]) => <article key={name} className="min-w-[154px] overflow-hidden rounded-2xl bg-white shadow-sm"><div className="relative h-28 bg-slate-100"><span className="absolute left-2 top-2 z-10 rounded-md bg-[#e5484d] px-2 py-1 text-[10px] font-black text-white">{discount}</span><img src={image} alt={name} className="h-full w-full object-contain" /></div><div className="p-3"><b className="block text-xs">{name}</b><span className="text-[10px] text-slate-400">{usd}</span><strong className="mt-1 block text-sm text-[#1879b8]">{rd}</strong></div></article>)}</div></Section>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-30 mx-auto flex max-w-3xl justify-around rounded-t-[28px] border border-[#38515a] bg-[#101820]/95 px-2 py-4 shadow-[0_-4px_18px_rgba(16,24,32,0.12)] backdrop-blur" aria-label="Navegación principal">
-        {[['Inicio', House], ['Tiendas', ShoppingBag], ['IA', Sparkles], ['Rastreo', MapPin], ['Cuenta', CircleUserRound]].map(([label, Icon]) => <button key={label as string} onClick={() => setActiveTab(label as string)} className={`flex min-w-14 flex-col items-center gap-1 text-xs transition ${activeTab === label ? 'font-extrabold text-[#51d98b]' : 'text-[#93a4a5]'}`}><Icon className="size-7" strokeWidth={activeTab === label ? 2.7 : 1.8} />{label as string}</button>)}
+      <Section title="Más tiendas"><div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">{moreStores.map((name) => <a href="/tiendas" key={name} className="flex min-w-[92px] items-center justify-center rounded-xl border border-slate-200 bg-white px-3 py-3 text-[10px] font-bold shadow-sm"><ShoppingBag className="mr-1.5 size-4 text-[#1879b8]" />{name}</a>)}</div></Section>
+
+      <nav className="fixed bottom-0 left-0 right-0 z-30 mx-auto flex max-w-[430px] items-end justify-around border-t border-slate-200 bg-white/95 px-2 py-3 shadow-[0_-8px_24px_rgba(7,27,69,.1)] backdrop-blur" aria-label="Navegación principal">
+        {[[Home, 'Inicio'], [ShoppingBag, 'Tiendas'], [Sparkles, 'Afrodita'], [MapPin, 'Rastreo'], [CircleUserRound, 'Cuenta']].map(([Icon, label], index) => <a href={label === 'Tiendas' ? '/tiendas' : '#'} key={label as string} className={`flex min-w-14 flex-col items-center gap-1 text-[10px] font-semibold ${label === 'Afrodita' ? '-mt-7' : ''} ${index === 0 ? 'text-[#1879b8]' : 'text-slate-500'}`}><span className={label === 'Afrodita' ? 'flex size-14 items-center justify-center rounded-full bg-violet-600 text-white shadow-lg shadow-violet-200' : ''}><Icon className="size-5" /></span>{label as string}</a>)}
       </nav>
     </main>
   )
 }
 
-function SectionHeading({ title }: { title: string }) {
-  return <div className="flex items-center justify-between"><h2 className="text-[21px] font-extrabold tracking-[-0.04em]">{title}</h2><button className="text-[17px] font-bold text-[#0a8a43]">Ver todo</button></div>
+function Section({ title, action, children }: { title: string; action?: string; children: React.ReactNode }) {
+  return <section className="px-4 py-5"><div className="mb-4 flex items-center justify-between"><h2 className="text-lg font-extrabold tracking-tight">{title}</h2>{action && <button className="text-xs font-bold text-[#1879b8]">{action}</button>}</div>{children}</section>
 }
