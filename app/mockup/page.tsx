@@ -29,7 +29,7 @@ const offers = [
 export default function HomeMockup() {
   const [link, setLink] = useState('')
   return (
-    <main className="min-h-screen bg-[#f5f8fc] pb-24 text-[#071b45]">
+    <main className="mx-auto min-h-screen w-full max-w-[430px] overflow-hidden bg-[#f5f8fc] pb-24 text-[#071b45] shadow-[0_0_50px_rgba(7,27,69,0.14)] sm:my-6 sm:min-h-[calc(100vh-3rem)] sm:rounded-[2.5rem] sm:border-[10px] sm:border-[#071b45]">
       <section className="relative overflow-hidden bg-gradient-to-br from-[#071b45] via-[#0c3471] to-[#2473b8] px-5 pb-7 pt-5 text-white">
         <div className="relative z-10 mx-auto max-w-md">
           <header className="flex items-center justify-between">
@@ -51,14 +51,14 @@ export default function HomeMockup() {
         </div>
       </section>
 
-      <section className="mx-4 -mt-3 rounded-3xl bg-white p-4 shadow-[0_8px_28px_rgba(7,27,69,0.08)]">
+      <section className="mx-4 -mt-3 rounded-3xl border border-[#e8edf4] bg-white p-4 shadow-[0_8px_28px_rgba(7,27,69,0.08)]">
         <div className="mb-4 flex items-center justify-between"><h2 className="text-lg font-black">Así funciona</h2><button className="text-xs font-bold text-[#2473b8]">Ver más</button></div>
         <div className="flex justify-between gap-2 text-center">
           {[['1', 'Cotiza', 'Pega el link', '🔗'], ['2', 'Recibe', 'Tu cotización', '📄'], ['3', 'Paga', 'Seguro', '💳'], ['4', 'Recíbelo', 'En RD', '📦']].map(([number, title, sub, icon]) => <div key={number} className="min-w-0 flex-1"><div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-[#e8f4ff] text-lg">{icon}</div><p className="text-[11px] font-black">{number}. {title}</p><p className="mt-1 text-[10px] text-[#7d8898]">{sub}</p></div>)}
         </div>
       </section>
 
-      <Section title="Categorías" action="Ver todas"><div className="flex gap-3 overflow-x-auto pb-1">{categories.map(([name, image]) => <div key={name} className="w-20 shrink-0"><div className="h-20 overflow-hidden rounded-2xl bg-white shadow-sm"><img src={image} alt={name} className="h-full w-full object-contain" /></div><p className="mt-2 text-center text-[11px] font-bold">{name}</p></div>)}</div></Section>
+      <Section title="Categorías" action="Ver todas"><div className="flex gap-3 overflow-x-auto pb-1">{categories.map(([name, image]) => <div key={name} className="w-20 shrink-0"><div className="aspect-square overflow-hidden rounded-2xl border border-[#e5ebf3] bg-white p-1 shadow-sm"><img src={image} alt={name} className="h-full w-full rounded-xl object-cover" /></div><p className="mt-2 text-center text-[11px] font-bold">{name}</p></div>)}</div></Section>
 
       <Section title="Tiendas destacadas" action="Ver todas"><div className="grid grid-cols-2 gap-3">{stores.map(([name, type, image]) => <div key={name} className="relative h-32 overflow-hidden rounded-2xl bg-[#071b45]"><img src={image} alt={name} className="h-full w-full object-cover opacity-80" /><div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#071b45] p-3 pt-8"><p className="text-[12px] font-black text-white">{name}</p><p className="text-[10px] text-white/70">{type}</p></div></div>)}</div></Section>
 
