@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowRight, Bell, CircleUserRound, Home, Link2, MapPin, Package, Plane, Search, ShoppingBag, Sparkles, Tag, Truck } from 'lucide-react'
+import { ArrowRight, Bell, CircleUserRound, Home as HomeIcon, Link2, MapPin, Package, Plane, Search, ShoppingBag, Sparkles, Tag, Truck } from 'lucide-react'
 
 const categories = [
   ['Moda', '/macys/satin-dress.png', '/hub/moda'],
@@ -77,7 +77,7 @@ export default function Home() {
       <Section title="Más tiendas"><div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">{moreStores.map((name) => <a href="/tiendas" key={name} className="flex min-w-[92px] items-center justify-center rounded-xl border border-slate-200 bg-white px-3 py-3 text-[10px] font-bold shadow-sm"><ShoppingBag className="mr-1.5 size-4 text-[#1879b8]" />{name}</a>)}</div></Section>
 
       <nav className="fixed bottom-0 left-0 right-0 z-30 mx-auto flex max-w-[430px] items-end justify-around border-t border-slate-200 bg-white/95 px-2 py-3 shadow-[0_-8px_24px_rgba(7,27,69,.1)] backdrop-blur" aria-label="Navegación principal">
-        {[[Home, 'Inicio'], [ShoppingBag, 'Tiendas'], [Sparkles, 'Afrodita'], [MapPin, 'Rastreo'], [CircleUserRound, 'Cuenta']].map(([Icon, label], index) => <a href={label === 'Tiendas' ? '/tiendas' : '#'} key={label as string} className={`flex min-w-14 flex-col items-center gap-1 text-[10px] font-semibold ${label === 'Afrodita' ? '-mt-7' : ''} ${index === 0 ? 'text-[#1879b8]' : 'text-slate-500'}`}><span className={label === 'Afrodita' ? 'flex size-14 items-center justify-center rounded-full bg-violet-600 text-white shadow-lg shadow-violet-200' : ''}><Icon className="size-5" /></span>{label as string}</a>)}
+        {[[HomeIcon, 'Inicio'], [ShoppingBag, 'Tiendas'], [Sparkles, 'Afrodita'], [MapPin, 'Rastreo'], [CircleUserRound, 'Cuenta']].map(([Icon, label], index) => <a href={label === 'Tiendas' ? '/tiendas' : '#'} key={label as string} className={`flex min-w-14 flex-col items-center gap-1 text-[10px] font-semibold ${label === 'Afrodita' ? '-mt-7' : ''} ${index === 0 ? 'text-[#1879b8]' : 'text-slate-500'}`}><span className={label === 'Afrodita' ? 'flex size-14 items-center justify-center rounded-full bg-violet-600 text-white shadow-lg shadow-violet-200' : ''}><Icon className="size-5" /></span>{label as string}</a>)}
       </nav>
     </main>
   )
