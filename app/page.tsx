@@ -28,7 +28,7 @@ const offers = [
 
 const moreStores = ['Target', 'Best Buy', 'Ulta', 'Apple', 'Lululemon', 'Foot Locker']
 
-export default function Home() {
+export default function HomePage() {
   const [link, setLink] = useState('')
   const [message, setMessage] = useState('')
 
