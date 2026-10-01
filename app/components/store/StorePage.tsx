@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { ChevronLeft, Home, Link2, MapPin, Search, ShieldCheck, ShoppingBag, Sparkles, Truck, UserRound, X } from 'lucide-react'
-import { toRD, type StoreConfig, type StoreModel } from './storeData'
+import { ChevronLeft, ExternalLink, Home, Link2, MapPin, ShieldCheck, ShoppingBag, Sparkles, Truck, UserRound, X } from 'lucide-react'
+import { formatUSD, modelUrl, toRD, type StoreConfig, type StoreModel } from './storeData'
 
 const WHATSAPP = 'https://wa.me/18565622190?text='
 
@@ -33,10 +33,11 @@ export default function StorePage({ store }: { store: StoreConfig }) {
     const lines = [
       `Hola USALINK, quiero cotizar en ${store.name}:`,
       `Modelo: ${selected.name}`,
-      `Precio de referencia: US$ ${selected.usd}`,
+      `Precio de referencia: ${formatUSD(selected.usd)}`,
       store.sizeLabel ? `${store.sizeLabel}: ${size}` : null,
-      color ? `Color: ${color}` : null,
+      color ? `${store.colorLabel}: ${color}` : null,
       `Cantidad: ${quantity}`,
+      `Ver en tienda: ${modelUrl(store, selected)}`,
     ].filter(Boolean)
     window.open(WHATSAPP + encodeURIComponent(lines.join('\n')), '_blank')
   }
@@ -57,14 +58,28 @@ export default function StorePage({ store }: { store: StoreConfig }) {
             <ChevronLeft className="size-5" />
           </Link>
           <p className="text-sm font-bold">{store.name}</p>
-          <button type="button" aria-label="Buscar en la tienda" className="flex size-9 items-center justify-center rounded-full bg-[#ffffff] shadow-sm">
-            <Search className="size-4" />
-          </button>
+          <a
+            href={store.website}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`Abrir la web oficial de ${store.name}`}
+            className="flex size-9 items-center justify-center rounded-full bg-[#ffffff] shadow-sm"
+          >
+            <ExternalLink className="size-4" />
+          </a>
         </header>
 
         <section className="px-4">
-          <div className="relative h-44 overflow-hidden rounded-3xl">
-            <img src={store.facade} alt={`Entrada de ${store.name}`} className="size-full object-cover" />
+          <div className="relative h-44 overflow-hidden rounded-3xl bg-[#071b45]">
+            {store.facade ? (
+              <img src={store.facade} alt={`Entrada de ${store.name}`} className="size-full object-cover" />
+            ) : (
+              <div className="flex h-full items-start justify-end gap-2 p-3">
+                {store.models.slice(0, 3).map((model) => (
+                  <img key={model.id} src={model.image} alt="" className="h-24 w-20 rounded-2xl bg-[#ffffff] object-contain p-2" />
+                ))}
+              </div>
+            )}
             <div className="absolute inset-0 bg-gradient-to-t from-[#071b45] via-[#071b45]/30 to-transparent" />
             <div className="absolute inset-x-0 bottom-0 flex flex-col gap-1 p-4 text-[#ffffff]">
               <span className="w-fit rounded-full bg-[#ffffff]/20 px-2 py-0.5 text-[11px] font-semibold backdrop-blur">Tienda oficial USA</span>
@@ -108,7 +123,7 @@ export default function StorePage({ store }: { store: StoreConfig }) {
                 </div>
                 <div className="flex flex-1 flex-col gap-1 p-3">
                   <p className="line-clamp-2 text-sm font-semibold leading-snug">{model.name}</p>
-                  <p className="text-xs text-[#8b98aa]">US$ {model.usd}</p>
+                  <p className="text-xs text-[#8b98aa]">{formatUSD(model.usd)}</p>
                   <p className="text-base font-extrabold text-[#2473b8]">{toRD(model.usd)}</p>
                   <button
                     type="button"
@@ -117,6 +132,15 @@ export default function StorePage({ store }: { store: StoreConfig }) {
                   >
                     Cotizar
                   </button>
+                  <a
+                    href={modelUrl(store, model)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-1 text-xs font-medium text-[#2473b8]"
+                  >
+                    {`Ver en ${store.name}`}
+                    <ExternalLink className="size-3" />
+                  </a>
                 </div>
               </li>
             ))}
@@ -169,7 +193,7 @@ export default function StorePage({ store }: { store: StoreConfig }) {
                 <img src={selected.image} alt="" className="size-16 rounded-xl bg-[#f7f9fb] object-contain p-1" />
                 <div className="flex-1">
                   <p id="quote-title" className="font-bold">{selected.name}</p>
-                  <p className="text-sm font-extrabold text-[#2473b8]">{toRD(selected.usd)} <span className="font-normal text-[#8b98aa]">· US$ {selected.usd}</span></p>
+                  <p className="text-sm font-extrabold text-[#2473b8]">{toRD(selected.usd)} <span className="font-normal text-[#8b98aa]">· {formatUSD(selected.usd)}</span></p>
                 </div>
                 <button type="button" onClick={() => setSelected(null)} aria-label="Cerrar" className="flex size-8 items-center justify-center rounded-full bg-[#f5f8fc]">
                   <X className="size-4" />
@@ -186,7 +210,7 @@ export default function StorePage({ store }: { store: StoreConfig }) {
                         type="button"
                         onClick={() => setSize(s)}
                         aria-pressed={size === s}
-                        className={`size-10 rounded-xl text-sm font-semibold ${size === s ? 'bg-[#071b45] text-[#ffffff]' : 'bg-[#f5f8fc] text-[#071b45]'}`}
+                        className={`h-10 min-w-10 rounded-xl px-2 text-sm font-semibold ${size === s ? 'bg-[#071b45] text-[#ffffff]' : 'bg-[#f5f8fc] text-[#071b45]'}`}
                       >
                         {s}
                       </button>
@@ -197,7 +221,7 @@ export default function StorePage({ store }: { store: StoreConfig }) {
 
               <div className="flex gap-3">
                 <label className="flex flex-1 flex-col gap-1 text-sm font-semibold">
-                  Color
+                  {store.colorLabel}
                   <input
                     value={color}
                     onChange={(e) => setColor(e.target.value)}
