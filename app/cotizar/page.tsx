@@ -1,9 +1,17 @@
 "use client"
 
 import { useSearchParams, useRouter } from "next/navigation"
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 
 export default function CotizarPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-white" />}>
+      <CotizarContent />
+    </Suspense>
+  )
+}
+
+function CotizarContent() {
   const params = useSearchParams()
   const router = useRouter()
   const url = params.get("url") || ""
