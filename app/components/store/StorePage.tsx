@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { ChevronLeft, ExternalLink, Home, Link2, MapPin, ShieldCheck, ShoppingBag, Sparkles, Truck, UserRound, X } from 'lucide-react'
 import { formatUSD, modelUrl, toRD, type StoreConfig, type StoreModel } from './storeData'
 
+import { cotizarHref } from '@/lib/quote'
+
 const WHATSAPP = 'https://wa.me/18565622190?text='
 
 export default function StorePage({ store }: { store: StoreConfig }) {
@@ -47,7 +49,7 @@ export default function StorePage({ store }: { store: StoreConfig }) {
       window.alert('Pega un enlace válido que empiece con https://')
       return
     }
-    window.open(WHATSAPP + encodeURIComponent(`Hola USALINK, quiero cotizar este producto de ${store.name}:\n${link.trim()}`), '_blank')
+    window.location.assign(cotizarHref(link.trim(), store.name))
   }
 
   return (

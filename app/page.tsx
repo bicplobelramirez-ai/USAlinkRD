@@ -2,9 +2,10 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { cotizarHref } from '@/lib/quote'
 import { Bell, ChevronRight, Home, MapPin, Search, ShoppingBag, Sparkles, UserRound } from 'lucide-react'
 
-const WHATSAPP = 'https://wa.me/18565622190?text='
 
 const categories = [
   ['Moda', '/macys/satin-dress.png', '/macys'],
@@ -43,6 +44,7 @@ const moreStores = [
 ]
 
 export default function HomeMockup() {
+  const router = useRouter()
   const [link, setLink] = useState('')
   const [error, setError] = useState('')
 
@@ -53,7 +55,7 @@ export default function HomeMockup() {
       return
     }
     setError('')
-    window.open(WHATSAPP + encodeURIComponent(`Hola USALINK, quiero cotizar este producto:\n${value}`), '_blank', 'noopener,noreferrer')
+    router.push(cotizarHref(value))
   }
 
   return (

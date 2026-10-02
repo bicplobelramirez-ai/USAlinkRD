@@ -3,7 +3,8 @@
 import { randomUUID } from 'crypto'
 
 import { stripe } from '@/lib/stripe'
-import { getQuote, isValidProductUrl } from '@/lib/quote'
+import { isValidProductUrl } from '@/lib/quote'
+import { quoteProductUrl } from '@/lib/scrape'
 
 export async function startQuoteCheckout(productUrl: string, store: string) {
   if (!isValidProductUrl(productUrl)) {
@@ -11,7 +12,11 @@ export async function startQuoteCheckout(productUrl: string, store: string) {
   }
 
   const safeStore = store.replace(/[^\p{L}\p{N} &'.-]/gu, '').slice(0, 60) || 'tienda'
-  const quote = getQuote()
+  const result = await quoteProductUrl(productUrl)
+  if (!result.found) {
+    throw new Error('No pudimos confirmar el precio de este producto')
+  }
+  const { quote } = result
 
   const session = await stripe.checkout.sessions.create(
     {

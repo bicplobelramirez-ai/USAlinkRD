@@ -1,5 +1,7 @@
 export const RD_RATE = 59
 
+export const FEES = { tax: 0, shipUSA: 8, service: 15, shipRD: 18 }
+
 export interface Quote {
   name: string
   price: number
@@ -11,11 +13,11 @@ export interface Quote {
   totalRD: number
 }
 
-// Datos de prueba: se reemplaza por el resultado de /api/scrape cuando exista.
-export function getQuote(): Quote {
-  const base = { name: "Nike Air Force 1 '07", price: 115, tax: 0, shipUSA: 8, service: 15, shipRD: 18 }
-  const total = base.price + base.tax + base.shipUSA + base.service + base.shipRD
-  return { ...base, total, totalRD: Math.round(total * RD_RATE) }
+const round2 = (value: number) => Math.round(value * 100) / 100
+
+export function buildQuote(name: string, price: number): Quote {
+  const total = round2(price + FEES.tax + FEES.shipUSA + FEES.service + FEES.shipRD)
+  return { name, price: round2(price), ...FEES, total, totalRD: Math.round(total * RD_RATE) }
 }
 
 export function isValidProductUrl(value: string) {
@@ -26,4 +28,10 @@ export function isValidProductUrl(value: string) {
   } catch {
     return false
   }
+}
+
+export function cotizarHref(url: string, store?: string) {
+  const params = new URLSearchParams({ url })
+  if (store) params.set('store', store)
+  return `/cotizar?${params.toString()}`
 }
