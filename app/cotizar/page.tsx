@@ -2,6 +2,8 @@
 
 import { useSearchParams, useRouter } from "next/navigation"
 import { useState, useEffect, Suspense } from "react"
+import QuoteCheckout from "@/app/components/QuoteCheckout"
+import { getQuote, isValidProductUrl } from "@/lib/quote"
 
 export default function CotizarPage() {
   return (
@@ -20,17 +22,10 @@ function CotizarContent() {
   const [step, setStep] = useState<"analyzing" | "result">("analyzing")
   const [progress, setProgress] = useState(10)
 
-  const product = {
-    name: "Nike Air Force 1 '07",
-    price: 115,
-    image: "👟",
-    tax: 0,
-    shipUSA: 8,
-    service: 15,
-    shipRD: 18,
-  }
-  const total = product.price + product.tax + product.shipUSA + product.service + product.shipRD
-  const totalRD = Math.round(total * 59)
+  const [showCheckout, setShowCheckout] = useState(false)
+  const product = { ...getQuote(), image: "👟" }
+  const { total, totalRD } = product
+  const canPay = isValidProductUrl(url)
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -103,7 +98,19 @@ function CotizarContent() {
         </div>
 
         <div className="mt-6 space-y-3">
-          <button type="button" className="flex w-full items-center justify-center gap-2 rounded-xl bg-black py-4 font-bold text-white">💳 Pagar con tarjeta</button>
+          {showCheckout ? (
+            <QuoteCheckout url={url} store={store} />
+          ) : (
+            <button
+              type="button"
+              disabled={!canPay}
+              onClick={() => setShowCheckout(true)}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-black py-4 font-bold text-white disabled:opacity-40"
+            >
+              💳 Pagar con tarjeta
+            </button>
+          )}
+          {!canPay && <p className="text-center text-xs text-red-600">Pega un enlace válido del producto para poder pagar.</p>}
           <button type="button" className="flex w-full items-center justify-center gap-2 rounded-xl border border-black py-4 font-bold"><span className="font-black text-blue-600">P</span> Pagar con PayPal</button>
           <button type="button" className="w-full rounded-xl bg-neutral-100 py-3 text-sm">🔖 Guardar cotización</button>
         </div>
