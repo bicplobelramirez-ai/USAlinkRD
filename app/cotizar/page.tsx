@@ -3,8 +3,9 @@
 import { useSearchParams, useRouter } from "next/navigation"
 import { useState, useEffect, Suspense } from "react"
 import useSWR from "swr"
-import QuoteCheckout from "@/app/components/QuoteCheckout"
-import { isValidProductUrl } from "@/lib/quote"
+import ApprovePayment from "@/app/components/ApprovePayment"
+import type { PaymentRequest } from "@/app/actions/stripe"
+import { isValidProductUrl, parseQuantity, quoteCatalogModel, type Quote } from "@/lib/quote"
 import type { QuoteResult } from "@/lib/scrape"
 
 const WHATSAPP = "https://wa.me/18565622190?text="
@@ -25,23 +26,30 @@ export default function CotizarPage() {
 function CotizarContent() {
   const params = useSearchParams()
   const router = useRouter()
+
+  const modelId = params.get("modelo") || ""
+  const storeSlug = params.get("tienda") || ""
+  const size = params.get("talla") || ""
+  const color = params.get("color") || ""
+  const quantity = parseQuantity(params.get("cantidad") ?? "1") ?? 1
+  const catalog = modelId ? quoteCatalogModel(storeSlug, modelId, quantity) : null
+
   const url = params.get("url") || ""
-  const store = params.get("store") || "tienda"
-  const validUrl = isValidProductUrl(url)
+  const validUrl = !modelId && isValidProductUrl(url)
+  const store = catalog?.store.name || params.get("store") || "tienda"
 
   const { data, error } = useSWR(validUrl ? `/api/scrape?url=${encodeURIComponent(url)}` : null, fetcher, {
     revalidateOnFocus: false,
   })
 
   const [progress, setProgress] = useState(10)
-  const [showCheckout, setShowCheckout] = useState(false)
 
   useEffect(() => {
     const interval = setInterval(() => {
       setProgress((currentProgress) => Math.min(currentProgress + 15, 100))
-    }, 400)
+    }, catalog ? 200 : 400)
     return () => clearInterval(interval)
-  }, [])
+  }, [catalog])
 
   const loading = validUrl && !data && !error
   const analyzing = progress < 100 || loading
@@ -51,7 +59,11 @@ function CotizarContent() {
       <div className="flex min-h-screen flex-col items-center justify-center bg-white p-8 text-black">
         <div className="w-full max-w-sm text-center">
           <div className="mb-8 animate-spin text-5xl">⚙️</div>
-          <h1 className="text-2xl font-black">Analizando tu<br />link de {store}...</h1>
+          <h1 className="text-2xl font-black">
+            {catalog ? "Calculando tu" : "Analizando tu"}
+            <br />
+            {catalog ? `cotización de ${store}...` : `link de ${store}...`}
+          </h1>
 
           <div className="mt-6 h-3 w-full overflow-hidden rounded-full bg-neutral-200">
             <div
@@ -60,8 +72,7 @@ function CotizarContent() {
             />
           </div>
 
-          <p className="mt-6 text-sm text-neutral-500">Estamos obteniendo precio,<br />impuestos y envío...</p>
-          <p className="mt-8 text-xs text-neutral-400">Esto puede demorar unos segundos</p>
+          <p className="mt-6 text-sm text-neutral-500">Estamos sumando precio,<br />impuestos y envío...</p>
           <p className="mt-20 text-[10px] text-neutral-300">USALINK • Cotiza en segundos</p>
         </div>
       </div>
@@ -83,12 +94,31 @@ function CotizarContent() {
     </div>
   )
 
+  if (catalog) {
+    const details = [size && `Talla ${size}`, color && `Color ${color}`, `Cantidad ${quantity}`].filter(Boolean).join(" · ")
+    const request: PaymentRequest = { kind: "model", store: catalog.store.slug, model: catalog.model.id, quantity, size, color }
+    return (
+      <QuoteView
+        header={header}
+        image={catalog.model.image}
+        name={catalog.model.name}
+        subtitle={details}
+        quote={catalog.quote}
+        store={store}
+        request={request}
+        summary={`${catalog.model.name} (${store}) · ${details}`}
+      />
+    )
+  }
+
   const whatsappHref =
     WHATSAPP + encodeURIComponent(`Hola USALINK, quiero cotizar este producto de ${store}:\n${url}`)
 
   if (!validUrl || error || !data || !data.found) {
     const reason = !validUrl
-      ? "Pega un enlace válido del producto (https://...)."
+      ? modelId
+        ? "Este modelo ya no está disponible."
+        : "Pega un enlace válido del producto (https://...)."
       : (data && !data.found && data.reason) || "No pudimos leer el producto."
     const product = data?.product ?? null
 
@@ -128,26 +158,60 @@ function CotizarContent() {
     )
   }
 
-  const { product, quote } = data
+  return (
+    <QuoteView
+      header={header}
+      image={data.product.image}
+      name={data.product.name}
+      subtitle={url}
+      quote={data.quote}
+      store={store}
+      request={{ kind: "url", url, store }}
+      summary={`${data.product.name} (${store})\n${url}`}
+    />
+  )
+}
 
+function QuoteView({
+  header,
+  image,
+  name,
+  subtitle,
+  quote,
+  store,
+  request,
+  summary,
+}: {
+  header: React.ReactNode
+  image: string | null
+  name: string
+  subtitle: string
+  quote: Quote
+  store: string
+  request: PaymentRequest
+  summary: string
+}) {
   return (
     <div className="min-h-screen bg-white pb-32 text-black">
       {header}
 
       <div className="mx-auto max-w-md p-4">
         <div className="mt-4 flex gap-4 rounded-2xl bg-neutral-50 p-4">
-          <ProductThumb image={product.image} name={product.name} />
+          <ProductThumb image={image} name={name} />
           <div className="min-w-0">
-            <div className="line-clamp-2 font-bold">{product.name}</div>
-            <div className="text-sm text-neutral-600">{usd(quote.price)}</div>
-            <div className="mt-1 truncate text-[11px] text-neutral-400">{url}</div>
+            <div className="line-clamp-2 font-bold">{name}</div>
+            <div className="text-sm text-neutral-600">{usd(quote.unitPrice)}</div>
+            <div className="mt-1 truncate text-[11px] text-neutral-400">{subtitle}</div>
           </div>
         </div>
 
         <div className="mt-6 border-t pt-4">
           <h3 className="font-bold">Desglose</h3>
           <div className="mt-3 space-y-2 text-sm">
-            <div className="flex justify-between"><span>Precio producto</span><span>{usd(quote.price)}</span></div>
+            <div className="flex justify-between">
+              <span>{quote.quantity > 1 ? `Precio producto (x${quote.quantity})` : "Precio producto"}</span>
+              <span>{usd(quote.price)}</span>
+            </div>
             <div className="flex justify-between"><span>Impuestos USA</span><span>{usd(quote.tax)}</span></div>
             <div className="flex justify-between"><span>Envío USA a Miami</span><span>{usd(quote.shipUSA)}</span></div>
             <div className="flex justify-between"><span>Servicio USALINK</span><span>{usd(quote.service)}</span></div>
@@ -162,22 +226,8 @@ function CotizarContent() {
           </div>
         </div>
 
-        <div className="mt-6 space-y-3">
-          {showCheckout ? (
-            <QuoteCheckout url={url} store={store} />
-          ) : (
-            <button
-              type="button"
-              onClick={() => setShowCheckout(true)}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-black py-4 font-bold text-white"
-            >
-              💳 Pagar con tarjeta
-            </button>
-          )}
-          <button type="button" className="flex w-full items-center justify-center gap-2 rounded-xl border border-black py-4 font-bold"><span className="font-black text-blue-600">P</span> Pagar con PayPal</button>
-          <a href={whatsappHref} target="_blank" rel="noopener noreferrer" className="block w-full rounded-xl bg-neutral-100 py-3 text-center text-sm">
-            ¿Talla o color? Escríbenos por WhatsApp
-          </a>
+        <div className="mt-6">
+          <ApprovePayment request={request} summary={summary} />
         </div>
 
         <div className="mt-8 grid grid-cols-3 gap-4 text-center text-[11px]">

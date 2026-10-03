@@ -5,9 +5,7 @@ import Link from 'next/link'
 import { ChevronLeft, ExternalLink, Home, Link2, MapPin, ShieldCheck, ShoppingBag, Sparkles, Truck, UserRound, X } from 'lucide-react'
 import { formatUSD, modelUrl, toRD, type StoreConfig, type StoreModel } from './storeData'
 
-import { cotizarHref } from '@/lib/quote'
-
-const WHATSAPP = 'https://wa.me/18565622190?text='
+import { cotizarHref, cotizarModelHref } from '@/lib/quote'
 
 export default function StorePage({ store }: { store: StoreConfig }) {
   const [filter, setFilter] = useState('Todos')
@@ -32,16 +30,9 @@ export default function StorePage({ store }: { store: StoreConfig }) {
       window.alert(`Elige tu ${store.sizeLabel.toLowerCase()}`)
       return
     }
-    const lines = [
-      `Hola USALINK, quiero cotizar en ${store.name}:`,
-      `Modelo: ${selected.name}`,
-      `Precio de referencia: ${formatUSD(selected.usd)}`,
-      store.sizeLabel ? `${store.sizeLabel}: ${size}` : null,
-      color ? `${store.colorLabel}: ${color}` : null,
-      `Cantidad: ${quantity}`,
-      `Ver en tienda: ${modelUrl(store, selected)}`,
-    ].filter(Boolean)
-    window.open(WHATSAPP + encodeURIComponent(lines.join('\n')), '_blank')
+    window.location.assign(
+      cotizarModelHref({ store: store.slug, model: selected.id, quantity, size, color: color.trim() }),
+    )
   }
 
   const sendLinkQuote = () => {
@@ -147,7 +138,7 @@ export default function StorePage({ store }: { store: StoreConfig }) {
               </li>
             ))}
           </ul>
-          <p className="mt-2 text-[11px] text-[#8b98aa]">Precios en RD$ aproximados. La cotización final llega por WhatsApp.</p>
+          <p className="mt-2 text-[11px] text-[#8b98aa]">Precios en RD$ aproximados. Toca Cotizar para ver el total con envío a RD.</p>
         </section>
 
         <section className="mx-4 mt-6 flex flex-col gap-3 rounded-3xl bg-[#071b45] p-4 text-[#ffffff]">
@@ -242,7 +233,7 @@ export default function StorePage({ store }: { store: StoreConfig }) {
               </div>
 
               <button type="button" onClick={sendModelQuote} className="rounded-2xl bg-[#2473b8] py-3.5 font-bold text-[#ffffff]">
-                Pedir cotización por WhatsApp
+                Ver cotización con impuestos y envío
               </button>
             </div>
           </div>
