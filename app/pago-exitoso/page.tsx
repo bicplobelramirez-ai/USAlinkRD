@@ -2,6 +2,8 @@ import Link from 'next/link'
 
 import { stripe } from '@/lib/stripe'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata = { title: 'Pago recibido | USALINK' }
 
 export default async function PagoExitosoPage({ searchParams }: { searchParams: Promise<{ session_id?: string }> }) {
