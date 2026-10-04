@@ -29,7 +29,7 @@ export default function AfroditaPage() {
         <header className="flex items-center justify-between border-b border-[#e8edf4] px-4 py-3">
           <Link href="/" aria-label="Volver al inicio" className="flex size-9 items-center justify-center rounded-full bg-[#f1f6fb]"><ArrowLeft className="size-4" /></Link>
           <div className="flex items-center gap-2">
-            <img src="/afrodita-avatar.png" alt="Afrodita" className="size-9 rounded-full object-cover ring-2 ring-[#d7edff]" />
+            <img src="/afrodita-avatar.png" alt="Afrodita" className="size-9 rounded-full object-cover ring-2 ring-[#d7edff] animate-[pulse_3s_ease-in-out_infinite]" />
             <div><p className="text-sm font-black">Afrodita</p><p className="text-[10px] text-[#2380bd]">Asistente USALINK</p></div>
           </div>
           <button type="button" aria-label="Más opciones" className="flex size-9 items-center justify-center rounded-full bg-[#f1f6fb]"><Sparkles className="size-4" /></button>
@@ -37,7 +37,7 @@ export default function AfroditaPage() {
 
         <section className="bg-[#071b45] px-5 pb-5 pt-6 text-white">
           <div className="flex items-center gap-4">
-            <img src="/afrodita-avatar.png" alt="Retrato de Afrodita" className="size-20 rounded-[24px] object-cover ring-4 ring-white/15" />
+            <img src="/afrodita-avatar.png" alt="Retrato de Afrodita" className="size-20 rounded-[24px] object-cover ring-4 ring-white/15 animate-[pulse_3s_ease-in-out_infinite]" />
             <div><p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#8dd5ff]">Tu guía de compras</p><h1 className="mt-1 text-2xl font-black tracking-tight">Compra mejor.<br />Pregunta a Afrodita.</h1></div>
           </div>
           <p className="mt-4 text-sm leading-6 text-white/75">Encuentra productos, compara opciones y entiende tu cotización antes de pagar.</p>
@@ -45,7 +45,7 @@ export default function AfroditaPage() {
 
         <section className="flex-1 space-y-4 overflow-auto px-4 py-5" aria-live="polite">
           {messages.map((message, index) => <div key={`${message.from}-${index}`} className={`flex items-end gap-2 ${message.from === "user" ? "justify-end" : "justify-start"}`}>
-            {message.from === "afrodita" && <img src="/afrodita-avatar.png" alt="" className="size-7 rounded-full object-cover" />}
+            {message.from === "afrodita" && <img src="/afrodita-avatar.png" alt="" className="size-7 rounded-full object-cover animate-[pulse_3s_ease-in-out_infinite]" />}
             <div className={`max-w-[78%] rounded-2xl px-4 py-3 text-sm leading-5 ${message.from === "user" ? "rounded-br-md bg-[#2473b8] text-white" : "rounded-bl-md bg-[#f0f5fa] text-[#263b55]"}`}>{message.text}</div>
           </div>)}
           {messages.length === 1 && <div className="flex flex-wrap gap-2 pl-9">{suggestions.map((suggestion) => <button key={suggestion} type="button" onClick={() => sendMessage(suggestion)} className="rounded-full border border-[#cfe5f5] px-3 py-2 text-xs font-semibold text-[#2473b8]">{suggestion}</button>)}</div>}

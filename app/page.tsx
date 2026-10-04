@@ -102,7 +102,20 @@ export default function HomeMockup() {
         </div>
       </section>
 
-      <Section title="Categorías" href="/hub">
+      <Link href="/afrodita" className="mx-4 mt-3 flex items-center gap-3 rounded-2xl bg-[#071b45] p-3 text-white shadow-[0_8px_24px_rgba(7,27,69,0.18)] transition-transform active:scale-[0.98]">
+        <div className="relative shrink-0">
+          <img src="/afrodita-avatar.png" alt="Afrodita" className="size-14 rounded-2xl object-cover ring-2 ring-[#8dd5ff] animate-[pulse_3s_ease-in-out_infinite]" />
+          <span className="absolute -bottom-1 -right-1 size-3 rounded-full border-2 border-[#071b45] bg-[#55d187]" aria-label="Afrodita está disponible" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#8dd5ff]">Tu asistente USALINK</p>
+          <p className="mt-0.5 text-base font-black">Pregunta a Afrodita</p>
+          <p className="truncate text-[11px] text-white/70">Encuentra, compara y cotiza tus productos.</p>
+        </div>
+        <ChevronRight className="size-5 shrink-0 text-[#8dd5ff]" />
+      </Link>
+
+      <Section title="Categorías" href="/hub"> 
         <div className="flex gap-3 overflow-x-auto pb-1">
           {categories.map(([name, image, href]) => (
             <Link key={name} href={href} className="w-20 shrink-0">
@@ -145,7 +158,7 @@ export default function HomeMockup() {
       <nav aria-label="Navegación principal" className="fixed bottom-0 left-0 right-0 z-30 mx-auto flex max-w-[430px] items-end justify-around border-t border-[#e3e9f1] bg-white/95 px-3 pb-3 pt-2 shadow-[0_-5px_20px_rgba(7,27,69,0.08)] backdrop-blur">
         <NavItem href="/" icon={<Home size={18} />} label="Inicio" active />
         <NavItem href="/tiendas" icon={<ShoppingBag size={18} />} label="Tiendas" />
-        <Link href="/concepto" className="-mt-7 flex flex-col items-center gap-1"><div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#8b5cf6] text-white shadow-lg shadow-violet-200"><Sparkles size={21} /></div><span className="text-[10px] font-bold text-[#8b5cf6]">Afrodita</span></Link>
+        <Link href="/afrodita" className="-mt-7 flex flex-col items-center gap-1"><div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-[#8b5cf6] text-white shadow-lg shadow-violet-200"><img src="/afrodita-avatar.png" alt="" className="size-full object-cover" /></div><span className="text-[10px] font-bold text-[#8b5cf6]">Afrodita</span></Link>
         <NavItem href="/concepto#rastreo" icon={<MapPin size={18} />} label="Rastreo" />
         <NavItem href="/hub" icon={<UserRound size={18} />} label="Cuenta" />
       </nav>
