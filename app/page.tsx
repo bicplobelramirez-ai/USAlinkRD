@@ -60,28 +60,25 @@ export default function HomeMockup() {
 
   return (
     <main className="mx-auto min-h-screen w-full max-w-[430px] overflow-hidden bg-[#f5f8fc] pb-24 text-[#071b45] shadow-[0_0_50px_rgba(7,27,69,0.14)] sm:my-6 sm:min-h-[calc(100vh-3rem)] sm:rounded-[2.5rem] sm:border-[10px] sm:border-[#071b45]">
-      <section className="relative overflow-hidden bg-gradient-to-br from-[#071b45] via-[#0c3471] to-[#2473b8] px-5 pb-7 pt-5 text-white">
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#071b45] via-[#0c3471] to-[#2473b8] px-4 pb-4 pt-3 text-white">
         <div className="relative z-10 mx-auto max-w-md">
           <header className="flex items-center justify-between">
-            <Link href="/" className="text-xl font-black tracking-[-0.08em]"><span className="text-white">USA</span><span className="text-[#8dd5ff]">LINK</span></Link>
+            <Link href="/" className="text-lg font-black tracking-[-0.08em]"><span className="text-white">USA</span><span className="text-[#8dd5ff]">LINK</span></Link>
             <div className="flex items-center gap-4 text-white/85">
-              <Link href="/tiendas" aria-label="Buscar tiendas"><Search size={19} /></Link>
-              <Link href="/concepto#rastreo" aria-label="Notificaciones"><Bell size={19} /></Link>
+              <Link href="/tiendas" aria-label="Buscar tiendas"><Search size={18} /></Link>
+              <Link href="/concepto#rastreo" aria-label="Notificaciones"><Bell size={18} /></Link>
             </div>
           </header>
-          <div className="pointer-events-none absolute -right-8 top-3 text-7xl opacity-20" aria-hidden="true">✈</div>
-          <div className="pointer-events-none absolute -bottom-7 right-0 h-20 w-28 rotate-[-5deg] rounded-lg bg-[#c78a4a] opacity-90 shadow-2xl" aria-hidden="true"><div className="m-3 h-5 w-16 rounded bg-white/70" /></div>
-          <div className="relative mt-10 max-w-[280px]">
-            <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-[#8dd5ff]">Compra en USA · Recibe en RD</p>
-            <h1 className="text-[34px] font-black leading-[0.98] tracking-[-0.06em]">Pega el link.<br />Nosotros compramos.</h1>
-            <p className="mt-4 text-sm leading-5 text-white/80">De tus tiendas favoritas a República Dominicana</p>
+          <div className="mt-3">
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#8dd5ff]">Compra en USA · Recibe en RD</p>
+            <h1 className="mt-1 text-[22px] font-black leading-tight tracking-[-0.04em] text-balance">Pega el link. Nosotros compramos.</h1>
           </div>
           <form
             onSubmit={(event) => {
               event.preventDefault()
               quote()
             }}
-            className="relative mt-6 flex rounded-2xl bg-white p-1.5 shadow-xl"
+            className="relative mt-3 flex rounded-2xl bg-white p-1 shadow-xl"
           >
             <input
               value={link}
@@ -94,14 +91,14 @@ export default function HomeMockup() {
             <button type="submit" className="shrink-0 rounded-xl bg-[#2473b8] px-3 py-3 text-xs font-black text-white">Cotizar ahora →</button>
           </form>
           {error && <p role="alert" className="mt-2 text-[11px] font-bold text-[#ffd0d0]">{error}</p>}
-          <div className="mt-3 flex items-center justify-between text-[10px] text-white/70"><span>Stripe · PayPal · VISA · Mastercard</span><span>Pago seguro</span></div>
+          <div className="mt-2 flex items-center justify-between text-[10px] text-white/70"><span>Stripe · PayPal · VISA · Mastercard</span><span>Pago seguro</span></div>
         </div>
       </section>
 
-      <section className="mx-4 -mt-3 rounded-3xl border border-[#e8edf4] bg-white p-4 shadow-[0_8px_28px_rgba(7,27,69,0.08)]">
-        <div className="mb-4 flex items-center justify-between"><h2 className="text-lg font-black">Así funciona</h2><Link href="/concepto" className="text-xs font-bold text-[#2473b8]">Ver más</Link></div>
+      <section className="mx-4 mt-3 rounded-2xl border border-[#e8edf4] bg-white px-3 py-3 shadow-[0_8px_28px_rgba(7,27,69,0.08)]">
+        <div className="mb-2 flex items-center justify-between"><h2 className="text-sm font-black">Así funciona</h2><Link href="/concepto" className="text-xs font-bold text-[#2473b8]">Ver más</Link></div>
         <div className="flex justify-between gap-2 text-center">
-          {[['1', 'Cotiza', 'Pega el link', '🔗'], ['2', 'Recibe', 'Tu cotización', '📄'], ['3', 'Paga', 'Seguro', '💳'], ['4', 'Recíbelo', 'En RD', '📦']].map(([number, title, sub, icon]) => <div key={number} className="min-w-0 flex-1"><div className="mx-auto mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-[#e8f4ff] text-lg">{icon}</div><p className="text-[11px] font-black">{number}. {title}</p><p className="mt-1 text-[10px] text-[#7d8898]">{sub}</p></div>)}
+          {[['1', 'Cotiza', 'Pega el link', '🔗'], ['2', 'Recibe', 'Tu cotización', '📄'], ['3', 'Paga', 'Seguro', '💳'], ['4', 'Recíbelo', 'En RD', '📦']].map(([number, title, sub, icon]) => <div key={number} className="min-w-0 flex-1"><div className="mx-auto mb-1 flex h-8 w-8 items-center justify-center rounded-full bg-[#e8f4ff] text-sm">{icon}</div><p className="text-[11px] font-black">{number}. {title}</p><p className="text-[10px] text-[#7d8898]">{sub}</p></div>)}
         </div>
       </section>
 
