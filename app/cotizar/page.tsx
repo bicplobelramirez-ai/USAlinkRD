@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { ArrowLeft, Check, ChevronDown, Link2, Bookmark, ShieldCheck, ShoppingBag, Truck } from "lucide-react"
+import { Suspense, useState } from "react"
+import { useSearchParams, useRouter } from "next/navigation"
+import { ArrowLeft, Check, ChevronDown, Link2, Bookmark, ShieldCheck, ShoppingBag, Truck, MessageCircle } from "lucide-react"
 
 const demoProduct = {
   name: "HOKA Clifton 10",
@@ -11,14 +11,20 @@ const demoProduct = {
   size: "10",
   color: "Black / White",
   quantity: 1,
-  image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=85",
+  image: "/hoka-clifton-10.png",
 }
 
 const money = (value: number) => `$${value.toFixed(2)}`
 
 export default function CotizarPage() {
+  return <Suspense fallback={<main className="min-h-screen bg-[#f6f8fb]" />}><CotizarContent /></Suspense>
+}
+
+function CotizarContent() {
   const router = useRouter()
-  const [link, setLink] = useState("https://www.hoka.com/en/us/mens-everyday-running-shoes/clifton-10")
+  const params = useSearchParams()
+  const incomingLink = params.get("url") || ""
+  const [link, setLink] = useState(incomingLink || "https://www.hoka.com/en/us/mens-everyday-running-shoes/clifton-10")
   const [submitted, setSubmitted] = useState(true)
   const [saved, setSaved] = useState(false)
 
@@ -76,7 +82,7 @@ export default function CotizarPage() {
 
           <section className="mt-5 rounded-3xl border border-[#dce5ef] bg-white p-5 shadow-[0_8px_24px_rgba(16,33,63,0.05)]"><h2 className="text-lg font-black tracking-tight">Tu cotización UsaLink</h2><div className="mt-4 space-y-3 text-sm"><div className="flex justify-between"><span>Producto después de descuentos</span><span>$101.25</span></div><div className="flex justify-between"><span>Envío dentro de USA</span><span>$0.00</span></div><div className="flex justify-between"><span>Sales tax</span><span>$6.63</span></div><div className="flex justify-between"><span>Fee UsaLink</span><span>$10.00</span></div></div><div className="mt-5 flex items-end justify-between border-t border-[#dce5ef] pt-4"><span className="text-base font-black">Total a pagar</span><span className="text-3xl font-black tracking-[-0.05em] text-[#2473b8]">$117.88</span></div><p className="mt-4 text-[11px] leading-5 text-[#94a3b8]">El envío internacional de tu courier no está incluido. Se paga directamente al courier.</p></section>
 
-          <section className="mt-5"><button type="button" onClick={() => alert("Mockup visual: aquí continuará el flujo de compra.")} className="w-full rounded-2xl bg-[#2473b8] py-4 text-base font-black text-white shadow-[0_10px_22px_rgba(36,115,184,0.25)] transition-transform active:scale-[0.98]">Comprar ahora</button><p className="mt-3 text-center text-[11px] leading-5 text-[#94a3b8]">Antes de cobrarte verificaremos nuevamente precio, disponibilidad, talla, color y descuentos.</p><button type="button" onClick={() => setSaved(!saved)} className="mx-auto mt-4 flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold text-[#64748b] hover:bg-white"> <Bookmark size={15} fill={saved ? "currentColor" : "none"} /> {saved ? "Cotización guardada" : "Guardar cotización"}</button></section>
+          <section className="mt-5"><button type="button" onClick={() => alert("Mockup visual: aquí continuará el flujo de compra.")} className="w-full rounded-2xl bg-[#2473b8] py-4 text-base font-black text-white shadow-[0_10px_22px_rgba(36,115,184,0.25)] transition-transform active:scale-[0.98]">Comprar ahora</button><p className="mt-3 text-center text-[11px] leading-5 text-[#94a3b8]">Antes de cobrarte verificaremos nuevamente precio, disponibilidad, talla, color y descuentos.</p><div className="mt-3 flex items-center justify-center gap-3"><button type="button" onClick={() => setSaved(!saved)} className="flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold text-[#64748b] hover:bg-white"><Bookmark size={15} fill={saved ? "currentColor" : "none"} /> {saved ? "Cotización guardada" : "Guardar cotización"}</button><button type="button" onClick={() => window.open(`https://wa.me/18565622190?text=${encodeURIComponent(`Hola UsaLink, quiero ayuda con esta cotización: ${link}`)}`, "_blank", "noopener,noreferrer")} className="flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold text-[#15915a]"><MessageCircle size={15} /> WhatsApp</button></div></section>
 
           <div className="mt-8 grid grid-cols-3 gap-3 border-t border-[#e4eaf2] pt-5 text-center text-[10px] font-bold text-[#64748b]"><div><ShieldCheck size={20} className="mx-auto mb-1 text-[#2473b8]" />Compra segura</div><div><ShoppingBag size={20} className="mx-auto mb-1 text-[#2473b8]" />Precio claro</div><div><Truck size={20} className="mx-auto mb-1 text-[#2473b8]" />Entrega en RD</div></div>
         </>}
