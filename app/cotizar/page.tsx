@@ -1,256 +1,86 @@
 "use client"
 
-import { useSearchParams, useRouter } from "next/navigation"
-import { useState, useEffect, Suspense } from "react"
-import useSWR from "swr"
-import ApprovePayment from "@/app/components/ApprovePayment"
-import type { PaymentRequest } from "@/app/actions/stripe"
-import { isValidProductUrl, parseQuantity, quoteCatalogModel, type Quote } from "@/lib/quote"
-import type { QuoteResult } from "@/lib/scrape"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { ArrowLeft, Check, ChevronDown, Link2, Bookmark, ShieldCheck, ShoppingBag, Truck } from "lucide-react"
 
-const WHATSAPP = "https://wa.me/18565622190?text="
+const demoProduct = {
+  name: "HOKA Clifton 10",
+  store: "HOKA",
+  price: 150,
+  size: "10",
+  color: "Black / White",
+  quantity: 1,
+  image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=85",
+}
 
-const fetcher = (path: string) => fetch(path).then((res) => res.json() as Promise<QuoteResult>)
-
-const usd = (value: number) =>
-  `US$${value.toLocaleString("en-US", { minimumFractionDigits: value % 1 ? 2 : 0, maximumFractionDigits: 2 })}`
+const money = (value: number) => `$${value.toFixed(2)}`
 
 export default function CotizarPage() {
-  return (
-    <Suspense fallback={<div className="min-h-screen bg-white" />}>
-      <CotizarContent />
-    </Suspense>
-  )
-}
-
-function CotizarContent() {
-  const params = useSearchParams()
   const router = useRouter()
+  const [link, setLink] = useState("https://www.hoka.com/en/us/mens-everyday-running-shoes/clifton-10")
+  const [submitted, setSubmitted] = useState(true)
+  const [saved, setSaved] = useState(false)
 
-  const modelId = params.get("modelo") || ""
-  const storeSlug = params.get("tienda") || ""
-  const size = params.get("talla") || ""
-  const color = params.get("color") || ""
-  const quantity = parseQuantity(params.get("cantidad") ?? "1") ?? 1
-  const catalog = modelId ? quoteCatalogModel(storeSlug, modelId, quantity) : null
-
-  const url = params.get("url") || ""
-  const validUrl = !modelId && isValidProductUrl(url)
-  const store = catalog?.store.name || params.get("store") || "tienda"
-
-  const { data, error } = useSWR(validUrl ? `/api/scrape?url=${encodeURIComponent(url)}` : null, fetcher, {
-    revalidateOnFocus: false,
-  })
-
-  const [progress, setProgress] = useState(10)
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress((currentProgress) => Math.min(currentProgress + 15, 100))
-    }, catalog ? 200 : 400)
-    return () => clearInterval(interval)
-  }, [catalog])
-
-  const loading = validUrl && !data && !error
-  const analyzing = progress < 100 || loading
-
-  if (analyzing) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-white p-8 text-black">
-        <div className="w-full max-w-sm text-center">
-          <div className="mb-8 animate-spin text-5xl">⚙️</div>
-          <h1 className="text-2xl font-black">
-            {catalog ? "Calculando tu" : "Analizando tu"}
-            <br />
-            {catalog ? `cotización de ${store}...` : `link de ${store}...`}
-          </h1>
-
-          <div className="mt-6 h-3 w-full overflow-hidden rounded-full bg-neutral-200">
-            <div
-              className={`h-full bg-black transition-all duration-500 ${progress >= 100 ? "animate-pulse" : ""}`}
-              style={{ width: `${Math.min(progress, 95)}%` }}
-            />
-          </div>
-
-          <p className="mt-6 text-sm text-neutral-500">Estamos sumando precio,<br />impuestos y envío...</p>
-          <p className="mt-20 text-[10px] text-neutral-300">USALINK • Cotiza en segundos</p>
+  return (
+    <main className="min-h-screen bg-[#f6f8fb] text-[#10213f] pb-8">
+      <header className="sticky top-0 z-20 border-b border-[#e4eaf2] bg-white/95 px-4 py-3 backdrop-blur">
+        <div className="mx-auto flex max-w-md items-center justify-between">
+          <button type="button" onClick={() => router.back()} aria-label="Volver" className="rounded-full p-2 text-[#10213f] hover:bg-[#f0f4f9]"><ArrowLeft size={20} /></button>
+          <div className="text-sm font-black tracking-tight">Cotización</div>
+          <div className="size-9" />
         </div>
-      </div>
-    )
-  }
+      </header>
 
-  const header = (
-    <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-white px-4 py-3">
-      <button type="button" onClick={() => router.back()} aria-label="Volver">‹</button>
-      <div className="font-bold">Cotización</div>
-      <button
-        type="button"
-        className="text-sm"
-        aria-label="Compartir"
-        onClick={() => navigator.share?.({ title: "Mi cotización USALINK", url: window.location.href })}
-      >
-        ↗
-      </button>
-    </div>
-  )
+      <div className="mx-auto max-w-md px-4">
+        <section className="pt-7">
+          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#2473b8]">Compra fácil en USA</p>
+          <h1 className="mt-2 text-[29px] font-black leading-[1.05] tracking-[-0.045em] text-balance">Cotiza cualquier producto de USA</h1>
+          <p className="mt-3 text-sm leading-6 text-[#64748b]">Pega el link del producto y descubre cuánto te cuesta comprarlo con UsaLink.</p>
 
-  if (catalog) {
-    const details = [size && `Talla ${size}`, color && `Color ${color}`, `Cantidad ${quantity}`].filter(Boolean).join(" · ")
-    const request: PaymentRequest = { kind: "model", store: catalog.store.slug, model: catalog.model.id, quantity, size, color }
-    return (
-      <QuoteView
-        header={header}
-        image={catalog.model.image}
-        name={catalog.model.name}
-        subtitle={details}
-        quote={catalog.quote}
-        store={store}
-        request={request}
-        summary={`${catalog.model.name} (${store}) · ${details}`}
-      />
-    )
-  }
+          <div className="mt-5 rounded-2xl border border-[#dce5ef] bg-white p-2 shadow-[0_8px_24px_rgba(16,33,63,0.06)]">
+            <div className="flex items-center gap-2 rounded-xl bg-[#f6f8fb] px-3">
+              <Link2 size={17} className="shrink-0 text-[#2473b8]" />
+              <input value={link} onChange={(event) => { setLink(event.target.value); setSubmitted(false) }} aria-label="Link del producto" placeholder="Pega aquí el link del producto" className="min-w-0 flex-1 bg-transparent py-3.5 text-xs text-[#334155] outline-none placeholder:text-[#94a3b8]" />
+            </div>
+            <button type="button" onClick={() => setSubmitted(true)} className="mt-2 w-full rounded-xl bg-[#10213f] py-3.5 text-sm font-black text-white transition-transform active:scale-[0.98]">Obtener cotización</button>
+          </div>
+        </section>
 
-  const whatsappHref =
-    WHATSAPP + encodeURIComponent(`Hola USALINK, quiero cotizar este producto de ${store}:\n${url}`)
-
-  if (!validUrl || error || !data || !data.found) {
-    const reason = !validUrl
-      ? modelId
-        ? "Este modelo ya no está disponible."
-        : "Pega un enlace válido del producto (https://...)."
-      : (data && !data.found && data.reason) || "No pudimos leer el producto."
-    const product = data?.product ?? null
-
-    return (
-      <div className="min-h-screen bg-white pb-32 text-black">
-        {header}
-        <div className="mx-auto max-w-md p-4">
-          {product && (
-            <div className="mt-4 flex gap-4 rounded-2xl bg-neutral-50 p-4">
-              <ProductThumb image={product.image} name={product.name} />
-              <div className="min-w-0">
-                <div className="font-bold">{product.name}</div>
-                <div className="mt-1 truncate text-[11px] text-neutral-400">{url}</div>
+        {submitted && <>
+          <section className="mt-7">
+            <div className="mb-3 flex items-center justify-between"><h2 className="text-lg font-black tracking-tight">Producto detectado</h2><span className="flex items-center gap-1 text-xs font-bold text-[#15915a]"><Check size={15} /> Disponible</span></div>
+            <div className="overflow-hidden rounded-3xl border border-[#dce5ef] bg-white shadow-[0_8px_24px_rgba(16,33,63,0.06)]">
+              <div className="relative flex h-56 items-center justify-center overflow-hidden bg-[#eef4f8] p-5">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={demoProduct.image} alt="HOKA Clifton 10" className="size-full object-contain mix-blend-multiply" referrerPolicy="no-referrer" />
+                <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-[#2473b8]">HOKA</span>
+              </div>
+              <div className="p-4">
+                <div className="flex items-start justify-between gap-3"><div><h3 className="text-xl font-black tracking-tight">HOKA Clifton 10</h3><p className="mt-1 text-sm text-[#64748b]">HOKA · Precio original</p></div><span className="text-lg font-black">$150.00</span></div>
+                <div className="mt-5 grid grid-cols-3 gap-2">
+                  {[['Talla', '10'], ['Color', 'Black / White'], ['Cantidad', '1']].map(([label, value]) => <button key={label} type="button" className="flex min-w-0 items-center justify-between gap-1 rounded-xl border border-[#dce5ef] px-2.5 py-2 text-left"><span className="min-w-0"><span className="block text-[9px] font-bold uppercase text-[#94a3b8]">{label}</span><span className="mt-1 block truncate text-[11px] font-black">{value}</span></span><ChevronDown size={13} className="shrink-0 text-[#94a3b8]" /></button>)}
+                </div>
               </div>
             </div>
-          )}
-          <div className="mt-6 rounded-2xl border p-5 text-center">
-            <div className="text-3xl">💬</div>
-            <h1 className="mt-3 text-lg font-black text-balance">Te cotizamos manualmente</h1>
-            <p className="mt-2 text-sm leading-relaxed text-neutral-500">{reason} Un asesor te envía el precio final por WhatsApp en minutos.</p>
-            {validUrl && (
-              <a
-                href={whatsappHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-black py-4 font-bold text-white"
-              >
-                Cotizar por WhatsApp
-              </a>
-            )}
-            <button type="button" onClick={() => router.push("/")} className="mt-3 w-full rounded-xl bg-neutral-100 py-3 text-sm">
-              Probar otro link
-            </button>
-          </div>
-        </div>
+          </section>
+
+          <section className="mt-5 rounded-3xl border border-[#dce5ef] bg-white p-5 shadow-[0_8px_24px_rgba(16,33,63,0.05)]">
+            <h2 className="text-lg font-black tracking-tight">Descuentos aplicados</h2>
+            <div className="mt-4 space-y-3 text-sm"><div className="flex justify-between text-[#94a3b8]"><span>Precio original</span><span className="line-through">/$150.00/</span></div><div className="flex justify-between"><span>Descuento de la tienda — 25%</span><span className="font-bold text-[#15915a]">−$37.50</span></div><div className="flex justify-between border-b border-[#edf1f5] pb-3 font-bold"><span>Subtotal</span><span>$112.50</span></div><div className="flex justify-between"><span>Descuento adicional — 10%</span><span className="font-bold text-[#15915a]">−$11.25</span></div></div>
+            <div className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-[#e9f8f0] px-3 py-1.5 text-[11px] font-black text-[#15915a]"><Check size={13} /> EXTRA10 aplicado</div>
+            <div className="mt-5 flex items-end justify-between border-t border-[#edf1f5] pt-4"><span className="text-sm font-bold">Precio después de descuentos</span><span className="text-2xl font-black text-[#2473b8]">$101.25</span></div>
+          </section>
+
+          <section className="relative mt-5 overflow-hidden rounded-3xl bg-[#10213f] p-6 text-white shadow-[0_12px_30px_rgba(16,33,63,0.2)]"><div className="absolute -right-10 -top-10 size-32 rounded-full bg-[#2473b8]/40 blur-2xl" /><p className="relative text-sm font-bold text-[#8dd5ff]">🎉 Estás ahorrando</p><p className="relative mt-2 text-5xl font-black tracking-[-0.06em]">$48.75</p><p className="relative mt-2 text-sm text-white/70">32.5% menos que el precio original</p><div className="relative mt-5 h-2 overflow-hidden rounded-full bg-white/15"><div className="h-full w-[32.5%] rounded-full bg-[#55d187]" /></div></section>
+
+          <section className="mt-5 rounded-3xl border border-[#dce5ef] bg-white p-5 shadow-[0_8px_24px_rgba(16,33,63,0.05)]"><h2 className="text-lg font-black tracking-tight">Tu cotización UsaLink</h2><div className="mt-4 space-y-3 text-sm"><div className="flex justify-between"><span>Producto después de descuentos</span><span>$101.25</span></div><div className="flex justify-between"><span>Envío dentro de USA</span><span>$0.00</span></div><div className="flex justify-between"><span>Sales tax</span><span>$6.63</span></div><div className="flex justify-between"><span>Fee UsaLink</span><span>$10.00</span></div></div><div className="mt-5 flex items-end justify-between border-t border-[#dce5ef] pt-4"><span className="text-base font-black">Total a pagar</span><span className="text-3xl font-black tracking-[-0.05em] text-[#2473b8]">$117.88</span></div><p className="mt-4 text-[11px] leading-5 text-[#94a3b8]">El envío internacional de tu courier no está incluido. Se paga directamente al courier.</p></section>
+
+          <section className="mt-5"><button type="button" onClick={() => alert("Mockup visual: aquí continuará el flujo de compra.")} className="w-full rounded-2xl bg-[#2473b8] py-4 text-base font-black text-white shadow-[0_10px_22px_rgba(36,115,184,0.25)] transition-transform active:scale-[0.98]">Comprar ahora</button><p className="mt-3 text-center text-[11px] leading-5 text-[#94a3b8]">Antes de cobrarte verificaremos nuevamente precio, disponibilidad, talla, color y descuentos.</p><button type="button" onClick={() => setSaved(!saved)} className="mx-auto mt-4 flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold text-[#64748b] hover:bg-white"> <Bookmark size={15} fill={saved ? "currentColor" : "none"} /> {saved ? "Cotización guardada" : "Guardar cotización"}</button></section>
+
+          <div className="mt-8 grid grid-cols-3 gap-3 border-t border-[#e4eaf2] pt-5 text-center text-[10px] font-bold text-[#64748b]"><div><ShieldCheck size={20} className="mx-auto mb-1 text-[#2473b8]" />Compra segura</div><div><ShoppingBag size={20} className="mx-auto mb-1 text-[#2473b8]" />Precio claro</div><div><Truck size={20} className="mx-auto mb-1 text-[#2473b8]" />Entrega en RD</div></div>
+        </>}
       </div>
-    )
-  }
-
-  return (
-    <QuoteView
-      header={header}
-      image={data.product.image}
-      name={data.product.name}
-      subtitle={url}
-      quote={data.quote}
-      store={store}
-      request={{ kind: "url", url, store }}
-      summary={`${data.product.name} (${store})\n${url}`}
-    />
-  )
-}
-
-function QuoteView({
-  header,
-  image,
-  name,
-  subtitle,
-  quote,
-  store,
-  request,
-  summary,
-}: {
-  header: React.ReactNode
-  image: string | null
-  name: string
-  subtitle: string
-  quote: Quote
-  store: string
-  request: PaymentRequest
-  summary: string
-}) {
-  return (
-    <div className="min-h-screen bg-white pb-32 text-black">
-      {header}
-
-      <div className="mx-auto max-w-md p-4">
-        <div className="mt-4 flex gap-4 rounded-2xl bg-neutral-50 p-4">
-          <ProductThumb image={image} name={name} />
-          <div className="min-w-0">
-            <div className="line-clamp-2 font-bold">{name}</div>
-            <div className="text-sm text-neutral-600">{usd(quote.unitPrice)}</div>
-            <div className="mt-1 truncate text-[11px] text-neutral-400">{subtitle}</div>
-          </div>
-        </div>
-
-        <div className="mt-6 border-t pt-4">
-          <h3 className="font-bold">Desglose</h3>
-          <div className="mt-3 space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span>{quote.quantity > 1 ? `Precio producto (x${quote.quantity})` : "Precio producto"}</span>
-              <span>{usd(quote.price)}</span>
-            </div>
-            <div className="flex justify-between"><span>Impuestos USA</span><span>{usd(quote.tax)}</span></div>
-            <div className="flex justify-between"><span>Envío USA a Miami</span><span>{usd(quote.shipUSA)}</span></div>
-            <div className="flex justify-between"><span>Servicio USALINK</span><span>{usd(quote.service)}</span></div>
-            <div className="flex justify-between"><span>Envío Miami a RD</span><span>{usd(quote.shipRD)}</span></div>
-          </div>
-          <div className="mt-4 flex justify-between border-t pt-3 text-lg font-bold">
-            <span>Total:</span>
-            <div className="text-right">
-              <div>{usd(quote.total)}</div>
-              <div className="text-xs font-normal text-neutral-500">convertido a RD${quote.totalRD.toLocaleString("en-US")}</div>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-6">
-          <ApprovePayment request={request} summary={summary} />
-        </div>
-
-        <div className="mt-8 grid grid-cols-3 gap-4 text-center text-[11px]">
-          <div><div className="text-xl">🛡️</div>Compra<br />100% original</div>
-          <div><div className="text-xl">🚚</div>Entrega<br />7-14 días</div>
-          <div><div className="text-xl">💬</div>Soporte<br />WhatsApp</div>
-        </div>
-
-        <div className="mt-8 text-center text-[11px] text-neutral-400">Al pagar autorizas a USALINK a comprar por ti en {store}. Recibirás factura y tracking por WhatsApp.</div>
-      </div>
-    </div>
-  )
-}
-
-function ProductThumb({ image, name }: { image: string | null; name: string }) {
-  return (
-    <div className="flex size-20 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-white text-3xl">
-      {image ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={image} alt={name} className="size-full object-contain" referrerPolicy="no-referrer" />
-      ) : (
-        "🛍️"
-      )}
-    </div>
+    </main>
   )
 }
