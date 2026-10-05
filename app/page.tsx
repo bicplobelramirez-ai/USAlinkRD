@@ -160,7 +160,7 @@ export default function HomeMockup() {
         <NavItem href="/tiendas" icon={<ShoppingBag size={18} />} label="Tiendas" />
         <Link href="/afrodita" className="-mt-7 flex flex-col items-center gap-1"><div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full bg-[#8b5cf6] text-white shadow-lg shadow-violet-200"><img src="/afrodita-avatar.png" alt="" className="size-full object-cover" /></div><span className="text-[10px] font-bold text-[#8b5cf6]">Afrodita</span></Link>
         <NavItem href="/concepto#rastreo" icon={<MapPin size={18} />} label="Rastreo" />
-        <NavItem href="/hub" icon={<UserRound size={18} />} label="Cuenta" />
+        <NavItem href="/cuenta" icon={<UserRound size={18} />} label="Cuenta" />
       </nav>
     </main>
   )
