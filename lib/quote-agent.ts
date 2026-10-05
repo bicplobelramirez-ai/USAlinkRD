@@ -1,0 +1,76 @@
+export const WHATSAPP_NUMBER = "18565622190"
+
+export interface QuoteDiscount {
+  label: string
+  amount: number
+  percent?: number
+  code?: string
+  verified: boolean
+}
+
+export interface VerifiedQuote {
+  storeName: string
+  productName: string
+  productUrl: string
+  productImage: string | null
+  originalPrice: number
+  currentPrice: number
+  availability: "available" | "limited" | "unavailable"
+  sizes: string[]
+  selectedSize: string | null
+  colors: string[]
+  selectedColor: string | null
+  quantity: number
+  storeDiscounts: QuoteDiscount[]
+  promoCodes: QuoteDiscount[]
+  verifiedDiscounts: QuoteDiscount[]
+  usaShipping: number
+  salesTax: number
+  usaLinkFee: number
+  savingsAmount: number
+  savingsPercentage: number
+  finalTotal: number
+}
+
+export interface QuoteRequest {
+  productUrl: string
+  storeHint?: string
+  productHint?: string
+  size?: string
+  color?: string
+  quantity?: number
+}
+
+export type QuoteResponse =
+  | { status: "verified"; quote: VerifiedQuote }
+  | { status: "unverified"; reason?: string }
+
+export const ANALYSIS_STEPS = [
+  "Analizando producto…",
+  "Verificando precio…",
+  "Buscando promociones y descuentos…",
+  "Verificando disponibilidad…",
+  "Calculando tu cotización…",
+]
+
+/**
+ * Punto único de entrada al sistema de cotización.
+ * El Agente de Cotización se conectará aquí; hasta entonces nunca se devuelven datos inventados.
+ */
+export async function requestQuote(request: QuoteRequest): Promise<QuoteResponse> {
+  void request
+  return { status: "unverified", reason: "agent_not_connected" }
+}
+
+export function whatsappQuoteUrl(request: Partial<QuoteRequest> & { intent?: "help" | "review" }) {
+  const lines = [
+    request.intent === "review" ? "Hola UsaLink, solicito revisión de esta cotización:" : "Hola UsaLink, quiero ayuda para cotizar:",
+    request.productUrl ? `Link: ${request.productUrl}` : null,
+    request.storeHint ? `Tienda: ${request.storeHint}` : null,
+    request.productHint ? `Producto: ${request.productHint}` : null,
+    request.size ? `Talla: ${request.size}` : null,
+    request.color ? `Color: ${request.color}` : null,
+    request.quantity ? `Cantidad: ${request.quantity}` : null,
+  ].filter(Boolean)
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(lines.join("\n"))}`
+}

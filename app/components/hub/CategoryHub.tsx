@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { ArrowRight, Bell, ChevronLeft, Mic, Search } from "lucide-react"
 import type { Hub, HubItem } from "./hubData"
 import { BottomNav } from "./BottomNav"
+import { cotizarHref, cotizarProductHref } from "@/lib/quote"
 
 const surfaceClass: Record<Hub["surface"], string> = {
   plain: "bg-background",
@@ -159,7 +160,7 @@ function ProductCard({ entry, badge }: { entry: HubItem; badge: string }) {
           {entry.brand} {entry.model}
         </h2>
         <Link
-          href={`/tienda/${entry.slug}`}
+          href={cotizarProductHref({ store: entry.brand, product: `${entry.brand} ${entry.model}` })}
           className="flex items-center justify-center gap-1 rounded-full bg-hub-pink py-2 text-sm font-bold text-background hover:opacity-90"
         >
           Cotizar <ArrowRight className="size-4" aria-hidden="true" />
@@ -183,7 +184,7 @@ function LinkQuoteBlock({ missingWord }: { missingWord: string }) {
         onSubmit={(event) => {
           event.preventDefault()
           if (!link.trim()) return
-          router.push(`/tienda/link?url=${encodeURIComponent(link.trim())}`)
+          router.push(cotizarHref(link.trim()))
         }}
       >
         <h2 id="link-quote-title" className="font-display text-lg font-extrabold leading-snug text-balance">

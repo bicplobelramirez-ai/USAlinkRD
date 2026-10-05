@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { cotizarHref, cotizarProductHref } from "@/lib/quote"
 
 const productos = [
   { id: 1, nombre: "Mini Projector 4K", precio: "$38.50", viral: "1.2k VIRAL", imagen: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=600&q=80" },
@@ -33,29 +34,18 @@ export default function TikTokShop() {
       window.alert("Escribe la talla y el color")
       return
     }
-    const message = `NUEVA COTIZACION DE VITRINA:\nProducto: ${selected.nombre}\nPrecio: ${selected.precio}\nTalla: ${size}\nColor: ${color}\nCantidad: ${quantity}\nNota: ${note || "Sin nota"}`
-    window.open(`https://wa.me/18565622190?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer")
     setSelected(null)
+    window.location.assign(cotizarProductHref({ store: "TikTok Shop", product: selected.nombre, size, color, quantity }))
   }
 
-  const sendLinkQuote = async () => {
+  const sendLinkQuote = () => {
     const value = link.trim()
     if (!value) {
       window.alert("Pega un link de TikTok Shop")
       return
     }
     setDetecting(true)
-    let details = { title: "No detectado", price: "No detectado" }
-    try {
-      const response = await fetch(`/api/product-meta?url=${encodeURIComponent(value)}`)
-      if (response.ok) details = await response.json()
-    } catch {
-      // El link se envía aunque la tienda bloquee sus metadatos.
-    } finally {
-      setDetecting(false)
-    }
-    const message = `NUEVA COTIZACION POR LINK:\nLink: ${value}\nProducto detectado: ${details.title}\nPrecio detectado: ${details.price}`
-    window.open(`https://wa.me/18565622190?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer")
+    window.location.assign(cotizarHref(value, "TikTok Shop"))
   }
 
   return (

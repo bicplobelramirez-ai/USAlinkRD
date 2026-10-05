@@ -3,10 +3,13 @@
 import { useState } from "react"
 import { ArrowLeft, Check, Link2, MessageCircle, Search, Send, ShoppingBag, Sparkles, X } from "lucide-react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { cotizarHref } from "@/lib/quote"
 
 const suggestions = ["Buscar unas Nike", "Cotizar un link", "Ver mis pedidos"]
 
 export default function AfroditaPage() {
+  const router = useRouter()
   const [messages, setMessages] = useState([
     { from: "afrodita", text: "Hola, soy Afrodita. Te ayudo a encontrar productos de USA y calcular cuánto pagarías en RD." },
   ])
@@ -15,6 +18,11 @@ export default function AfroditaPage() {
   function sendMessage(value = input) {
     const clean = value.trim()
     if (!clean) return
+    const pastedLink = clean.match(/https?:\/\/\S+/)?.[0]
+    if (pastedLink || clean === "Cotizar un link") {
+      router.push(cotizarHref(pastedLink))
+      return
+    }
     setMessages((current) => [
       ...current,
       { from: "user", text: clean },

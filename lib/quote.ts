@@ -55,10 +55,20 @@ export function isValidProductUrl(value: string) {
   }
 }
 
-export function cotizarHref(url: string, store?: string) {
-  const params = new URLSearchParams({ url })
-  if (store) params.set('store', store)
-  return `/cotizar?${params.toString()}`
+export function cotizarHref(url?: string, store?: string) {
+  return cotizarProductHref({ url, store })
+}
+
+export function cotizarProductHref(options: { url?: string; store?: string; product?: string; size?: string; color?: string; quantity?: number | string }) {
+  const params = new URLSearchParams()
+  if (options.url) params.set('url', options.url)
+  if (options.store) params.set('store', options.store)
+  if (options.product) params.set('producto', options.product)
+  if (options.size) params.set('talla', options.size)
+  if (options.color) params.set('color', options.color)
+  if (options.quantity) params.set('cantidad', String(options.quantity))
+  const query = params.toString()
+  return query ? `/cotizar?${query}` : '/cotizar'
 }
 
 export function cotizarModelHref(options: { store: string; model: string; quantity: number; size?: string; color?: string }) {

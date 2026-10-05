@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { cotizarHref, cotizarProductHref } from "@/lib/quote"
 
 export type VitrinaProducto = {
   id: number
@@ -20,7 +21,6 @@ type VitrinaStoreProps = {
   colorLabel?: string
 }
 
-const WHATSAPP = "https://wa.me/18565622190?text="
 
 export default function VitrinaStore({
   tienda,
@@ -40,7 +40,6 @@ export default function VitrinaStore({
   const [note, setNote] = useState("")
   const [detecting, setDetecting] = useState(false)
 
-  const tiendaUpper = tienda.toUpperCase()
   const inputId = `link-${tienda.toLowerCase().replace(/\s+/g, "-")}`
 
   const openProductQuote = (producto: VitrinaProducto) => {
@@ -61,37 +60,18 @@ export default function VitrinaStore({
       window.alert(`Escribe: ${colorLabel}`)
       return
     }
-    const lines = [
-      `NUEVA COTIZACION DE VITRINA (${tiendaUpper}):`,
-      `Producto: ${selected.nombre}`,
-      `Precio: ${selected.precio}`,
-      sizeLabel ? `${sizeLabel}: ${size}` : null,
-      `${colorLabel}: ${color}`,
-      `Cantidad: ${quantity}`,
-      `Nota: ${note || "Sin nota"}`,
-    ].filter(Boolean)
-    window.open(WHATSAPP + encodeURIComponent(lines.join("\n")), "_blank", "noopener,noreferrer")
     setSelected(null)
+    window.location.assign(cotizarProductHref({ store: tienda, product: selected.nombre, size, color, quantity }))
   }
 
-  const sendLinkQuote = async () => {
+  const sendLinkQuote = () => {
     const value = link.trim()
     if (!value) {
       window.alert(`Pega un link de ${tienda}`)
       return
     }
     setDetecting(true)
-    let details = { title: "No detectado", price: "No detectado" }
-    try {
-      const response = await fetch(`/api/product-meta?url=${encodeURIComponent(value)}`)
-      if (response.ok) details = await response.json()
-    } catch {
-      // El link se envía aunque la tienda bloquee sus metadatos.
-    } finally {
-      setDetecting(false)
-    }
-    const message = `NUEVA COTIZACION POR LINK (${tiendaUpper}):\nLink: ${value}\nProducto detectado: ${details.title}\nPrecio detectado: ${details.price}`
-    window.open(WHATSAPP + encodeURIComponent(message), "_blank", "noopener,noreferrer")
+    window.location.assign(cotizarHref(value, tienda))
   }
 
   return (
