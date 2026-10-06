@@ -1,47 +1,21 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { ArrowRight } from 'lucide-react'
-
-const WHATSAPP_NUMBER = '18565622190'
-const DOP_RATE = 61
-const USA_SHIPPING = 8
-
-function money(value: number) {
-  return value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-}
+import { whatsappQuoteUrl } from '@/lib/quote-agent'
 
 export default function QuoteLabel() {
+  const router = useRouter()
   const [link, setLink] = useState('')
-  const [price, setPrice] = useState('')
   const [error, setError] = useState('')
 
-  const parsed = Number.parseFloat(price)
-  const hasPrice = Number.isFinite(parsed) && parsed > 0
-  const tax = hasPrice ? parsed * 0.08 : 0
-  const fee = hasPrice ? parsed * 0.3 : 0
-  const totalUSD = hasPrice ? parsed + tax + USA_SHIPPING + fee : 0
-  const totalDOP = Math.round(totalUSD * DOP_RATE)
-
-  function sendQuote() {
-    if (!link.trim()) return setError('Pega el link del producto.')
-    if (!hasPrice) return setError('Escribe el precio en USD.')
+  function goToQuote() {
+    const productUrl = link.trim()
+    if (!/^https?:\/\//i.test(productUrl)) return setError('Pega un link válido del producto.')
     setError('')
-    const message = [
-      'Hola USALINK, quiero traer este producto:',
-      `Link: ${link.trim()}`,
-      `Precio: $${money(parsed)} USD`,
-      `Total estimado: RD$${totalDOP.toLocaleString('en-US')} ($${money(totalUSD)} USD)`,
-    ].join('\n')
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank')
+    router.push(`/cotizar?url=${encodeURIComponent(productUrl)}`)
   }
-
-  const rows: [string, string][] = [
-    ['Producto', hasPrice ? `$${money(parsed)}` : '—'],
-    ['Tax USA 8%', hasPrice ? `$${money(tax)}` : '—'],
-    ['Envío en USA', hasPrice ? `$${money(USA_SHIPPING)}` : '—'],
-    ['Gestión USALINK', hasPrice ? `$${money(fee)}` : '—'],
-  ]
 
   return (
     <div className="relative">
@@ -49,7 +23,7 @@ export default function QuoteLabel() {
       <form
         onSubmit={(event) => {
           event.preventDefault()
-          sendQuote()
+          goToQuote()
         }}
         className="relative border-2 border-ink bg-label shadow-[8px_8px_0_0_var(--color-ink)]"
       >
@@ -65,12 +39,12 @@ export default function QuoteLabel() {
           </div>
           <div className="flex flex-col gap-1 px-4 py-3">
             <span className="text-fog">PARA</span>
-            <span className="font-semibold">Tu puerta en RD</span>
+            <span className="font-semibold">Tu courier en RD</span>
           </div>
         </div>
 
         <label className="flex flex-col gap-1 border-b-2 border-ink px-4 py-3">
-          <span className="font-label text-xs text-fog">1 · LINK DEL PRODUCTO</span>
+          <span className="font-label text-xs text-fog">LINK DEL PRODUCTO</span>
           <input
             value={link}
             onChange={(event) => setLink(event.target.value)}
@@ -81,52 +55,11 @@ export default function QuoteLabel() {
           />
         </label>
 
-        <label className="flex flex-col gap-1 border-b-2 border-ink px-4 py-3">
-          <span className="font-label text-xs text-fog">2 · PRECIO EN LA TIENDA (USD)</span>
-          <div className="flex items-center gap-2">
-            <span className="font-label text-lg font-semibold">$</span>
-            <input
-              value={price}
-              onChange={(event) => setPrice(event.target.value)}
-              type="number"
-              min="0.01"
-              step="0.01"
-              inputMode="decimal"
-              placeholder="115.00"
-              className="w-full bg-transparent py-1 font-label text-lg font-semibold outline-none placeholder:text-fog/60"
-            />
-          </div>
-        </label>
-
-        <dl className="flex flex-col gap-1 border-b-2 border-dashed border-ink px-4 py-3 font-label text-sm">
-          {rows.map(([label, value]) => (
-            <div key={label} className="flex justify-between gap-4">
-              <dt className="text-fog">{label}</dt>
-              <dd>{value}</dd>
-            </div>
-          ))}
-        </dl>
-
-        <div className="flex items-end justify-between gap-4 px-4 py-4">
-          <div className="flex flex-col">
-            <span className="font-label text-xs text-fog">TOTAL PUESTO EN RD</span>
-            <output aria-live="polite" className="text-4xl font-black leading-none tracking-tight">
-              {hasPrice ? `RD$${totalDOP.toLocaleString('en-US')}` : 'RD$—'}
-            </output>
-          </div>
-          <span
-            aria-hidden="true"
-            className="-rotate-12 border-2 border-stamp px-2 py-1 font-label text-xs font-semibold text-stamp"
-          >
-            7 DÍAS
-          </span>
-        </div>
-
         <button
           type="submit"
           className="flex w-full items-center justify-center gap-2 bg-stamp px-4 py-4 text-base font-bold text-label transition-colors hover:bg-ink"
         >
-          Pedir por WhatsApp <ArrowRight className="size-5" aria-hidden="true" />
+          Obtener cotización <ArrowRight className="size-5" aria-hidden="true" />
         </button>
       </form>
       {error ? (
@@ -134,6 +67,14 @@ export default function QuoteLabel() {
           {error}
         </p>
       ) : null}
+      <a
+        href={whatsappQuoteUrl({ productUrl: link.trim() || undefined })}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-4 block text-center font-label text-sm text-fog underline underline-offset-4 hover:text-ink"
+      >
+        ¿Prefieres ayuda? Cotizar por WhatsApp
+      </a>
     </div>
   )
 }
