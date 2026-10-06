@@ -3,11 +3,17 @@
 import { Suspense, useRef, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { ArrowLeft, Link2 } from "lucide-react"
-import { ANALYSIS_STEPS, requestQuote, whatsappQuoteUrl, type QuoteRequest, type VerifiedQuote } from "@/lib/quote-agent"
+import { PRODUCT_STEPS, requestQuote, whatsappQuoteUrl, type ProductSnapshot, type QuoteRequest, type UnverifiedReason, type VerifiedQuote } from "@/lib/quote-agent"
 import { MAX_QUANTITY, findCatalogModel, isValidProductUrl } from "@/lib/quote"
-import { AnalyzingSteps, DiscountsCard, ProductCard, QuoteActions, QuoteSummary, SavingsCard, TrustRow, UnverifiedCard, WhatsAppHelp, type Selection } from "./QuoteSections"
+import { AnalyzingSteps, DiscountsCard, ProductCard, QuoteActions, QuoteSummary, SavingsCard, TrustRow, UnverifiedCard, VerifiedPriceCard, VerifiedProductCard, WhatsAppHelp, type Selection } from "./QuoteSections"
 
-type Phase = "idle" | "analyzing" | "ready" | "unverified"
+type Phase = "idle" | "analyzing" | "ready" | "product" | "unverified"
+
+function unverifiedMessage(reason?: UnverifiedReason) {
+  if (reason === "store_not_supported") return "Por ahora la verificación automática está disponible solo para productos de Nike USA."
+  if (reason === "product_not_found") return "No encontramos este producto en Nike. Revisa que el link sea de un producto disponible."
+  return "No pudimos verificar automáticamente toda la información de este producto."
+}
 
 const STEP_DELAY_MS = 650
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
@@ -37,6 +43,8 @@ function CotizarContent() {
   const [phase, setPhase] = useState<Phase>("idle")
   const [step, setStep] = useState(0)
   const [quote, setQuote] = useState<VerifiedQuote | null>(null)
+  const [product, setProduct] = useState<ProductSnapshot | null>(null)
+  const [unverifiedReason, setUnverifiedReason] = useState<UnverifiedReason | undefined>()
   const [selection, setSelection] = useState<Selection>({ size: entry.size, color: entry.color, quantity: entry.quantity })
   const [saved, setSaved] = useState(false)
   const [buyNote, setBuyNote] = useState<string | null>(null)
@@ -64,8 +72,9 @@ function CotizarContent() {
     setBuyNote(null)
     setPhase("analyzing")
 
+    setProduct(null)
     const responsePromise = requestQuote({ ...request, productUrl: url })
-    for (let index = 0; index < ANALYSIS_STEPS.length; index++) {
+    for (let index = 0; index < PRODUCT_STEPS.length; index++) {
       setStep(index)
       await wait(STEP_DELAY_MS)
       if (currentRun !== runId.current) return
@@ -77,7 +86,16 @@ function CotizarContent() {
       setQuote(response.quote)
       setSelection({ size: response.quote.selectedSize ?? selection.size, color: response.quote.selectedColor ?? selection.color, quantity: response.quote.quantity })
       setPhase("ready")
+    } else if (response.status === "product") {
+      setProduct(response.product)
+      setSelection((current) => ({
+        size: response.product.sizes.includes(current.size) ? current.size : "",
+        color: response.product.color ?? "",
+        quantity: current.quantity,
+      }))
+      setPhase("product")
     } else {
+      setUnverifiedReason(response.reason)
       setPhase("unverified")
     }
   }
@@ -120,9 +138,22 @@ function CotizarContent() {
           {phase === "idle" && <WhatsAppHelp href={whatsappHref} />}
         </section>
 
-        {phase === "analyzing" && <AnalyzingSteps steps={ANALYSIS_STEPS} current={step} />}
+        {phase === "analyzing" && <AnalyzingSteps steps={PRODUCT_STEPS} current={step} />}
 
-        {phase === "unverified" && <UnverifiedCard reviewHref={whatsappQuoteUrl({ ...request, intent: "review" })} whatsappHref={whatsappHref} />}
+        {phase === "unverified" && <UnverifiedCard message={unverifiedMessage(unverifiedReason)} reviewHref={whatsappQuoteUrl({ ...request, intent: "review" })} whatsappHref={whatsappHref} />}
+
+        {phase === "product" && product && <>
+          <VerifiedProductCard product={product} selection={selection} maxQuantity={MAX_QUANTITY} onChange={setSelection} />
+          <VerifiedPriceCard product={product} />
+          <QuoteActions
+            canBuy={false}
+            saved={saved}
+            buyNote="Comprar ahora se habilitará cuando calculemos tu total UsaLink."
+            onBuy={() => {}}
+            onSave={() => setSaved((value) => !value)}
+            whatsappHref={whatsappHref}
+          />
+        </>}
 
         {phase === "ready" && quote && <>
           <ProductCard quote={quote} selection={selection} maxQuantity={MAX_QUANTITY} onChange={setSelection} />

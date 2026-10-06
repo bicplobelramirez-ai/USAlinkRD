@@ -41,9 +41,30 @@ export interface QuoteRequest {
   quantity?: number
 }
 
+/** Datos factuales extraídos del producto real. `null` significa pendiente de verificación. */
+export interface ProductSnapshot {
+  storeName: string
+  source: "nike-pdp"
+  productUrl: string
+  productName: string | null
+  productImage: string | null
+  styleColor: string | null
+  color: string | null
+  currency: "USD" | null
+  currentPrice: number | null
+  originalPrice: number | null
+  availability: "available" | "unavailable" | null
+  sizes: string[]
+  sizeAvailabilityVerified: boolean
+  verifiedAt: string
+}
+
+export type UnverifiedReason = "invalid_url" | "store_not_supported" | "store_unavailable" | "product_not_found" | "network_error"
+
 export type QuoteResponse =
   | { status: "verified"; quote: VerifiedQuote }
-  | { status: "unverified"; reason?: string }
+  | { status: "product"; product: ProductSnapshot }
+  | { status: "unverified"; reason?: UnverifiedReason }
 
 export const ANALYSIS_STEPS = [
   "Analizando producto…",
@@ -53,13 +74,20 @@ export const ANALYSIS_STEPS = [
   "Calculando tu cotización…",
 ]
 
-/**
- * Punto único de entrada al sistema de cotización.
- * El Agente de Cotización se conectará aquí; hasta entonces nunca se devuelven datos inventados.
- */
+export const PRODUCT_STEPS = ["Analizando producto…", "Verificando precio…", "Verificando disponibilidad…"]
+
+/** Punto único de entrada al sistema de cotización. Los datos vienen siempre del servidor. */
 export async function requestQuote(request: QuoteRequest): Promise<QuoteResponse> {
-  void request
-  return { status: "unverified", reason: "agent_not_connected" }
+  try {
+    const response = await fetch("/api/quote", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productUrl: request.productUrl }),
+    })
+    return (await response.json()) as QuoteResponse
+  } catch {
+    return { status: "unverified", reason: "network_error" }
+  }
 }
 
 export function whatsappQuoteUrl(request: Partial<QuoteRequest> & { intent?: "help" | "review" }) {

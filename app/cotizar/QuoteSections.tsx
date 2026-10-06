@@ -1,7 +1,7 @@
 "use client"
 
-import { AlertCircle, Bookmark, Check, ChevronDown, Loader2, MessageCircle, ShieldCheck, ShoppingBag, Truck } from "lucide-react"
-import type { QuoteDiscount, VerifiedQuote } from "@/lib/quote-agent"
+import { AlertCircle, Bookmark, Check, ChevronDown, Clock, Loader2, MessageCircle, ShieldCheck, ShoppingBag, Truck } from "lucide-react"
+import type { ProductSnapshot, QuoteDiscount, VerifiedQuote } from "@/lib/quote-agent"
 
 const money = (value: number) => `$${value.toFixed(2)}`
 const card = "rounded-3xl border border-[#dce5ef] bg-white shadow-[0_8px_24px_rgba(16,33,63,0.06)]"
@@ -169,12 +169,87 @@ export function WhatsAppHelp({ href }: { href: string }) {
   )
 }
 
-export function UnverifiedCard({ reviewHref, whatsappHref }: { reviewHref: string; whatsappHref: string }) {
+export function PendingBadge({ label = "Pendiente de verificación" }: { label?: string }) {
+  return <span className="inline-flex items-center gap-1 rounded-full bg-[#fff4e5] px-2.5 py-1 text-[10px] font-black text-[#c2410c]"><Clock size={11} /> {label}</span>
+}
+
+function formatVerifiedAt(iso: string) {
+  return new Date(iso).toLocaleString("es-DO", { dateStyle: "medium", timeStyle: "short" })
+}
+
+export function VerifiedProductCard({ product, selection, maxQuantity, onChange }: { product: ProductSnapshot; selection: Selection; maxQuantity: number; onChange: (selection: Selection) => void }) {
+  const available = product.availability === "available"
+  return (
+    <section className="mt-7">
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <h2 className="text-lg font-black tracking-tight">Producto detectado</h2>
+        {product.availability === null ? <PendingBadge /> : (
+          <span className={`flex items-center gap-1 text-xs font-bold ${available ? "text-[#15915a]" : "text-[#c2410c]"}`}>
+            {available ? <Check size={15} /> : <AlertCircle size={15} />} {availabilityLabel[product.availability]}
+          </span>
+        )}
+      </div>
+      <div className={`overflow-hidden ${card}`}>
+        <div className="relative flex h-56 items-center justify-center overflow-hidden bg-[#eef4f8] p-5">
+          {product.productImage ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={product.productImage} alt={product.productName ?? `Producto de ${product.storeName}`} className="size-full object-contain mix-blend-multiply" referrerPolicy="no-referrer" />
+          ) : <PendingBadge label="Imagen pendiente de verificación" />}
+          <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-[#2473b8]">{product.storeName}</span>
+        </div>
+        <div className="p-4">
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              {product.productName ? <h3 className="text-xl font-black tracking-tight text-pretty">{product.productName}</h3> : <PendingBadge label="Nombre pendiente de verificación" />}
+              <p className="mt-1 text-sm text-[#64748b]">{[product.storeName, product.color, product.styleColor].filter(Boolean).join(" · ")}</p>
+            </div>
+            {product.currentPrice !== null ? (
+              <div className="text-right">
+                <span className="block text-lg font-black">{money(product.currentPrice)}</span>
+                {product.originalPrice !== null && <span className="block text-xs text-[#94a3b8] line-through">{money(product.originalPrice)}</span>}
+              </div>
+            ) : <PendingBadge label="Precio pendiente" />}
+          </div>
+          <div className="mt-5 grid grid-cols-3 gap-2">
+            {product.sizes.length > 0 ? <OptionSelect label="Talla" value={selection.size} options={product.sizes} onChange={(size) => onChange({ ...selection, size })} /> : <div />}
+            {product.color ? <OptionSelect label="Color" value={selection.color || product.color} options={[product.color]} onChange={(color) => onChange({ ...selection, color })} /> : <div />}
+            <OptionSelect label="Cantidad" value={String(selection.quantity)} options={Array.from({ length: maxQuantity }, (_, index) => String(index + 1))} onChange={(quantity) => onChange({ ...selection, quantity: Number(quantity) || 1 })} />
+          </div>
+          {product.sizes.length > 0 && !product.sizeAvailabilityVerified && (
+            <p className="mt-3 flex flex-wrap items-center gap-2 text-[11px] text-[#64748b]">Disponibilidad por talla: <PendingBadge /></p>
+          )}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+export function VerifiedPriceCard({ product }: { product: ProductSnapshot }) {
+  const pendingRows = ["Descuentos", "Envío dentro de USA", "Sales tax", "Fee UsaLink"]
+  return (
+    <section className={`mt-5 p-5 ${card}`}>
+      <h2 className="text-lg font-black tracking-tight">Tu cotización UsaLink</h2>
+      <div className="mt-4 flex flex-col gap-3 text-sm">
+        <div className="flex items-center justify-between gap-3">
+          <span>Precio en {product.storeName}</span>
+          {product.currentPrice !== null ? <span className="font-black">{money(product.currentPrice)}</span> : <PendingBadge />}
+        </div>
+        {pendingRows.map((label) => <div key={label} className="flex items-center justify-between gap-3 text-[#64748b]"><span>{label}</span><PendingBadge label="Pendiente" /></div>)}
+      </div>
+      <div className="mt-5 flex items-center justify-between border-t border-[#dce5ef] pt-4"><span className="text-base font-black">Total a pagar</span><PendingBadge label="Pendiente" /></div>
+      <p className="mt-4 flex items-center gap-1.5 rounded-xl bg-[#e9f8f0] px-3 py-2 text-[11px] font-bold text-[#15915a]">
+        <ShieldCheck size={14} className="shrink-0" /> {product.currentPrice !== null ? "Precio verificado" : "Producto consultado"} en {product.storeName} el {formatVerifiedAt(product.verifiedAt)}
+      </p>
+    </section>
+  )
+}
+
+export function UnverifiedCard({ reviewHref, whatsappHref, message = "No pudimos verificar automáticamente toda la información de este producto." }: { reviewHref: string; whatsappHref: string; message?: string }) {
   return (
     <section aria-live="polite" className={`mt-7 p-5 ${card}`}>
       <div className="flex items-start gap-3">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-2xl bg-[#fff4e5] text-[#c2410c]"><AlertCircle size={20} /></span>
-        <p className="text-sm font-bold leading-6 text-pretty">No pudimos verificar automáticamente toda la información de este producto.</p>
+        <p className="text-sm font-bold leading-6 text-pretty">{message}</p>
       </div>
       <div className="mt-5 flex flex-col gap-2">
         <a href={reviewHref} target="_blank" rel="noopener noreferrer" className="w-full rounded-2xl bg-[#2473b8] py-3.5 text-center text-sm font-black text-white">Solicitar revisión</a>
