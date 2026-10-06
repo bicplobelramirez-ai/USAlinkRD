@@ -3,15 +3,15 @@
 import { Suspense, useRef, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { ArrowLeft, Link2 } from "lucide-react"
-import { PRODUCT_STEPS, requestQuote, whatsappQuoteUrl, type ProductSnapshot, type QuoteRequest, type UnverifiedReason, type VerifiedQuote } from "@/lib/quote-agent"
+import { PRODUCT_STEPS, SUPPORTED_STORES, requestQuote, whatsappQuoteUrl, type ProductSnapshot, type QuoteRequest, type UnverifiedReason, type VerifiedQuote } from "@/lib/quote-agent"
 import { MAX_QUANTITY, findCatalogModel, isValidProductUrl } from "@/lib/quote"
-import { AnalyzingSteps, DiscountsCard, ProductCard, QuoteActions, QuoteSummary, SavingsCard, TrustRow, UnverifiedCard, VerifiedPriceCard, VerifiedProductCard, WhatsAppHelp, type Selection } from "./QuoteSections"
+import { AnalyzingSteps, DiscountsCard, ProductCard, QuoteActions, QuoteSummary, SavingsCard, TrustRow, UnverifiedCard, VerifiedPriceCard, VerifiedProductCard, VerifiedSavingsCard, WhatsAppHelp, type Selection } from "./QuoteSections"
 
 type Phase = "idle" | "analyzing" | "ready" | "product" | "unverified"
 
 function unverifiedMessage(reason?: UnverifiedReason) {
-  if (reason === "store_not_supported") return "Por ahora la verificación automática está disponible solo para productos de Nike USA."
-  if (reason === "product_not_found") return "No encontramos este producto en Nike. Revisa que el link sea de un producto disponible."
+  if (reason === "store_not_supported") return `Por ahora la verificación automática está disponible para ${SUPPORTED_STORES.join(", ")} (USA). Para otras tiendas te ayudamos por revisión o WhatsApp.`
+  if (reason === "product_not_found") return "No encontramos este producto en la tienda. Revisa que el link sea de un producto disponible."
   return "No pudimos verificar automáticamente toda la información de este producto."
 }
 
@@ -144,6 +144,7 @@ function CotizarContent() {
 
         {phase === "product" && product && <>
           <VerifiedProductCard product={product} selection={selection} maxQuantity={MAX_QUANTITY} onChange={setSelection} />
+          <VerifiedSavingsCard product={product} />
           <VerifiedPriceCard product={product} />
           <QuoteActions
             canBuy={false}

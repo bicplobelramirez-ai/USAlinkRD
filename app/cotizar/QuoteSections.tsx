@@ -224,12 +224,32 @@ export function VerifiedProductCard({ product, selection, maxQuantity, onChange 
   )
 }
 
+export function VerifiedSavingsCard({ product }: { product: ProductSnapshot }) {
+  if (!product.savings || product.originalPrice === null || product.currentPrice === null) return null
+  const percent = Math.min(100, Math.max(0, product.savings.percentage))
+  return (
+    <section className="relative mt-5 overflow-hidden rounded-3xl bg-[#10213f] p-6 text-white shadow-[0_12px_30px_rgba(16,33,63,0.2)]">
+      <div className="absolute -right-10 -top-10 size-32 rounded-full bg-[#2473b8]/40 blur-2xl" />
+      <p className="relative text-sm font-bold text-[#8dd5ff]">🎉 Estás ahorrando</p>
+      <p className="relative mt-2 text-5xl font-black tracking-[-0.06em]">{money(product.savings.amount)}</p>
+      <p className="relative mt-2 text-sm text-white/70">{`${percent.toLocaleString("es-DO", { maximumFractionDigits: 1 })}% menos que el precio original en ${product.storeName}`}</p>
+      <div className="relative mt-5 h-2 overflow-hidden rounded-full bg-white/15"><div className="h-full rounded-full bg-[#55d187]" style={{ width: `${percent}%` }} /></div>
+    </section>
+  )
+}
+
 export function VerifiedPriceCard({ product }: { product: ProductSnapshot }) {
-  const pendingRows = ["Descuentos", "Envío dentro de USA", "Sales tax", "Fee UsaLink"]
+  const pendingRows = [product.savings ? "Códigos promocionales" : "Descuentos", "Envío dentro de USA", "Sales tax", "Fee UsaLink"]
   return (
     <section className={`mt-5 p-5 ${card}`}>
       <h2 className="text-lg font-black tracking-tight">Tu cotización UsaLink</h2>
       <div className="mt-4 flex flex-col gap-3 text-sm">
+        {product.savings && product.originalPrice !== null && (
+          <>
+            <div className="flex justify-between text-[#94a3b8]"><span>Precio original</span><span className="line-through">{money(product.originalPrice)}</span></div>
+            <div className="flex justify-between gap-3"><span>{`Rebaja de ${product.storeName} — ${product.savings.percentage.toLocaleString("es-DO", { maximumFractionDigits: 1 })}%`}</span><span className="font-bold text-[#15915a]">−{money(product.savings.amount)}</span></div>
+          </>
+        )}
         <div className="flex items-center justify-between gap-3">
           <span>Precio en {product.storeName}</span>
           {product.currentPrice !== null ? <span className="font-black">{money(product.currentPrice)}</span> : <PendingBadge />}

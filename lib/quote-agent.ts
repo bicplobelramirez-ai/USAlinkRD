@@ -44,7 +44,7 @@ export interface QuoteRequest {
 /** Datos factuales extraídos del producto real. `null` significa pendiente de verificación. */
 export interface ProductSnapshot {
   storeName: string
-  source: "nike-pdp"
+  source: "nike-pdp" | "footlocker-pdp" | "ulta-pdp"
   productUrl: string
   productName: string | null
   productImage: string | null
@@ -57,7 +57,11 @@ export interface ProductSnapshot {
   sizes: string[]
   sizeAvailabilityVerified: boolean
   verifiedAt: string
+  /** Calculado en el servidor solo a partir de originalPrice y currentPrice reales. */
+  savings?: { amount: number; percentage: number } | null
 }
+
+export const SUPPORTED_STORES = ["Nike", "Foot Locker", "Ulta Beauty"]
 
 export type UnverifiedReason = "invalid_url" | "store_not_supported" | "store_unavailable" | "product_not_found" | "network_error"
 
