@@ -3,9 +3,9 @@
 import { Suspense, useRef, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { ArrowLeft, Link2 } from "lucide-react"
-import { PRODUCT_STEPS, SUPPORTED_STORES, requestQuote, whatsappQuoteUrl, type ProductSnapshot, type QuoteRequest, type UnverifiedReason, type VerifiedQuote } from "@/lib/quote-agent"
+import { PRODUCT_STEPS, SUPPORTED_STORES, requestQuote, whatsappQuoteUrl, type ProductSnapshot, type QuoteAgentResult, type QuoteRequest, type UnverifiedReason, type VerifiedQuote } from "@/lib/quote-agent"
 import { MAX_QUANTITY, findCatalogModel, isValidProductUrl } from "@/lib/quote"
-import { AnalyzingSteps, DiscountsCard, ProductCard, QuoteActions, QuoteSummary, SavingsCard, TrustRow, UnverifiedCard, VerifiedPriceCard, VerifiedProductCard, VerifiedSavingsCard, WhatsAppHelp, type Selection } from "./QuoteSections"
+import { AgentGuidanceCard, AnalyzingSteps, DiscountsCard, ProductCard, QuoteActions, QuoteSummary, SavingsCard, TrustRow, UnverifiedCard, VerifiedPriceCard, VerifiedProductCard, VerifiedSavingsCard, WhatsAppHelp, type Selection } from "./QuoteSections"
 
 type Phase = "idle" | "analyzing" | "ready" | "product" | "unverified"
 
@@ -48,7 +48,10 @@ function CotizarContent() {
   const [selection, setSelection] = useState<Selection>({ size: entry.size, color: entry.color, quantity: entry.quantity })
   const [saved, setSaved] = useState(false)
   const [buyNote, setBuyNote] = useState<string | null>(null)
+  const [agent, setAgent] = useState<QuoteAgentResult | null>(null)
+  const [agentUpdating, setAgentUpdating] = useState(false)
   const runId = useRef(0)
+  const agentRunId = useRef(0)
 
   const request: QuoteRequest = {
     productUrl: link.trim(),
@@ -88,6 +91,7 @@ function CotizarContent() {
       setPhase("ready")
     } else if (response.status === "product") {
       setProduct(response.product)
+      setAgent(response.agent ?? null)
       setSelection((current) => ({
         size: response.product.sizes.includes(current.size) ? current.size : "",
         color: response.product.color ?? "",
@@ -97,6 +101,20 @@ function CotizarContent() {
     } else {
       setUnverifiedReason(response.reason)
       setPhase("unverified")
+    }
+  }
+
+  /** Continúa la misma cotización con la nueva selección: el servidor vuelve a verificar el producto y el agente responde. */
+  async function updateProductSelection(next: Selection) {
+    setSelection(next)
+    const currentRun = ++agentRunId.current
+    setAgentUpdating(true)
+    const response = await requestQuote({ ...request, productUrl: link.trim(), size: next.size || undefined, color: next.color || undefined, quantity: next.quantity })
+    if (currentRun !== agentRunId.current) return
+    setAgentUpdating(false)
+    if (response.status === "product") {
+      setProduct(response.product)
+      setAgent(response.agent ?? null)
     }
   }
 
@@ -143,7 +161,8 @@ function CotizarContent() {
         {phase === "unverified" && <UnverifiedCard message={unverifiedMessage(unverifiedReason)} reviewHref={whatsappQuoteUrl({ ...request, intent: "review" })} whatsappHref={whatsappHref} />}
 
         {phase === "product" && product && <>
-          <VerifiedProductCard product={product} selection={selection} maxQuantity={MAX_QUANTITY} onChange={setSelection} />
+          <VerifiedProductCard product={product} selection={selection} maxQuantity={MAX_QUANTITY} onChange={updateProductSelection} />
+          {agent && <AgentGuidanceCard agent={agent} sizes={product.sizes} selectedSize={selection.size} updating={agentUpdating} onSelectSize={(size) => updateProductSelection({ ...selection, size })} />}
           <VerifiedSavingsCard product={product} />
           <VerifiedPriceCard product={product} />
           <QuoteActions

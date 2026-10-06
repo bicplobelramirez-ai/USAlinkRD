@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server"
+import { runQuotationAgent } from "@/lib/agents/quotation-agent"
+import { sanitizeSelection } from "@/lib/agents/quote-tools"
 import type { ProductSnapshot, QuoteResponse } from "@/lib/quote-agent"
 import { extractFootLockerProduct, parseFootLockerUrl } from "@/lib/stores/footlocker"
 import { ExtractionError, extractNikeProduct, isNikeUrl } from "@/lib/stores/nike"
@@ -37,11 +39,20 @@ export async function POST(request: Request) {
     return NextResponse.json<QuoteResponse>({ status: "unverified", reason: "store_not_supported" })
   }
 
+  let product: ProductSnapshot
   try {
-    const product = withSavings(await extractor.extract(url))
-    return NextResponse.json<QuoteResponse>({ status: "product", product }, { headers: { "Cache-Control": "no-store" } })
+    product = withSavings(await extractor.extract(url))
   } catch (error) {
     const reason = error instanceof ExtractionError ? error.reason : "store_unavailable"
     return NextResponse.json<QuoteResponse>({ status: "unverified", reason })
   }
+
+  const raw = body as { size?: unknown; color?: unknown; quantity?: unknown }
+  const selection = sanitizeSelection(product, {
+    size: typeof raw.size === "string" ? raw.size : null,
+    color: typeof raw.color === "string" ? raw.color : null,
+    quantity: typeof raw.quantity === "number" ? raw.quantity : 1,
+  })
+  const agent = await runQuotationAgent(product, selection)
+  return NextResponse.json<QuoteResponse>({ status: "product", product, agent }, { headers: { "Cache-Control": "no-store" } })
 }

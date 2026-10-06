@@ -65,9 +65,31 @@ export const SUPPORTED_STORES = ["Nike", "Foot Locker", "Ulta Beauty"]
 
 export type UnverifiedReason = "invalid_url" | "store_not_supported" | "store_unavailable" | "product_not_found" | "network_error"
 
+export interface QuoteSelectionInput {
+  size: string | null
+  color: string | null
+  quantity: number
+}
+
+export type AgentMissingField = "size" | "color"
+export type AgentNextStep = "ask_size" | "ask_color" | "ready_for_pricing" | "unavailable" | "needs_review"
+
+/** Respuesta del Agente de Cotización. Solo contiene texto y pasos: nunca precios propios. */
+export interface QuoteAgentResult {
+  source: "openai" | "rules"
+  model: string
+  nextStep: AgentNextStep
+  question: string | null
+  summary: string
+  discountExplanation: string | null
+  missing: AgentMissingField[]
+  pending: string[]
+  rejectedModelOutput: boolean
+}
+
 export type QuoteResponse =
   | { status: "verified"; quote: VerifiedQuote }
-  | { status: "product"; product: ProductSnapshot }
+  | { status: "product"; product: ProductSnapshot; agent?: QuoteAgentResult }
   | { status: "unverified"; reason?: UnverifiedReason }
 
 export const ANALYSIS_STEPS = [
@@ -86,7 +108,7 @@ export async function requestQuote(request: QuoteRequest): Promise<QuoteResponse
     const response = await fetch("/api/quote", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ productUrl: request.productUrl }),
+      body: JSON.stringify({ productUrl: request.productUrl, size: request.size, color: request.color, quantity: request.quantity }),
     })
     return (await response.json()) as QuoteResponse
   } catch {

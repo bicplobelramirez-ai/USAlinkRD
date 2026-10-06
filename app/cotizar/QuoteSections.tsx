@@ -1,7 +1,7 @@
 "use client"
 
 import { AlertCircle, Bookmark, Check, ChevronDown, Clock, Loader2, MessageCircle, ShieldCheck, ShoppingBag, Truck } from "lucide-react"
-import type { ProductSnapshot, QuoteDiscount, VerifiedQuote } from "@/lib/quote-agent"
+import type { ProductSnapshot, QuoteAgentResult, QuoteDiscount, VerifiedQuote } from "@/lib/quote-agent"
 
 const money = (value: number) => `$${value.toFixed(2)}`
 const card = "rounded-3xl border border-[#dce5ef] bg-white shadow-[0_8px_24px_rgba(16,33,63,0.06)]"
@@ -220,6 +220,26 @@ export function VerifiedProductCard({ product, selection, maxQuantity, onChange 
           )}
         </div>
       </div>
+    </section>
+  )
+}
+
+export function AgentGuidanceCard({ agent, sizes, selectedSize, updating, onSelectSize }: { agent: QuoteAgentResult; sizes: string[]; selectedSize: string; updating: boolean; onSelectSize: (size: string) => void }) {
+  return (
+    <section aria-live="polite" aria-busy={updating} className={`mt-5 p-5 ${card}`}>
+      <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-[#2473b8]">
+        {updating ? <Loader2 size={14} className="animate-spin" /> : <ShieldCheck size={14} />} Asistente de cotización
+      </div>
+      {agent.question && <p className="mt-3 text-base font-black tracking-tight text-pretty">{agent.question}</p>}
+      {agent.nextStep === "ask_size" && sizes.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {sizes.map((size) => (
+            <button key={size} type="button" disabled={updating} aria-pressed={selectedSize === size} onClick={() => onSelectSize(size)} className={`min-w-11 rounded-xl border px-3 py-2 text-xs font-black transition-colors disabled:opacity-60 ${selectedSize === size ? "border-[#10213f] bg-[#10213f] text-white" : "border-[#dce5ef] bg-white text-[#10213f] hover:border-[#2473b8]"}`}>{size}</button>
+          ))}
+        </div>
+      )}
+      <p className="mt-3 text-sm leading-6 text-[#334155] text-pretty">{agent.summary}</p>
+      {agent.discountExplanation && <p className="mt-2 text-sm leading-6 font-bold text-[#15915a] text-pretty">{agent.discountExplanation}</p>}
     </section>
   )
 }
