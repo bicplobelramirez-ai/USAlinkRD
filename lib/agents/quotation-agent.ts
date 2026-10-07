@@ -1,7 +1,8 @@
 import { generateText, isStepCount, Output, tool } from "ai"
 import { z } from "zod"
 import type { AgentMissingField, AgentNextStep, ProductSnapshot, QuoteAgentResult, QuoteSelectionInput } from "@/lib/quote-agent"
-import { allowedAmounts, buildAgentInput, checkMissingSelections, listPendingItems, type QuotationAgentInput } from "./quote-tools"
+import type { QuoteBreakdown } from "@/lib/pricing/quote-engine"
+import { allowedAmounts, buildAgentInput, checkMissingSelections, listEstimatedItems, listPendingItems, type QuotationAgentInput } from "./quote-tools"
 
 export const QUOTATION_AGENT_MODEL = "openai/gpt-4.1-mini"
 const AGENT_TIMEOUT_MS = 12000
@@ -15,10 +16,13 @@ const INSTRUCTIONS = `Eres el Agente de Cotización de UsaLink, un servicio que 
 Respondes siempre en español neutro, en frases cortas y claras.
 
 Reglas obligatorias:
-- Llama primero a getVerifiedProduct y luego a checkMissingSelections. Solo usa los datos que devuelven esas herramientas.
-- Nunca inventes ni modifiques precios, descuentos, cupones, códigos promocionales, disponibilidad, tallas, colores, envío, sales tax, fee UsaLink ni totales.
-- No hagas cálculos monetarios. No multipliques por la cantidad ni sumes montos. Los totales los calcula el backend en una fase posterior.
-- Si mencionas un precio o descuento, copia exactamente el valor de getVerifiedProduct con formato $0.00.
+- Llama a getVerifiedProduct, checkMissingSelections y getQuoteBreakdown. Solo usa los datos que devuelven esas herramientas.
+- Nunca inventes ni modifiques precios, descuentos, cupones, códigos promocionales, disponibilidad, tallas, colores, envío, impuesto, Servicio UsaLink ni totales.
+- No hagas cálculos monetarios: no multipliques, no sumes, no apliques porcentajes. Todos los montos de la cotización los calcula el backend y vienen en getQuoteBreakdown.
+- Si mencionas un monto, cópialo exactamente de getVerifiedProduct o getQuoteBreakdown con formato $0.00.
+- Si un cargo tiene status ESTIMATED, dilo como "estimado"; nunca lo presentes como definitivo o verificado.
+- Si riskStatus es REVIEW_REQUIRED, indica que la compra requiere una verificación adicional por el valor del pedido antes de habilitar el pago.
+- No autorizas compras ni pagos. Los pagos todavía no están habilitados.
 - Si un dato es null o no está verificado, di que está "pendiente de verificación".
 - Solo existen códigos promocionales si getVerifiedProduct los devuelve. Hoy nunca los devuelve: no menciones cupones.
 - nextStep debe coincidir con checkMissingSelections: si falta "size" usa ask_size; si falta "color" usa ask_color; si el producto no está disponible usa unavailable; si falta el precio usa needs_review; si no falta nada usa ready_for_pricing.
@@ -43,8 +47,8 @@ function expectedNextStep(input: QuotationAgentInput, missing: AgentMissingField
 }
 
 /** Rechaza cualquier texto que mencione un monto o porcentaje que no venga de la tienda. */
-function mentionsOnlyVerifiedNumbers(text: string, input: QuotationAgentInput) {
-  const { cents, percentages } = allowedAmounts(input)
+function mentionsOnlyVerifiedNumbers(text: string, input: QuotationAgentInput, breakdown: QuoteBreakdown) {
+  const { cents, percentages } = allowedAmounts(input, breakdown)
   for (const match of text.matchAll(/(?:US)?\$\s?(\d[\d,]*(?:\.\d{1,2})?)/g)) {
     if (!cents.has(Math.round(Number(match[1].replace(/,/g, "")) * 100))) return false
   }
@@ -56,15 +60,17 @@ function mentionsOnlyVerifiedNumbers(text: string, input: QuotationAgentInput) {
 
 const money = (value: number) => `$${value.toFixed(2)}`
 
-function fallbackMessages(input: QuotationAgentInput, nextStep: AgentNextStep) {
+function fallbackMessages(input: QuotationAgentInput, nextStep: AgentNextStep, breakdown: QuoteBreakdown) {
   const name = input.productName ?? "este producto"
   const price = input.currentPrice !== null ? ` a ${money(input.currentPrice)}` : ""
+  const total = breakdown.estimatedTotal.amount !== null ? money(breakdown.estimatedTotal.amount) : null
+  const review = breakdown.riskStatus === "REVIEW_REQUIRED" ? " Esta compra requiere una verificación adicional por el valor del pedido antes de habilitar el pago." : ""
   const summary = {
     needs_review: `Encontramos ${name} en ${input.storeName}, pero el precio está pendiente de verificación.`,
     unavailable: `${input.storeName} marca ${name} como no disponible en este momento.`,
     ask_size: `Verificamos ${name} en ${input.storeName}${price}. Elige tu talla para continuar.`,
     ask_color: `Verificamos ${name} en ${input.storeName}${price}. Elige el color para continuar.`,
-    ready_for_pricing: `Verificamos ${name} en ${input.storeName}${price}. El envío, el sales tax y el fee UsaLink están pendientes.`,
+    ready_for_pricing: `Verificamos ${name} en ${input.storeName}${price}. Tu total estimado es ${total}; el envío y el impuesto son estimados.${review}`,
   }[nextStep]
   const discount = input.verifiedDiscounts[0]
   const discountExplanation = discount && input.originalPrice !== null && input.currentPrice !== null
@@ -73,13 +79,14 @@ function fallbackMessages(input: QuotationAgentInput, nextStep: AgentNextStep) {
   return { summary, discountExplanation }
 }
 
-export async function runQuotationAgent(product: ProductSnapshot, selection: QuoteSelectionInput): Promise<QuoteAgentResult> {
+export async function runQuotationAgent(product: ProductSnapshot, selection: QuoteSelectionInput, breakdown: QuoteBreakdown): Promise<QuoteAgentResult> {
   const input = buildAgentInput(product, selection)
   const missing = checkMissingSelections(input)
-  const pending = listPendingItems(input)
+  const pending = listPendingItems(input, breakdown)
+  const estimated = listEstimatedItems(breakdown)
   const nextStep = expectedNextStep(input, missing)
   const deterministicQuestion = nextStep === "ask_size" ? QUESTIONS.size : nextStep === "ask_color" ? QUESTIONS.color : null
-  const fallback = fallbackMessages(input, nextStep)
+  const fallback = fallbackMessages(input, nextStep, breakdown)
   const base = { nextStep, question: deterministicQuestion, missing, pending, model: QUOTATION_AGENT_MODEL }
 
   try {
@@ -98,14 +105,19 @@ export async function runQuotationAgent(product: ProductSnapshot, selection: Quo
           inputSchema: z.object({}),
           execute: async () => ({ missing, pending }),
         }),
+        getQuoteBreakdown: tool({
+          description: "Devuelve la cotización calculada por el motor determinístico del backend (solo lectura). Incluye el status de cada cargo: VERIFIED, ESTIMATED, CALCULATED o PENDING.",
+          inputSchema: z.object({}),
+          execute: async () => ({ ...breakdown, estimatedItems: estimated }),
+        }),
       },
       output: Output.object({ schema: outputSchema }),
-      stopWhen: isStepCount(4),
+      stopWhen: isStepCount(5),
       abortSignal: AbortSignal.timeout(AGENT_TIMEOUT_MS),
     })
 
     const texts = [output.summary, output.question ?? "", output.discountExplanation ?? ""]
-    const trustworthy = output.nextStep === nextStep && texts.every((text) => mentionsOnlyVerifiedNumbers(text, input))
+    const trustworthy = output.nextStep === nextStep && texts.every((text) => mentionsOnlyVerifiedNumbers(text, input, breakdown))
     if (!trustworthy) return { ...base, ...fallback, source: "rules", rejectedModelOutput: true }
 
     return {

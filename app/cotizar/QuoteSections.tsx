@@ -1,6 +1,7 @@
 "use client"
 
 import { AlertCircle, Bookmark, Check, ChevronDown, Clock, Loader2, MessageCircle, ShieldCheck, ShoppingBag, Truck } from "lucide-react"
+import type { ChargeStatus, QuoteBreakdown, QuoteCharge } from "@/lib/pricing/quote-engine"
 import type { ProductSnapshot, QuoteAgentResult, QuoteDiscount, VerifiedQuote } from "@/lib/quote-agent"
 
 const money = (value: number) => `$${value.toFixed(2)}`
@@ -258,28 +259,64 @@ export function VerifiedSavingsCard({ product }: { product: ProductSnapshot }) {
   )
 }
 
-export function VerifiedPriceCard({ product }: { product: ProductSnapshot }) {
-  const pendingRows = [product.savings ? "Códigos promocionales" : "Descuentos", "Envío dentro de USA", "Sales tax", "Fee UsaLink"]
+const chargeBadge: Record<ChargeStatus, { label: string; className: string }> = {
+  VERIFIED: { label: "Verificado", className: "bg-[#e9f8f0] text-[#15915a]" },
+  ESTIMATED: { label: "Estimado", className: "bg-[#fff4e5] text-[#c2410c]" },
+  CALCULATED: { label: "Calculado", className: "bg-[#e8f4ff] text-[#2473b8]" },
+  PENDING: { label: "Pendiente", className: "bg-[#fff4e5] text-[#c2410c]" },
+}
+
+function ChargeBadge({ status }: { status: ChargeStatus }) {
+  const badge = chargeBadge[status]
+  return <span className={`rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-wide ${badge.className}`}>{badge.label}</span>
+}
+
+function ChargeRow({ label, charge, suffix }: { label: string; charge: QuoteCharge; suffix?: string }) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <span className="flex min-w-0 flex-wrap items-center gap-2">{label} <ChargeBadge status={charge.status} /></span>
+      {charge.amount !== null ? <span className={charge.status === "ESTIMATED" ? "text-[#64748b]" : "font-black"}>{money(charge.amount)}{suffix}</span> : <PendingBadge label="Pendiente" />}
+    </div>
+  )
+}
+
+const percentLabel = (rate: number) => `${(rate * 100).toLocaleString("es-DO", { maximumFractionDigits: 2 })}%`
+
+export function VerifiedPriceCard({ product, pricing }: { product: ProductSnapshot; pricing: QuoteBreakdown }) {
+  const quantityLabel = pricing.quantity > 1 ? ` (×${pricing.quantity})` : ""
+  const shippingSuffix = pricing.usShipping.status === "ESTIMATED" ? " estimado" : undefined
+  const taxLabel = pricing.salesTax.status === "ESTIMATED" && pricing.salesTax.rate !== null ? `Impuesto estimado (${percentLabel(pricing.salesTax.rate)})` : "Impuesto"
+  const total = pricing.estimatedTotal
   return (
     <section className={`mt-5 p-5 ${card}`}>
       <h2 className="text-lg font-black tracking-tight">Tu cotización UsaLink</h2>
       <div className="mt-4 flex flex-col gap-3 text-sm">
-        {product.savings && product.originalPrice !== null && (
+        {pricing.savings !== null && pricing.originalSubtotal !== null && product.savings && (
           <>
-            <div className="flex justify-between text-[#94a3b8]"><span>Precio original</span><span className="line-through">{money(product.originalPrice)}</span></div>
-            <div className="flex justify-between gap-3"><span>{`Rebaja de ${product.storeName} — ${product.savings.percentage.toLocaleString("es-DO", { maximumFractionDigits: 1 })}%`}</span><span className="font-bold text-[#15915a]">−{money(product.savings.amount)}</span></div>
+            <div className="flex justify-between text-[#94a3b8]"><span>Precio original{quantityLabel}</span><span className="line-through">{money(pricing.originalSubtotal)}</span></div>
+            <div className="flex justify-between gap-3"><span>{`Rebaja de ${product.storeName} — ${product.savings.percentage.toLocaleString("es-DO", { maximumFractionDigits: 1 })}%`}</span><span className="font-bold text-[#15915a]">−{money(pricing.savings)}</span></div>
           </>
         )}
-        <div className="flex items-center justify-between gap-3">
-          <span>Precio en {product.storeName}</span>
-          {product.currentPrice !== null ? <span className="font-black">{money(product.currentPrice)}</span> : <PendingBadge />}
-        </div>
-        {pendingRows.map((label) => <div key={label} className="flex items-center justify-between gap-3 text-[#64748b]"><span>{label}</span><PendingBadge label="Pendiente" /></div>)}
+        <ChargeRow label={`Producto${quantityLabel}`} charge={pricing.productSubtotal} />
+        <ChargeRow label="Envío dentro de EE. UU." charge={pricing.usShipping} suffix={shippingSuffix} />
+        <ChargeRow label={taxLabel} charge={pricing.salesTax} />
+        <ChargeRow label="Servicio UsaLink" charge={pricing.usaLinkFee} />
+        <div className="flex items-center justify-between gap-3 text-[#64748b]"><span>Códigos promocionales</span><PendingBadge label="Pendiente" /></div>
       </div>
-      <div className="mt-5 flex items-center justify-between border-t border-[#dce5ef] pt-4"><span className="text-base font-black">Total a pagar</span><PendingBadge label="Pendiente" /></div>
+      <div className="mt-5 flex items-end justify-between gap-3 border-t border-[#dce5ef] pt-4">
+        <span className="text-base font-black">Total estimado</span>
+        {total.amount !== null ? <span className="text-3xl font-black tracking-[-0.05em] text-[#2473b8]">{money(total.amount)}</span> : <PendingBadge label="Pendiente" />}
+      </div>
+      {total.amount !== null && <p className="mt-2 text-[11px] leading-5 text-[#64748b]">Los valores estimados serán verificados antes de realizar el cobro.</p>}
+      {pricing.riskStatus === "REVIEW_REQUIRED" && (
+        <p role="status" className="mt-4 flex items-start gap-2 rounded-xl bg-[#fff4e5] px-3 py-2.5 text-xs font-bold leading-5 text-[#c2410c]">
+          <AlertCircle size={15} className="mt-0.5 shrink-0" /> Esta compra requiere una verificación adicional por el valor del pedido. Revisaremos tu cotización antes de habilitar el pago.
+        </p>
+      )}
       <p className="mt-4 flex items-center gap-1.5 rounded-xl bg-[#e9f8f0] px-3 py-2 text-[11px] font-bold text-[#15915a]">
         <ShieldCheck size={14} className="shrink-0" /> {product.currentPrice !== null ? "Precio verificado" : "Producto consultado"} en {product.storeName} el {formatVerifiedAt(product.verifiedAt)}
       </p>
+      <p className="mt-3 text-[11px] leading-5 text-[#94a3b8]">El envío internacional de tu courier no está incluido. Se paga directamente al courier.</p>
     </section>
   )
 }

@@ -3,6 +3,7 @@
 import { Suspense, useRef, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { ArrowLeft, Link2 } from "lucide-react"
+import type { QuoteBreakdown } from "@/lib/pricing/quote-engine"
 import { PRODUCT_STEPS, SUPPORTED_STORES, requestQuote, whatsappQuoteUrl, type ProductSnapshot, type QuoteAgentResult, type QuoteRequest, type UnverifiedReason, type VerifiedQuote } from "@/lib/quote-agent"
 import { MAX_QUANTITY, findCatalogModel, isValidProductUrl } from "@/lib/quote"
 import { AgentGuidanceCard, AnalyzingSteps, DiscountsCard, ProductCard, QuoteActions, QuoteSummary, SavingsCard, TrustRow, UnverifiedCard, VerifiedPriceCard, VerifiedProductCard, VerifiedSavingsCard, WhatsAppHelp, type Selection } from "./QuoteSections"
@@ -50,6 +51,7 @@ function CotizarContent() {
   const [buyNote, setBuyNote] = useState<string | null>(null)
   const [agent, setAgent] = useState<QuoteAgentResult | null>(null)
   const [agentUpdating, setAgentUpdating] = useState(false)
+  const [pricing, setPricing] = useState<QuoteBreakdown | null>(null)
   const runId = useRef(0)
   const agentRunId = useRef(0)
 
@@ -92,6 +94,7 @@ function CotizarContent() {
     } else if (response.status === "product") {
       setProduct(response.product)
       setAgent(response.agent ?? null)
+      setPricing(response.pricing ?? null)
       setSelection((current) => ({
         size: response.product.sizes.includes(current.size) ? current.size : "",
         color: response.product.color ?? "",
@@ -115,6 +118,7 @@ function CotizarContent() {
     if (response.status === "product") {
       setProduct(response.product)
       setAgent(response.agent ?? null)
+      setPricing(response.pricing ?? null)
     }
   }
 
@@ -164,11 +168,11 @@ function CotizarContent() {
           <VerifiedProductCard product={product} selection={selection} maxQuantity={MAX_QUANTITY} onChange={updateProductSelection} />
           {agent && <AgentGuidanceCard agent={agent} sizes={product.sizes} selectedSize={selection.size} updating={agentUpdating} onSelectSize={(size) => updateProductSelection({ ...selection, size })} />}
           <VerifiedSavingsCard product={product} />
-          <VerifiedPriceCard product={product} />
+          {pricing && <VerifiedPriceCard product={product} pricing={pricing} />}
           <QuoteActions
             canBuy={false}
             saved={saved}
-            buyNote="Comprar ahora se habilitará cuando calculemos tu total UsaLink."
+            buyNote={pricing?.riskStatus === "REVIEW_REQUIRED" ? "El pago se habilitará después de revisar tu cotización." : "Los pagos todavía no están habilitados. Antes de cobrarte verificaremos nuevamente todos los valores."}
             onBuy={() => {}}
             onSave={() => setSaved((value) => !value)}
             whatsappHref={whatsappHref}

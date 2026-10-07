@@ -1,3 +1,5 @@
+import type { QuoteBreakdown } from "@/lib/pricing/quote-engine"
+
 export const WHATSAPP_NUMBER = "18565622190"
 
 export interface QuoteDiscount {
@@ -89,7 +91,7 @@ export interface QuoteAgentResult {
 
 export type QuoteResponse =
   | { status: "verified"; quote: VerifiedQuote }
-  | { status: "product"; product: ProductSnapshot; agent?: QuoteAgentResult }
+  | { status: "product"; product: ProductSnapshot; agent?: QuoteAgentResult; pricing?: QuoteBreakdown }
   | { status: "unverified"; reason?: UnverifiedReason }
 
 export const ANALYSIS_STEPS = [

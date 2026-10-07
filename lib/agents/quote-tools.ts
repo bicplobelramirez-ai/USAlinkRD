@@ -1,5 +1,6 @@
 import type { AgentMissingField, ProductSnapshot, QuoteSelectionInput } from "@/lib/quote-agent"
 import { MAX_QUANTITY } from "@/lib/quote"
+import { breakdownAmounts, type QuoteBreakdown } from "@/lib/pricing/quote-engine"
 
 /** Contrato de datos que recibe el agente. Todos los valores factuales vienen del extractor de la tienda. */
 export interface QuotationAgentInput {
@@ -61,7 +62,7 @@ export function checkMissingSelections(input: QuotationAgentInput): AgentMissing
 }
 
 /** Datos que todavía no se pueden verificar o calcular. */
-export function listPendingItems(input: QuotationAgentInput): string[] {
+export function listPendingItems(input: QuotationAgentInput, breakdown: QuoteBreakdown): string[] {
   return [
     input.productName === null && "Nombre del producto",
     input.productImage === null && "Imagen del producto",
@@ -69,20 +70,27 @@ export function listPendingItems(input: QuotationAgentInput): string[] {
     input.availability === null && "Disponibilidad",
     input.availableSizes.length > 0 && !input.sizeAvailabilityVerified && "Disponibilidad por talla",
     "Códigos promocionales",
-    "Envío dentro de USA",
-    "Sales tax",
-    "Fee UsaLink",
-    "Total a pagar",
+    breakdown.estimatedTotal.status === "PENDING" && "Total estimado",
   ].filter((item): item is string => Boolean(item))
 }
 
-/** Montos que el agente tiene permitido mencionar: exactamente los que vienen de la tienda. */
-export function allowedAmounts(input: QuotationAgentInput) {
+/** Cargos que el backend calculó con reglas provisionales (no verificados con la tienda). */
+export function listEstimatedItems(breakdown: QuoteBreakdown): string[] {
+  return [
+    breakdown.usShipping.status === "ESTIMATED" && "Envío dentro de EE. UU.",
+    breakdown.salesTax.status === "ESTIMATED" && "Impuesto",
+    breakdown.estimatedTotal.status === "ESTIMATED" && "Total estimado",
+  ].filter((item): item is string => Boolean(item))
+}
+
+/** Montos que el agente tiene permitido mencionar: los de la tienda y los calculados por el motor determinístico. */
+export function allowedAmounts(input: QuotationAgentInput, breakdown: QuoteBreakdown) {
   const cents = new Set<number>()
-  for (const value of [input.currentPrice, input.originalPrice, ...input.verifiedDiscounts.map((discount) => discount.amount)]) {
+  for (const value of [input.currentPrice, input.originalPrice, ...input.verifiedDiscounts.map((discount) => discount.amount), ...breakdownAmounts(breakdown)]) {
     if (value !== null) cents.add(Math.round(value * 100))
   }
-  const percentages = new Set(input.verifiedDiscounts.map((discount) => Math.round(discount.percentage * 10)))
+  const rates = [breakdown.salesTax.rate, breakdown.usaLinkFee.rate].filter((rate): rate is number => rate !== null).map((rate) => Math.round(rate * 1000))
+  const percentages = new Set([...input.verifiedDiscounts.map((discount) => Math.round(discount.percentage * 10)), ...rates])
   return { cents, percentages }
 }
 
@@ -91,14 +99,11 @@ export type FutureToolResult = { status: "not_enabled"; tool: string }
 const notEnabled = (tool: string): FutureToolResult => ({ status: "not_enabled", tool })
 
 /**
- * Herramientas reservadas para las siguientes fases. No se exponen al modelo todavía:
- * cuando se habiliten, cada una será una función determinística del backend.
+ * Herramientas reservadas para las siguientes fases. No se exponen al modelo.
+ * calculateUsaLinkFee, calculateSalesTax, calculateUSShipping y createQuote ya existen en lib/pricing/quote-engine.ts
+ * y los ejecuta el backend, nunca el modelo.
  */
 export const futureTools = {
-  calculateUsaLinkFee: async (): Promise<FutureToolResult> => notEnabled("calculateUsaLinkFee"),
-  calculateSalesTax: async (): Promise<FutureToolResult> => notEnabled("calculateSalesTax"),
-  calculateUSShipping: async (): Promise<FutureToolResult> => notEnabled("calculateUSShipping"),
-  createQuote: async (): Promise<FutureToolResult> => notEnabled("createQuote"),
   saveQuote: async (): Promise<FutureToolResult> => notEnabled("saveQuote"),
   createPayment: async (): Promise<FutureToolResult> => notEnabled("createPayment"),
 }
