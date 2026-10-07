@@ -112,7 +112,7 @@ export function createQuote(input: PricingInput, rules: QuoteRules = QUOTE_RULES
   const totalIsVerified = shipping.status === "VERIFIED" && tax.status === "VERIFIED"
 
   const isNewCustomer = input.isNewCustomer ?? true
-  const riskStatus: RiskStatus = isNewCustomer && totalCents > toCents(rules.newCustomerOrderLimit) ? "REVIEW_REQUIRED" : "OK"
+  const riskStatus: RiskStatus = isNewCustomer && subtotalCents > toCents(rules.newCustomerOrderLimit) ? "REVIEW_REQUIRED" : "OK"
   const quoteStatus: QuoteStatus =
     input.availability === "unavailable" ? "UNAVAILABLE"
       : input.needsSelection ? "NEEDS_SELECTION"
